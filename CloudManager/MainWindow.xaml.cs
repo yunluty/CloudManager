@@ -101,9 +101,16 @@ namespace CloudManager
             Dispatcher.Invoke(new Action(GotInstances));
         }
 
+        private void ECSList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            DescribeInstances_Instance instance = ECSList.SelectedItem as DescribeInstances_Instance;
+            
+        }
+
         private void GotInstances()
         {
-            ECSList.ItemsSource = mECSInstances;
+            ECSList.ItemsSource = mECSInstances; //Display the ESCs list
+
         }
     }
 }

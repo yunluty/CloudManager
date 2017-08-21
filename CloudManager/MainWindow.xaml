@@ -11,14 +11,15 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="220"></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <StackPanel>
-            <Expander x:Name="ECSExpander">
+            <Expander x:Name="ECSExpander" Grid.Column="0">
                 <Expander.Header>
                     <TextBlock Text="ECS"/>
                 </Expander.Header>
                 <Expander.Content>
-                    <ListView x:Name="ECSList">
+                    <ListView x:Name="ECSList" SelectionChanged="ECSList_SelectionChanged">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Instance Nmae" DisplayMemberBinding="{Binding InstanceName}"/>
@@ -33,5 +34,6 @@
                 </Expander.Header>
             </Expander>
         </StackPanel>
+        
     </Grid>
 </Window>
