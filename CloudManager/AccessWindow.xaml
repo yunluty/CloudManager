@@ -12,15 +12,31 @@
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
-        <TextBox x:Name="AKI" Grid.Row="0"
-                 VerticalAlignment="Bottom" Margin="85,0,85,0" Height="32"
+        <TextBox Grid.Row="0" TextWrapping="Wrap" Foreground="#F68300" Background="#FCF8E2"
+                 VerticalAlignment="Top" HorizontalAlignment="Center" Margin="30,10,30,0"
+                 HorizontalContentAlignment="Center" IsReadOnly="True" BorderThickness="0"
+                 Text="提示：请在阿里云控制台中的Access Key管理页面创建和查看您的Access Key">
+        </TextBox>
+        <TextBlock Text="Access Key ID :" Grid.Row="1" Foreground="DarkGray"
+                   VerticalAlignment="Top" Margin="80,0,0,0"/>
+        <TextBox x:Name="AKI" Grid.Row="1" Text="LTAIh25SpncZcjON"
+                 VerticalAlignment="Top" Margin="80,17,80,0" Height="32"
                  VerticalContentAlignment="Center"/>
-        <TextBox x:Name="AKS" Grid.Row="1" 
-                 VerticalAlignment="Center" Margin="85,0,85,0" Height="32"
+        <TextBlock Text="Access Key Secret :" Grid.Row="2" Foreground="DarkGray"
+                   VerticalAlignment="Bottom" Margin="80,0,0,34"/>
+        <TextBox x:Name="AKS" Grid.Row="2" Text="j75hjBZFlhFS4ldWGjaDIVeEycmTWW"
+                 VerticalAlignment="Bottom" Margin="80,0,80,0" Height="32"
                  VerticalContentAlignment="Center"/>
-        <Button x:Name="AccessButton" Grid.Row="3" Content="接入"
-                VerticalAlignment="Top" Margin="112,0,112,0" Height="30"
+        <TextBox x:Name="Message" Grid.Row="3" TextWrapping="Wrap" Foreground="Red"
+                 VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,5,0,0" Height="36"
+                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                 IsReadOnly="True" BorderThickness="0" BorderBrush="Transparent">
+        </TextBox>
+        <Button x:Name="AccessButton" Grid.Row="3" Grid.RowSpan="2" Content="接入" 
+                VerticalAlignment="Center" Margin="120,0,120,0" Height="30"
                 Style="{StaticResource ResourceKey=LoginButton}"
                 Click="AccessButton_Click"/>
     </Grid>

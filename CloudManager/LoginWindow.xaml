@@ -57,7 +57,7 @@
                    VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,5,0,10"/>
         <Button x:Name="LoginButton" 
                 Grid.ColumnSpan="2" Grid.Row="2" VerticalAlignment="Top" 
-                Height="30" Margin="112,28,112,0" Content="登录" 
+                Height="30" Margin="120,28,120,0" Content="登录" 
                 Style="{StaticResource ResourceKey=LoginButton}" 
                 Click="LoginButton_Click"/>
     </Grid>

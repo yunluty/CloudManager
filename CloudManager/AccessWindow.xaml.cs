@@ -38,6 +38,7 @@ namespace CloudManager
 
         private void AccessButton_Click(object sender, RoutedEventArgs e)
         {
+            Message.Text = "";
             mAki = AKI.Text;
             mAks = AKS.Text;
 
@@ -81,14 +82,22 @@ namespace CloudManager
 
         private void AccessFail(object obj)
         {
+            string message;
             if (typeof(ServerException).IsInstanceOfType(obj))
             {
                 //Server Exception
+                message = ExceptionMessage.GetErrorMessage((ServerException)obj);
             }
             else if (typeof(ClientException).IsInstanceOfType(obj))
             {
                 //Client Exception
+                message = ExceptionMessage.GetErrorMessage((ClientException)obj);
             }
+            else
+            {
+                message = "未知错误";
+            }
+            Message.Text = message;
         }
     }
 }
