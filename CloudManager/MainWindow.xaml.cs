@@ -31,10 +31,11 @@ namespace CloudManager
     /// </summary>
     public partial class MainWindow : Window
     {
-        string mAki, mAks;
-        List<string> mRegionIds = new List<string>();
-        ObservableCollection<DescribeInstance> mECSInstances = new ObservableCollection<DescribeInstance>();
-        DescribeInstance mSelInstance;
+        private string mAki, mAks;
+        private List<string> mRegionIds = new List<string>();
+        private ObservableCollection<DescribeInstance> mECSInstances = new ObservableCollection<DescribeInstance>();
+        private DescribeInstance mSelInstance;
+        private ECSPage mECSPage;
 
         public MainWindow()
         {
@@ -53,6 +54,7 @@ namespace CloudManager
             InitializeComponent();
             mAki = aki;
             mAks = aks;
+            mECSPage = new ECSPage(aki, aks);
         }
 
         private void GetRegions()
@@ -121,8 +123,12 @@ namespace CloudManager
 
         private void ECSList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            DescribeInstance instance = ECSList.SelectedItem as DescribeInstance;
-            Information.DataContext = mSelInstance = instance;
+            mSelInstance = ECSList.SelectedItem as DescribeInstance;
+            if (Information.Content != mECSPage)
+            {
+                Information.Navigate(mECSPage);
+            }
+            mECSPage.mInstance = mSelInstance;
             /*if (mSelInstance.Status.CompareTo("Running") == 0)
             {
                 Stop.Content = "停止";
@@ -131,159 +137,6 @@ namespace CloudManager
             {
                 Stop.Content = "启动";
             }*/
-        }
-
-        private void GetInstanceStatus(DescribeInstance instance)
-        {
-            bool goOn = true;
-            int count = 0;
-            string regionId = instance.RegionId;
-            string instanceId = instance.InstanceId;
-            IClientProfile profile = DefaultProfile.GetProfile(regionId, mAki, mAks);
-            DefaultAcsClient client = new DefaultAcsClient(profile);
-            DescribeInstanceStatusRequest request = new DescribeInstanceStatusRequest();
-
-            do
-            {
-                Thread.Sleep(TimeSpan.FromSeconds(5));
-                try
-                {
-                    DescribeInstanceStatusResponse reponse = client.GetAcsResponse(request);
-                    foreach (DescribeInstanceStatus_InstanceStatus status in reponse.InstanceStatuses)
-                    {
-                        if (status.InstanceId == instanceId)
-                        {
-                            instance.Status = status.Status;
-                            if (status.Status.Equals("Stopped") || status.Status.Equals("Running"))
-                            {
-                                goOn = false;
-                            }
-                            break;
-                        }
-                    }
-                }
-                catch
-                {
-
-                }
-
-                count++;   
-            } while (goOn && count <= 10);
-        }
-
-        private void DoStopInstance(Object obj)
-        {
-            DescribeInstance instance = obj as DescribeInstance;
-            if (instance == null)
-            {
-                return;
-            }
-
-            string regionId = instance.RegionId;
-            string instanceId = instance.InstanceId;
-            IClientProfile profile = DefaultProfile.GetProfile(regionId, mAki, mAks);
-            DefaultAcsClient client = new DefaultAcsClient(profile);
-            StopInstanceRequest request = new StopInstanceRequest();
-            request.InstanceId = instanceId;
-            try
-            {
-                StopInstanceResponse response = client.GetAcsResponse(request);
-            }
-            catch (ClientException)
-            {
-
-            }
-            GetInstanceStatus(instance);
-        }
-
-        private void DoStartInstance(Object obj)
-        {
-            DescribeInstance instance = obj as DescribeInstance;
-            if (instance == null)
-            {
-                return;
-            }
-
-            string regionId = instance.RegionId;
-            string instanceId = instance.InstanceId;
-            IClientProfile profile = DefaultProfile.GetProfile(regionId, mAki, mAks);
-            DefaultAcsClient client = new DefaultAcsClient(profile);
-            StartInstanceRequest request = new StartInstanceRequest();
-            request.InstanceId = instanceId;
-            try
-            {
-                StartInstanceResponse response = client.GetAcsResponse(request);
-            }
-            catch (ClientException)
-            {
-
-            }
-            GetInstanceStatus(instance);
-        }
-
-        private void DisableInstanceButton()
-        {
-            Stop.IsEnabled = false;
-            Reboot.IsEnabled = false;
-            ResetPassword.IsEnabled = false;
-        }
-
-        private void Stop_Click(object sender, RoutedEventArgs e)
-        {
-            Thread t;
-            if (mSelInstance.Status.CompareTo("Running") == 0)
-            {
-                t = new Thread(new ParameterizedThreadStart(DoStopInstance));
-                mSelInstance.Status = "Stopping";
-            }
-            else
-            {
-                t = new Thread(new ParameterizedThreadStart(DoStartInstance));
-                mSelInstance.Status = "Starting";
-            }
-            t.Start(mSelInstance);
-            DisableInstanceButton();
-        }
-
-        private void DoRebootInstance(object obj)
-        {
-            DescribeInstance instance = obj as DescribeInstance;
-            if (instance == null)
-            {
-                return;
-            }
-
-            string regionId = instance.RegionId;
-            string instanceId = instance.InstanceId;
-            IClientProfile profile = DefaultProfile.GetProfile(regionId, mAki, mAks);
-            DefaultAcsClient client = new DefaultAcsClient(profile);
-            RebootInstanceRequest request = new RebootInstanceRequest();
-            request.InstanceId = instanceId;
-            try
-            {
-                RebootInstanceResponse response = client.GetAcsResponse(request);
-            }
-            catch (ClientException)
-            {
-
-            }
-            GetInstanceStatus(instance);
-        }
-
-        private void Reboot_Click(object sender, RoutedEventArgs e)
-        {
-            Thread t = new Thread(new ParameterizedThreadStart(DoRebootInstance));
-            mSelInstance.Status = "Stopping";
-            t.Start(mSelInstance);
-        }
-
-        private void ResetPassword_Click(object sender, RoutedEventArgs e)
-        {
-            PasswordWindow win = new PasswordWindow(mAki, mAks, mSelInstance);
-            win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            win.Owner = this;
-            win.PassValuesEvent += new PasswordWindow.PassValuesHandler(ReceivedReboot);
-            win.ShowDialog();
         }
 
         private void RDSList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -304,13 +157,6 @@ namespace CloudManager
         private void DomainList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
-        }
-
-        private void ReceivedReboot(object sender, DescribeInstance instance)
-        {
-            Thread t = new Thread(new ParameterizedThreadStart(DoRebootInstance));
-            instance.Status = "Stopping";
-            t.Start(instance);
         }
     }
 }

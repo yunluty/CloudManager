@@ -90,7 +90,7 @@ namespace CloudManager
             EnableControl();
         }
 
-        private void DisableControl()
+        private void DisableControls()
         {
             Username.IsEnabled = false;
             Password.IsEnabled = false;
@@ -112,7 +112,7 @@ namespace CloudManager
 
         private void StartLogin()
         {
-            DisableControl();
+            DisableControls();
             Thread t = new Thread(DoLogin);
             t.Start();
         }
@@ -197,6 +197,18 @@ namespace CloudManager
             {
                 PasswordHint.Visibility = Visibility.Hidden;
             }
+        }
+
+        private void SignUp_Click(object sender, RoutedEventArgs e)
+        {
+            SignUpWindow win = new SignUpWindow();
+            win.ShowDialog();
+        }
+
+        private void Forgot_Click(object sender, RoutedEventArgs e)
+        {
+            ForgotWindow win = new ForgotWindow();
+            win.ShowDialog();
         }
     }
 }

@@ -33,8 +33,7 @@
         <TextBox x:Name="Message" Grid.Row="3" TextWrapping="Wrap" Foreground="Red"
                  VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,5,0,0" Height="36"
                  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                 IsReadOnly="True" BorderThickness="0" BorderBrush="Transparent">
-        </TextBox>
+                 IsReadOnly="True" BorderThickness="0" BorderBrush="Transparent"/>
         <Button x:Name="AccessButton" Grid.Row="3" Grid.RowSpan="2" Content="接入" 
                 VerticalAlignment="Center" Margin="120,0,120,0" Height="30"
                 Style="{StaticResource ResourceKey=LoginButton}"

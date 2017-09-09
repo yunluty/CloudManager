@@ -77,14 +77,40 @@
     </Compile>
     <Compile Include="ControlConverter.cs" />
     <Compile Include="DescribeInstance.cs" />
+    <Compile Include="ECSPage.xaml.cs">
+      <DependentUpon>ECSPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ExceptionMessage.cs" />
+    <Compile Include="ForgotWindow.xaml.cs">
+      <DependentUpon>ForgotWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LoginedData.cs" />
     <Compile Include="PasswordWindow.xaml.cs">
       <DependentUpon>PasswordWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ResetPasswordPage.xaml.cs">
+      <DependentUpon>ResetPasswordPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SettingsUtils.cs" />
+    <Compile Include="SignUpWindow.xaml.cs">
+      <DependentUpon>SignUpWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserNamePage.xaml.cs">
+      <DependentUpon>UserNamePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="VerifyPhonePage.xaml.cs">
+      <DependentUpon>VerifyPhonePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="VisibilityConverter.cs" />
     <Page Include="AccessWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ECSPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ForgotWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -111,7 +137,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ResetPasswordPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="resources\Style.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SignUpWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserNamePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="VerifyPhonePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -149,6 +191,19 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="CloudManager.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\ecs.png" />
+    <Resource Include="images\running.png" />
+    <Resource Include="images\starting.png" />
+    <Resource Include="images\stopped.png" />
+    <Resource Include="images\stopping.png" />
+    <Resource Include="images\ubuntu.png" />
+    <Resource Include="images\windows.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\illegal.png" />
+    <Resource Include="images\legal.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

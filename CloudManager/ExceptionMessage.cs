@@ -17,7 +17,7 @@ namespace CloudManager
                     return "Access Key ID找不到，请检查输入的Access Key是否正确";
 
                 case "InvalidAccessKeyId.Inactive":
-                    return "Access Key ID被禁用，请检查 AccessKey 是否正常可用";
+                    return "Access Key ID被禁用，请检查Access Key是否正常可用";
 
                 case "IncompleteSignature":
                     return "签名不匹配，请检查Access Key ID和Access Key Secret是否正确";

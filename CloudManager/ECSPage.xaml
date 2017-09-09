@@ -1,0 +1,92 @@
+﻿<Page x:Class="CloudManager.ECSPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:CloudManager"
+      mc:Ignorable="d" 
+      d:DesignHeight="300" d:DesignWidth="300"
+      Title="ECSPage">
+    <Page.Resources>
+        <local:ControlConverter x:Key="ControlConverter"/>
+        <local:VisibilityConverter x:Key="VisibilityConverter"/>
+    </Page.Resources>
+
+    <StackPanel x:Name="Information" Grid.Column="1">
+        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+            <TextBlock Text="ID :" Style="{StaticResource ResourceKey=TitleText}"/>
+            <TextBlock Text="{Binding Path=InstanceId}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+            <TextBlock Text="名称 :" Style="{StaticResource ResourceKey=TitleText}"/>
+            <TextBlock Text="{Binding Path=InstanceName}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+            <TextBlock Text="描述 :" Style="{StaticResource ResourceKey=TitleText}"/>
+            <TextBlock Text="{Binding Path=Description}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+            <TextBlock Text="状态 :" Style="{StaticResource ResourceKey=TitleText}"/>
+            <Image Source="images/running.png"/>
+            <TextBlock Text="{Binding Path=StatusLang}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+            <TextBlock Text="实例规格 :" Style="{StaticResource ResourceKey=TitleText}"/>
+            <TextBlock Text="{Binding Path=InstanceType}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+            <TextBlock Text="所在可用区 :" Style="{StaticResource ResourceKey=TitleText}"/>
+            <TextBlock Text="{Binding Path=ZoneLang}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+            <TextBlock Text="CPU :" Style="{StaticResource ResourceKey=TitleText}"/>
+            <TextBlock Text="{Binding Path=CpuLang}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+            <TextBlock Text="内存 :" Style="{StaticResource ResourceKey=TitleText}"/>
+            <TextBlock Text="{Binding Path=MemoryLang}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+            <TextBlock Text="操作系统 :" Style="{StaticResource ResourceKey=TitleText}"/>
+            <TextBlock Text="{Binding Path=OSName}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+            <TextBlock Text="公网IP :" Style="{StaticResource ResourceKey=TitleText}"/>
+            <TextBlock Text="{Binding Path=PublicIpAddress[0]}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+            <TextBlock Text="带宽计费方式 :" Style="{StaticResource ResourceKey=TitleText}"/>
+            <TextBlock Text="{Binding Path=InternetChargeTypeLang}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+            <TextBlock Text="带宽 :" Style="{StaticResource ResourceKey=TitleText}"/>
+            <TextBlock Text="{Binding Path=InternetMaxBandwidthOutLang}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+            <TextBlock Text="付费方式 :" Style="{StaticResource ResourceKey=TitleText}"/>
+            <TextBlock Text="{Binding Path=InstanceChargeTypeLang}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+            <TextBlock Text="到期时间 :" Style="{StaticResource ResourceKey=TitleText}"/>
+            <TextBlock Text="{Binding Path=ExpiredTime}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+            <TextBlock Text="创建时间 :" Style="{StaticResource ResourceKey=TitleText}"/>
+            <TextBlock Text="{Binding Path=CreationTime}"/>
+        </StackPanel>
+        <Button x:Name="Stop" Click="Stop_Click"
+                    Height="32" Width="220" Margin="0,30,0,5"
+                    Content="{Binding Path=Status, Converter={StaticResource ControlConverter}}"
+                    Style="{StaticResource ResourceKey=LoginButton}"/>
+        <Button x:Name="Reboot" Content="重启"
+                    Height="32" Width="220" Margin="5"
+                    Click="Reboot_Click"
+                    Visibility="{Binding Path=Status, Converter={StaticResource VisibilityConverter}}"
+                    Style="{StaticResource ResourceKey=LoginButton}"/>
+        <Button x:Name="ResetPassword" Content="重置密码" 
+                    Height="32" Width="220" Margin="5"
+                    Click="ResetPassword_Click"
+                    Visibility="{Binding Path=Status, Converter={StaticResource VisibilityConverter}}"
+                    Style="{StaticResource ResourceKey=LoginButton}"/>
+    </StackPanel>
+</Page>
