@@ -10,6 +10,9 @@
     <Page.Resources>
         <local:ControlConverter x:Key="ControlConverter"/>
         <local:VisibilityConverter x:Key="VisibilityConverter"/>
+        <local:StatusImageConverter x:Key="StatusImageConverter"/>
+        <local:IsEnableConverter x:Key="IsEnableConverter"/>
+        <local:StatusColorConverter x:Key="StatusColorConverter"/>
     </Page.Resources>
 
     <StackPanel x:Name="Information" Grid.Column="1">
@@ -27,8 +30,8 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
             <TextBlock Text="状态 :" Style="{StaticResource ResourceKey=TitleText}"/>
-            <Image Source="images/running.png"/>
-            <TextBlock Text="{Binding Path=StatusLang}"/>
+            <Image Margin="5,0,5,0" Source="{Binding Path=Status, Converter={StaticResource StatusImageConverter}}"/>
+            <TextBlock Text="{Binding Path=StatusLang}" Foreground="{Binding Path=Status, Converter={StaticResource StatusColorConverter}}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
             <TextBlock Text="实例规格 :" Style="{StaticResource ResourceKey=TitleText}"/>
@@ -75,18 +78,19 @@
             <TextBlock Text="{Binding Path=CreationTime}"/>
         </StackPanel>
         <Button x:Name="Stop" Click="Stop_Click"
-                    Height="32" Width="220" Margin="0,30,0,5"
-                    Content="{Binding Path=Status, Converter={StaticResource ControlConverter}}"
-                    Style="{StaticResource ResourceKey=LoginButton}"/>
+                Height="32" Width="220" Margin="0,30,0,5"
+                Content="{Binding Path=Status, Converter={StaticResource ControlConverter}}"
+                IsEnabled="{Binding Path=Status, Converter={StaticResource IsEnableConverter}}"
+                Style="{StaticResource ResourceKey=LoginButton}"/>
         <Button x:Name="Reboot" Content="重启"
-                    Height="32" Width="220" Margin="5"
-                    Click="Reboot_Click"
-                    Visibility="{Binding Path=Status, Converter={StaticResource VisibilityConverter}}"
-                    Style="{StaticResource ResourceKey=LoginButton}"/>
+                Height="32" Width="220" Margin="5"
+                Click="Reboot_Click"
+                Visibility="{Binding Path=Status, Converter={StaticResource VisibilityConverter}}"
+                Style="{StaticResource ResourceKey=LoginButton}"/>
         <Button x:Name="ResetPassword" Content="重置密码" 
-                    Height="32" Width="220" Margin="5"
-                    Click="ResetPassword_Click"
-                    Visibility="{Binding Path=Status, Converter={StaticResource VisibilityConverter}}"
-                    Style="{StaticResource ResourceKey=LoginButton}"/>
+                Height="32" Width="220" Margin="5"
+                Click="ResetPassword_Click"
+                Visibility="{Binding Path=Status, Converter={StaticResource VisibilityConverter}}"
+                Style="{StaticResource ResourceKey=LoginButton}"/>
     </StackPanel>
 </Page>

@@ -42,14 +42,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="aliyun-net-sdk-Core">
-      <HintPath>..\..\Aliyun\aliyun-net-sdk-Core.dll</HintPath>
+      <HintPath>..\Aliyun\aliyun-net-sdk-Core.dll</HintPath>
+    </Reference>
+    <Reference Include="aliyun-net-sdk-Domain">
+      <HintPath>..\Aliyun\aliyun-net-sdk-Domain.dll</HintPath>
     </Reference>
     <Reference Include="aliyun-net-sdk-Ecs">
-      <HintPath>..\..\Aliyun\aliyun-net-sdk-Ecs.dll</HintPath>
+      <HintPath>..\Aliyun\aliyun-net-sdk-Ecs.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data, Version=6.8.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\MySQL\MySQL Connector Net 6.8.8\Assemblies\v4.5\MySql.Data.dll</HintPath>
+    <Reference Include="aliyun-net-sdk-rds">
+      <HintPath>..\Aliyun\aliyun-net-sdk-rds.dll</HintPath>
+    </Reference>
+    <Reference Include="aliyun-net-sdk-Slb">
+      <HintPath>..\Aliyun\aliyun-net-sdk-Slb.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -84,6 +89,7 @@
     <Compile Include="ForgotWindow.xaml.cs">
       <DependentUpon>ForgotWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="IsEnableConverter.cs" />
     <Compile Include="LoginedData.cs" />
     <Compile Include="PasswordWindow.xaml.cs">
       <DependentUpon>PasswordWindow.xaml</DependentUpon>
@@ -95,6 +101,8 @@
     <Compile Include="SignUpWindow.xaml.cs">
       <DependentUpon>SignUpWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="StatusColorConverter.cs" />
+    <Compile Include="StatusImageConverter.cs" />
     <Compile Include="UserNamePage.xaml.cs">
       <DependentUpon>UserNamePage.xaml</DependentUpon>
     </Compile>

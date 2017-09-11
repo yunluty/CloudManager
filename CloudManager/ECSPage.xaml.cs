@@ -141,13 +141,6 @@ namespace CloudManager
             GetInstanceStatus(instance);
         }
 
-        private void DisableInstanceButton()
-        {
-            Stop.IsEnabled = false;
-            Reboot.IsEnabled = false;
-            ResetPassword.IsEnabled = false;
-        }
-
         private void Stop_Click(object sender, RoutedEventArgs e)
         {
             Thread t;
@@ -162,7 +155,6 @@ namespace CloudManager
                 mInstance.Status = "Starting";
             }
             t.Start(mInstance);
-            DisableInstanceButton();
         }
 
         private void DoRebootInstance(object obj)

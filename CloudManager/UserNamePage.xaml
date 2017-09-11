@@ -12,14 +12,16 @@
         <Grid.RowDefinitions>
             <RowDefinition></RowDefinition>
             <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="用户名：" Foreground="DarkGray"
+        <TextBlock Grid.Row="0" Grid.RowSpan="2" Text="用户名：" Foreground="DarkGray"
                    VerticalAlignment="Center" HorizontalAlignment="Left" Margin="50,0,0,0"/>
-        <TextBox x:Name="UserName" Grid.Row="0" Height="32" MaxLength="25"
+        <TextBox x:Name="UserName" Grid.Row="0" Grid.RowSpan="2" Height="32" MaxLength="25"
                  VerticalAlignment="Center" Margin="110,0,70,0"
                  VerticalContentAlignment="Center"
                  Text="{Binding Path=mUserName}"/>
-        <Button x:Name="Next" Grid.Row="1" Content="下一步" Margin="120,0,120,0" Height="32"
+        <Button x:Name="Next" Grid.Row="2" Content="下一步" Margin="120,0,120,0" Height="32"
+                VerticalAlignment="Top"
                 Style="{StaticResource ResourceKey=LoginButton}"
                 Click="Next_Click"/>
     </Grid>

@@ -19,17 +19,18 @@
         <TextBlock x:Name="DisplayNumber" Grid.Row="0"  Text="{Binding Path=mDisplayNumber}"
                    VerticalAlignment="Center" HorizontalAlignment="Left" Margin="110,0,0,0"/>
         <TextBlock Grid.Row="1" Text="验证码：" Foreground="DarkGray"
-                   VerticalAlignment="Center" HorizontalAlignment="Left" Margin="50,0,0,0"/>
+                   VerticalAlignment="Top" HorizontalAlignment="Left" Margin="50,0,0,0"/>
         <TextBox x:Name="Code" Grid.Row="1"
-                 VerticalAlignment="Center" Margin="110,0,140,0" Height="32"
+                 VerticalAlignment="Top" Margin="110,0,140,0" Height="32"
                  VerticalContentAlignment="Center"
                  InputMethod.IsInputMethodEnabled="False"
                  PreviewTextInput="Code_PreviewTextInput"/>
         <Button x:Name="GetCode" Grid.Row="1" Content="获取验证码"  Height="30" Width="70"
-                VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,65,0"
+                VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,0,65,0"
                 Style="{StaticResource ResourceKey=LoginButton}"
                 Click="GetCode_Click"/>
         <Button x:Name="Next" Grid.Row="2" Content="下一步" Margin="120,0,120,0" Height="32"
+                VerticalAlignment="Top"
                 Style="{StaticResource ResourceKey=LoginButton}"
                 Click="Next_Click"/>
     </Grid>
