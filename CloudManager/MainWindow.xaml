@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CloudManager"
         mc:Ignorable="d"
-        Title="CloudManager" Height="580" Width="920"
+        Title="CloudManager" Height="580" Width="980"
         WindowStartupLocation="CenterScreen"
         ContentRendered="Window_ContentRendered">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="220"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="180"/>
+            <ColumnDefinition Width="300"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <StackPanel  Grid.Column="0">
@@ -69,7 +69,7 @@
                              SelectionChanged="SLBList_SelectionChanged">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding InstanceName}"/>
+                                <TextBlock Text="{Binding LoadBalanceTitle}"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
@@ -91,6 +91,7 @@
                 </Expander.Content>
             </Expander>
         </StackPanel>
-        <Frame x:Name="Information" Grid.Column="1"/>
+        <Frame x:Name="Information" Grid.Column="1" NavigationUIVisibility="Hidden"/>
+        <Frame x:Name="Process" Grid.Column="2" NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>

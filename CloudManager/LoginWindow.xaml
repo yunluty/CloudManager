@@ -21,7 +21,7 @@
         <Image Grid.ColumnSpan="2" Source="images/cm.png" Height="128" Width="128"/>
         <TextBlock x:Name="UserHint" Grid.ColumnSpan="2" Grid.Row="1"
                    VerticalAlignment="Top" Margin="85,10,85,0"
-                   Text="手机号码/邮箱" Foreground="DarkGray"/>
+                   Text="用户名/手机号码" Foreground="DarkGray"/>
         <TextBox x:Name="Username" Grid.ColumnSpan="2" Grid.Row="1"
                  VerticalAlignment="Top" VerticalContentAlignment="Center" Margin="82,0,82,0" 
                  Height="32" Background="Transparent" 

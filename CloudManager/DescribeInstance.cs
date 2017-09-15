@@ -13,7 +13,6 @@ namespace CloudManager
     {
         public DescribeInstance()
         {
-
         }
 
         public DescribeInstance(DescribeInstances_Instance i)
@@ -395,36 +394,6 @@ namespace CloudManager
             {
                 _Status = value;
                 notifyPropertyChanged("Status");
-
-                StatusLang = value;
-            }
-        }
-
-        private string _StatusLang;
-        public string StatusLang
-        {
-            get { return _StatusLang; }
-            set
-            {
-                switch (value)
-                {
-                    case "Running":
-                        _StatusLang = "运行中";
-                        break;
-
-                    case "Stopped":
-                        _StatusLang = "已停止";
-                        break;
-
-                    case "Starting":
-                        _StatusLang = "启动中";
-                        break;
-
-                    case "Stopping":
-                        _StatusLang = "停止中";
-                        break;
-                }
-                notifyPropertyChanged("StatusLang");
             }
         }
 
@@ -537,6 +506,28 @@ namespace CloudManager
             {
                 _CpuLang = value + "核";
                 notifyPropertyChanged("CpuLang");
+            }
+        }
+
+        private int? _Weight;
+        public int? Weight
+        {
+            get { return _Weight; }
+            set
+            {
+                _Weight = value;
+                notifyPropertyChanged("Weight");
+            }
+        }
+
+        private bool _Checked;
+        public bool Checked
+        {
+            get { return _Checked; }
+            set
+            {
+                _Checked = value;
+                notifyPropertyChanged("Checked");
             }
         }
 

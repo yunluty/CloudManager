@@ -82,6 +82,7 @@
     </Compile>
     <Compile Include="ControlConverter.cs" />
     <Compile Include="DescribeInstance.cs" />
+    <Compile Include="DescribeLoadBalancer.cs" />
     <Compile Include="ECSPage.xaml.cs">
       <DependentUpon>ECSPage.xaml</DependentUpon>
     </Compile>
@@ -101,8 +102,15 @@
     <Compile Include="SignUpWindow.xaml.cs">
       <DependentUpon>SignUpWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SLBPage.xaml.cs">
+      <DependentUpon>SLBPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SLBServersPage.xaml.cs">
+      <DependentUpon>SLBServersPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="StatusColorConverter.cs" />
     <Compile Include="StatusImageConverter.cs" />
+    <Compile Include="StatusTextConverter.cs" />
     <Compile Include="UserNamePage.xaml.cs">
       <DependentUpon>UserNamePage.xaml</DependentUpon>
     </Compile>
@@ -154,6 +162,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SignUpWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SLBPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SLBServersPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

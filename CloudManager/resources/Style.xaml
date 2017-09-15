@@ -1,6 +1,14 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:CloudManager">
+    
+    <local:ControlConverter x:Key="ControlConverter"/>
+    <local:VisibilityConverter x:Key="VisibilityConverter"/>
+    <local:StatusImageConverter x:Key="StatusImageConverter"/>
+    <local:IsEnableConverter x:Key="IsEnableConverter"/>
+    <local:StatusColorConverter x:Key="StatusColorConverter"/>
+    <local:StatusTextConverter x:Key="StatusTextConverter"/>
+
     <Style x:Key="LoginButton" TargetType="{x:Type Button}">
         <Setter Property="Foreground" Value="#FFFFFF"/>
         <Setter Property="Template">

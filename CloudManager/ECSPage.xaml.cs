@@ -136,7 +136,6 @@ namespace CloudManager
             }
             catch (ClientException)
             {
-
             }
             GetInstanceStatus(instance);
         }

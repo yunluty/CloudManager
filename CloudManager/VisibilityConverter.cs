@@ -13,14 +13,29 @@ namespace CloudManager
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string status = (string)value;
-            if (status.Equals("Running"))
+            string status = value as string;
+            if (status != null)
             {
-                return Visibility.Visible;
+                if (status.Equals("Running"))
+                {
+                    return Visibility.Visible;
+                }
+                else
+                {
+                    return Visibility.Hidden;
+                }
             }
             else
             {
-                return Visibility.Hidden;
+                int? count = value as int?;
+                if (count == null || count == 0)
+                {
+                    return Visibility.Hidden;
+                }
+                else
+                {
+                    return Visibility.Visible;
+                }
             }
         }
 

@@ -8,33 +8,35 @@ using System.Windows.Data;
 
 namespace CloudManager
 {
-    class StatusImageConverter : IValueConverter
+    class StatusTextConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null)
-            {
-                return null;
-            }
-
             string status = (string)value;
             if (status.Equals("Running") || status.Equals("active"))
             {
-                return "images/running.png";
+                return "运行中";
             }
             else if (status.Equals("Stopped") || status.Equals("inactive"))
             {
-                return "images/stopped.png";
+                return "已停止";
             }
             else if (status.Equals("Starting"))
             {
-                return "images/starting.png";
+                return "启动中";
             }
             else if (status.Equals("Stopping"))
             {
-                return "images/stopping.png";
+                return "停止中";
             }
-            return null;
+            else if (status.Equals("locked"))
+            {
+                return "已锁定";
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
