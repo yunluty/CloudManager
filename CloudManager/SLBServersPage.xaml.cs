@@ -64,53 +64,6 @@ namespace CloudManager
             }
         }
 
-        private void AddedServers()
-        {
-            Thread t = new Thread(GetAttribute);
-            t.Start();
-        }
-
-        private void AddServers(object obj)
-        {
-            IClientProfile profile = DefaultProfile.GetProfile(mBalancer.RegionId, mAki, mAks);
-            DefaultAcsClient client = new DefaultAcsClient(profile);
-            AddBackendServersRequest request = new AddBackendServersRequest();
-            request.LoadBalancerId = mBalancer.LoadBalancerId;
-            request.BackendServers = obj as string;
-            try
-            {
-                AddBackendServersResponse response = client.GetAcsResponse(request);
-                Dispatcher.Invoke(new Action(AddedServers));
-            }
-            catch
-            {
-            }
-        }
-
-        private void AddSelected_Click(object sender, RoutedEventArgs e)
-        {
-            string server = "[{\"ServerId\":\"" + instance.InstanceId + "\",\"Weight\":\"100\"}]";
-            string servers = "[";
-            for (int i = 0; i < mBackendServers.Count; i++)
-            {
-                if (i != 0)
-                {
-                    servers += ',';
-                }
-
-                DescribeInstance instance = mBackendServers[i];
-                if (instance.Checked)
-                {
-                    servers += "\"";
-                    servers += instance.InstanceId;
-                    servers += "\"";
-                }
-            }
-            servers += "]";
-            Thread t = new Thread(AddServers);
-            t.Start();
-        }
-
         private void GotBackendServers(object obj)
         {
             ObservableCollection<DescribeInstance> instances = obj as ObservableCollection<DescribeInstance>;
@@ -191,6 +144,9 @@ namespace CloudManager
 
         private void RemovedServers()
         {
+            AddedSelectAll.IsChecked = false;
+            mBackendServers.Clear();
+
             Thread t = new Thread(GetAttribute);
             t.Start();
         }
@@ -210,6 +166,14 @@ namespace CloudManager
             catch (Exception)
             {
             }
+        }
+
+        private void RemoveSingle_Click(object sender, RoutedEventArgs e)
+        {
+            DescribeInstance instance = (sender as Button).DataContext as DescribeInstance;
+            string server = "[\"" + instance.InstanceId + "\"]";
+            Thread t = new Thread(new ParameterizedThreadStart(RemoveServers));
+            t.Start(server);
         }
 
         private void RemoveSelected_Click(object sender, RoutedEventArgs e)
@@ -235,12 +199,61 @@ namespace CloudManager
             t.Start(servers);
         }
 
+        private void AddedServers()
+        {
+            NotAddedSelectAll.IsChecked = false;
+            mNotAddedServers.Clear();
+
+            Thread t = new Thread(GetAttribute);
+            t.Start();
+        }
+
+        private void AddServers(object obj)
+        {
+            IClientProfile profile = DefaultProfile.GetProfile(mBalancer.RegionId, mAki, mAks);
+            DefaultAcsClient client = new DefaultAcsClient(profile);
+            AddBackendServersRequest request = new AddBackendServersRequest();
+            request.LoadBalancerId = mBalancer.LoadBalancerId;
+            request.BackendServers = obj as string;
+            try
+            {
+                AddBackendServersResponse response = client.GetAcsResponse(request);
+                Dispatcher.Invoke(new Action(AddedServers));
+            }
+            catch
+            {
+            }
+        }
+
         private void AddSingle_Click(object sender, RoutedEventArgs e)
         {
             DescribeInstance instance = (sender as Button).DataContext as DescribeInstance;
             string server = "[{\"ServerId\":\""+ instance.InstanceId + "\",\"Weight\":\"100\"}]";
             Thread t = new Thread(new ParameterizedThreadStart(AddServers));
             t.Start(server);
+        }
+
+        private void AddSelected_Click(object sender, RoutedEventArgs e)
+        {
+            string servers = "[";
+            for (int i = 0; i < mNotAddedServers.Count; i++)
+            {
+                if (i != 0)
+                {
+                    servers += ',';
+                }
+
+                DescribeInstance instance = mNotAddedServers[i];
+                if (instance.Checked)
+                {
+                    servers += "{\"ServerId\":\"";
+                    servers += instance.InstanceId;
+                    servers += "\",\"Weight\":\"100\"}";
+                }
+            }
+            servers += "]";
+            Thread t = new Thread(AddServers);
+            t.Start(servers);
         }
 
         private void AddedSelect_Unchecked(object sender, RoutedEventArgs e)
@@ -291,14 +304,6 @@ namespace CloudManager
                     i.Checked = false;
                 }
             }
-        }
-
-        private void RemoveSingle_Click(object sender, RoutedEventArgs e)
-        {
-            DescribeInstance instance = (sender as Button).DataContext as DescribeInstance;
-            string server = "[\"" + instance.InstanceId + "\"]";
-            Thread t = new Thread(new ParameterizedThreadStart(RemoveServers));
-            t.Start(server);
         }
     }
 }
