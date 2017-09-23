@@ -80,6 +80,9 @@
     <Compile Include="AccessWindow.xaml.cs">
       <DependentUpon>AccessWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AddListenerWindow.xaml.cs">
+      <DependentUpon>AddListenerWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ControlConverter.cs" />
     <Compile Include="DescribeInstance.cs" />
     <Compile Include="DescribeLoadBalancer.cs" />
@@ -102,6 +105,7 @@
     <Compile Include="SignUpWindow.xaml.cs">
       <DependentUpon>SignUpWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SLBListener.cs" />
     <Compile Include="SLBPage.xaml.cs">
       <DependentUpon>SLBPage.xaml</DependentUpon>
     </Compile>
@@ -119,6 +123,10 @@
     </Compile>
     <Compile Include="VisibilityConverter.cs" />
     <Page Include="AccessWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="AddListenerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -228,6 +236,9 @@
   <ItemGroup>
     <Resource Include="images\illegal.png" />
     <Resource Include="images\legal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\abnormal.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

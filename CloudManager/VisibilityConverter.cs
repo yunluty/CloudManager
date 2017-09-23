@@ -22,7 +22,7 @@ namespace CloudManager
                 }
                 else
                 {
-                    return Visibility.Hidden;
+                    return Visibility.Collapsed;
                 }
             }
             else
@@ -30,7 +30,7 @@ namespace CloudManager
                 int? count = value as int?;
                 if (count == null || count == 0)
                 {
-                    return Visibility.Hidden;
+                    return Visibility.Collapsed;
                 }
                 else
                 {

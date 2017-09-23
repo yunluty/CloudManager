@@ -14,9 +14,15 @@ namespace CloudManager
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             string status = (string)value;
-            if (status.Equals("Running") || status.Equals("active"))
+            if (status.Equals("Running", StringComparison.CurrentCultureIgnoreCase) 
+                || status.Equals("active", StringComparison.CurrentCultureIgnoreCase)
+                || status.Equals("normal", StringComparison.CurrentCultureIgnoreCase))
             {
                 return "Green";
+            }
+            else if (status.Equals("abnormal", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return "Red";
             }
             else
             {

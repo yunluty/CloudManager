@@ -23,7 +23,7 @@
         </DataTemplate>
         <DataTemplate x:Key="Status">
             <StackPanel Orientation="Horizontal">
-                <Image Source="{Binding Path=Status, Converter={StaticResource StatusImageConverter}}"/>
+                <Image Source="{Binding Path=Status, Converter={StaticResource StatusImageConverter}}" Margin="0,0,5,0"/>
                 <TextBlock Text="{Binding Path=Status, Converter={StaticResource StatusTextConverter}}"
                            Foreground="{Binding Path=Status, Converter={StaticResource StatusColorConverter}}"/>
             </StackPanel>
@@ -38,11 +38,59 @@
         </DataTemplate>
         <DataTemplate x:Key="AddedSelector">
             <CheckBox IsChecked="{Binding Path=Checked, Mode=TwoWay}"
+                      Checked="AddedSelect_Checked"
                       Unchecked="AddedSelect_Unchecked"/>
         </DataTemplate>
         <DataTemplate x:Key="NotAddedSelector">
             <CheckBox IsChecked="{Binding Path=Checked, Mode=TwoWay}"
+                      Checked="NotAddedSelect_Checked"
                       Unchecked="NotAddedSelect_Unchecked"/>
+        </DataTemplate>
+        <DataTemplate x:Key="ListenersSelector">
+            <CheckBox IsChecked="{Binding Path=Checked, Mode=TwoWay}"
+                      Checked="ListenersSelect_Checked"
+                      Unchecked="ListenersSelect_Unchecked"/>
+        </DataTemplate>
+        <DataTemplate x:Key="Protocol">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding Protocol}"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="ListenerPort">
+            <TextBlock Text="{Binding ListenerPort}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="BackendServerPort">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding BackendServerPort}" Width="35"/>
+                <TextBlock Text="{Binding HealthStatus, Converter={StaticResource StatusTextConverter}}"
+                           Foreground="{Binding Path=HealthStatus, Converter={StaticResource StatusColorConverter}}"/>
+                <Image Source="{Binding HealthStatus, Converter={StaticResource StatusImageConverter}}"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="ListenerStatus">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="{Binding Status, Converter={StaticResource StatusImageConverter}}" Margin="0,0,5,0"/>
+                <TextBlock Text="{Binding Status, Converter={StaticResource StatusTextConverter}}"
+                           Foreground="{Binding Path=Status, Converter={StaticResource StatusColorConverter}}"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="Scheduler">
+            <TextBlock Text="{Binding Scheduler, Converter={StaticResource StatusTextConverter}}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="ProcessListener">
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="Configrue" Content="配置" Style="{StaticResource ClickTex}"/>
+                <Button x:Name="Transform" Content="转发规则" Style="{StaticResource ClickTex}"/>
+                <Button x:Name="More" Content="更多" Style="{StaticResource ClickTex}">
+                    <Button.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="启动"/>
+                            <MenuItem Header="停止"/>
+                            <MenuItem Header="删除"/>
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+            </StackPanel>
         </DataTemplate>
     </Page.Resources>
 
@@ -89,6 +137,34 @@
                     </ListView.View>
                 </ListView>
                 <Button x:Name="AddSelected" Content="批量添加" Click="AddSelected_Click"/>
+            </StackPanel>
+        </TabItem>
+        <TabItem x:Name="Listener" Header="监听">
+            <StackPanel>
+                <ListView x:Name="Listeners" Visibility="{Binding Path=Count, Converter={StaticResource VisibilityConverter}}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn CellTemplate="{StaticResource ListenersSelector}">
+                                <GridViewColumn.Header>
+                                    <CheckBox x:Name="ListenersSelectAll" Click="ListenersSelectAll_Click" IsThreeState="False"/>
+                                </GridViewColumn.Header>
+                            </GridViewColumn>
+                            <GridViewColumn Header="协议" DisplayMemberBinding="{Binding Protocol}"/>
+                            <GridViewColumn Header="前段端口" DisplayMemberBinding="{Binding ListenerPort}"/>
+                            <GridViewColumn Header="后端端口" CellTemplate="{StaticResource BackendServerPort}"/>
+                            <GridViewColumn Header="状态" CellTemplate="{StaticResource ListenerStatus}"/>
+                            <GridViewColumn Header="转发规则" CellTemplate="{StaticResource Scheduler}"/>
+                            <GridViewColumn Header="操作" CellTemplate="{StaticResource ProcessListener}"/>
+                            <!--GridViewColumn Header="服务器组" DisplayMemberBinding="{Binding ServerGroupName}"/-->
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="启动" Click="StartListeners_Click"/>
+                    <Button Content="停止" Click="StopListeners_Click"/> 
+                    <Button Content="删除" Click="DeleteListeners_Click"/>
+                    <Button Content="添加监听" Click="AddListener_Click"/>
+                </StackPanel>
             </StackPanel>
         </TabItem>
     </TabControl>

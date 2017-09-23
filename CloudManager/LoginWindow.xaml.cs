@@ -54,7 +54,7 @@ namespace CloudManager
         private void DoLogin()
         {
             //模拟登录过程等待
-            Thread.Sleep(TimeSpan.FromSeconds(2));
+            Thread.Sleep(TimeSpan.FromSeconds(1));
             Dispatcher.Invoke(new Action(LoginSuccess));
         }
 

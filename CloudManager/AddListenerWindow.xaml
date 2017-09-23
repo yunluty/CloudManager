@@ -1,0 +1,96 @@
+﻿<Window x:Class="CloudManager.AddListenerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:c="clr-namespace:System.Collections;assembly=mscorlib"
+        xmlns:local="clr-namespace:CloudManager"
+        mc:Ignorable="d"
+        Title="AddListenerWindow" Height="300" Width="600">
+    <Window.Resources>
+        <x:Array x:Key="Protocols" Type="sys:String">
+            <sys:String>TCP</sys:String>
+            <sys:String>HTTP</sys:String>
+            <sys:String>HTTPS</sys:String>
+            <sys:String>UDP</sys:String>
+        </x:Array>
+        <c:ArrayList x:Key="Schedulers">
+            <local:Schedulers SchedulerId="wrr" SchedulerName="加权轮询"/>
+            <local:Schedulers SchedulerId="wlc" SchedulerName="加权最小连接数"/>
+            <local:Schedulers SchedulerId="rr" SchedulerName="轮询"/>
+        </c:ArrayList>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="前段协议[端口]:"/>
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,20">
+            <StackPanel Orientation="Horizontal">
+                <ComboBox x:Name="Protocol" Width="80" SelectedIndex="0" ItemsSource="{StaticResource Protocols}"/>
+                <TextBlock Text=":" Margin="10,2,10,0"/>
+                <TextBox Width="80"/>
+            </StackPanel>
+            <TextBlock Text="端口输入范围为1-65535" Foreground="DarkGray" Margin="0,10,0,0"/>
+            <TextBlock Text="四层监听请选择TCP、UDP；七层监听请选择HTTP、HTTPS；" Foreground="DarkGray"/>
+        </StackPanel>
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="后端协议[端口]:"/>
+        <StackPanel Grid.Row="1" Grid.Column="1">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding ElementName=Protocol,Path=SelectedValue}" Width="80"/>
+                <TextBlock Text=":" Margin="10,2,10,0"/>
+                <TextBox Width="80"/>
+            </StackPanel>
+            <TextBlock Text="端口输入范围为1-65535" Foreground="DarkGray"/>
+        </StackPanel>
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="带宽峰值:"/>
+        <StackPanel Grid.Row="2" Grid.Column="1">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock x:Name="Unlimited" Text="不限制" Margin="0,3,0,0"/>
+                <TextBox x:Name="BandWidth" VerticalContentAlignment="Center" Width="40" Visibility="Collapsed" PreviewTextInput="BandWidth_PreviewTextInput"/>
+                <TextBlock x:Name="BandM" Text="M" Margin="0,3,0,0" Visibility="Collapsed"/>
+                <Button x:Name="Configure" Content="配置" Margin="10,2,10,0" Click="Configure_Click"/>
+            </StackPanel>
+            <TextBlock Text="使用流量计费方式的实例默认不限制带宽峰值;峰值输入范围1-5000" Foreground="DarkGray"/>
+        </StackPanel>
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="调度算法:"/>
+        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
+            <ComboBox x:Name="Scheduler" Width="80" SelectedIndex="0" 
+                      ItemsSource="{StaticResource Schedulers}" 
+                      DisplayMemberPath="SchedulerName" SelectedValuePath="SchedulerId"/>
+        </StackPanel>
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="使用服务器组:"/>
+        <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
+            <CheckBox/>
+        </StackPanel>
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="服务器组类型:" Visibility="{Binding mShowGroup}"/>
+        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding mShowGroup}">
+            <RadioButton x:Name="VServeGroup" Content="虚拟服务器组" GroupName="GroupType"/>
+            <RadioButton x:Name="MServerGroup" Content="主备服务器组" GroupName="GroupType"/>
+        </StackPanel>
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="服务器组ID:" Visibility="{Binding mShowGroup}"/>
+        <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" Visibility="{Binding mShowGroup}">
+            <ComboBox x:Name="ServerGroupId"/>
+        </StackPanel>
+        <TextBlock Grid.Row="7" Grid.Column="0" Text="创建完毕自动启动监听:"/>
+        <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal">
+            <CheckBox IsChecked="True"/>
+        </StackPanel>
+        <Button x:Name="AddListener" Grid.Row="8" Grid.ColumnSpan="2" Content="添加"  Click="AddListener_Click"/>
+    </Grid>
+</Window>

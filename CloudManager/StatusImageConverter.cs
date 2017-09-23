@@ -18,21 +18,29 @@ namespace CloudManager
             }
 
             string status = (string)value;
-            if (status.Equals("Running") || status.Equals("active"))
+
+            if (status.Equals("Running", StringComparison.CurrentCultureIgnoreCase) 
+                || status.Equals("active", StringComparison.CurrentCultureIgnoreCase))
             {
                 return "images/running.png";
             }
-            else if (status.Equals("Stopped") || status.Equals("inactive"))
+            else if (status.Equals("Stopped") 
+                || status.Equals("inactive", StringComparison.CurrentCultureIgnoreCase))
             {
                 return "images/stopped.png";
             }
-            else if (status.Equals("Starting"))
+            else if (status.Equals("Starting", StringComparison.CurrentCultureIgnoreCase)
+                || status.Equals("configuring", StringComparison.CurrentCultureIgnoreCase))
             {
                 return "images/starting.png";
             }
-            else if (status.Equals("Stopping"))
+            else if (status.Equals("Stopping", StringComparison.CurrentCultureIgnoreCase))
             {
                 return "images/stopping.png";
+            }
+            else if (status.Equals("abnormal", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return "images/abnormal.png";
             }
             return null;
         }

@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CloudManager"
         mc:Ignorable="d"
-        Title="CloudManager" Height="580" Width="980"
+        Title="CloudManager" Height="720" Width="1024"
         WindowStartupLocation="CenterScreen"
         ContentRendered="Window_ContentRendered">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="180"/>
-            <ColumnDefinition Width="300"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="6*"/>
         </Grid.ColumnDefinitions>
         <StackPanel  Grid.Column="0">
             <Expander x:Name="ECSExpander">
@@ -92,6 +92,8 @@
             </Expander>
         </StackPanel>
         <Frame x:Name="Information" Grid.Column="1" NavigationUIVisibility="Hidden"/>
-        <Frame x:Name="Process" Grid.Column="2" NavigationUIVisibility="Hidden"/>
+        <StackPanel Grid.Column="2">
+            <Frame x:Name="Process" NavigationUIVisibility="Hidden"/>
+        </StackPanel>
     </Grid>
 </Window>
