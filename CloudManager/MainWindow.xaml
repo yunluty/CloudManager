@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:CloudManager"
         mc:Ignorable="d"
         Title="CloudManager" Height="720" Width="1024"
-        WindowStartupLocation="CenterScreen"
-        ContentRendered="Window_ContentRendered">
+        WindowStartupLocation="CenterScreen">
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
@@ -39,7 +39,7 @@
                              SelectionChanged="RDSList_SelectionChanged">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding InstanceName}"/>
+                                <TextBlock Text="{Binding DBInstanceDescription}"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>

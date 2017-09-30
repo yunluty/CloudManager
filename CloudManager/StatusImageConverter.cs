@@ -42,6 +42,42 @@ namespace CloudManager
             {
                 return "images/abnormal.png";
             }
+            else if (status.Equals("doing", StringComparison.CurrentCultureIgnoreCase))
+            {
+                string size = parameter as string;
+                if (size != null)
+                {
+                    return "images/doing_" +　size + ".png";
+                }
+                else
+                {
+                    return "images/doing.png";
+                }
+            }
+            else if (status.Equals("success", StringComparison.CurrentCultureIgnoreCase))
+            {
+                string size = parameter as string;
+                if (size != null)
+                {
+                    return "images/success_" + size + ".png";
+                }
+                else
+                {
+                    return "images/success.png";
+                }
+            }
+            else if (status.Equals("error", StringComparison.CurrentCultureIgnoreCase))
+            {
+                string size = parameter as string;
+                if (size != null)
+                {
+                    return "images/error_" + size + ".png";
+                }
+                else
+                {
+                    return "images/error.png";
+                }
+            }
             return null;
         }
 

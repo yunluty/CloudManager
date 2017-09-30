@@ -1,0 +1,255 @@
+﻿<Page x:Class="CloudManager.ListenerHealthCheckPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:CloudManager"
+      mc:Ignorable="d" 
+      d:DesignHeight="1300" d:DesignWidth="600"
+      Title="ListenerHealthCheckPage">
+
+    <StackPanel Margin="10">
+        <StackPanel Height="32">
+            <StackPanel.Background>
+                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                    <GradientStop Color="#3CC3F5" Offset="0"/>
+                    <GradientStop Color="White" Offset="1"/>
+                </LinearGradientBrush>
+            </StackPanel.Background>
+            <TextBlock Text="健康检查配置" FontSize="16" Margin="10,6,0,0"/>
+        </StackPanel>
+        <Grid Visibility="{Binding Path=Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=TCP}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="健康检查方式:" Margin="10,10,0,0"/>
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0,10,0,20">
+                <RadioButton x:Name="TCPCheck" Content="TCP" GroupName="CheckType" 
+                             IsChecked="{Binding Path=TCPCheck, Mode=TwoWay}"/>
+                <RadioButton x:Name="HTTPCheck" Content="HTTP" GroupName="CheckType" 
+                             IsChecked="{Binding Path=HTTPCheck, Mode=TwoWay}" Margin="10,0,0,0"/>
+            </StackPanel>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="域名:" Margin="10,0,0,0"
+                       Visibility="{Binding Path=HTTPCheck,Converter={StaticResource VisibilityConverter}}"/>
+            <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,0,20" Visibility="{Binding Path=HTTPCheck,Converter={StaticResource VisibilityConverter}}">
+                <TextBox x:Name="TCPHealthCheckDomain" Width="240" Height="32" MaxLength="80"
+                         VerticalContentAlignment="Center" HorizontalAlignment="Left"
+                         Text="{Binding Path=HealthCheckDomain, Mode=TwoWay}"
+                         InputMethod.IsInputMethodEnabled="False"/>
+                <TextBlock Text="长度1-80个字符" Foreground="DarkGray" Margin="0,5,0,0"/>
+                <TextBlock Text="只能使用字母、数字、'-'、'.'，默认使用各后端服务器的内网IP为域名" Foreground="DarkGray"/>
+            </StackPanel>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="检查端口:" Margin="10,0,0,0"/>
+            <StackPanel Grid.Row="2" Grid.Column="1" Margin="0,0,0,15">
+                <TextBox x:Name="TCPHealthCheckPort" Width="80" Height="32" MaxLength="5"
+                         VerticalContentAlignment="Center" HorizontalAlignment="Left"
+                         Text="{Binding Path=HealthCheckPortStr, Mode=TwoWay}"
+                         PreviewTextInput="Digital_PreviewTextInput"
+                         InputMethod.IsInputMethodEnabled="False"/>
+                <TextBlock Text="端口输入范围为1-65535" Foreground="DarkGray" Margin="0,5,0,0"/>
+                <TextBlock Text="默认使用后端服务器的端口进行健康检查" Foreground="DarkGray"/>
+            </StackPanel>
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="检查路径:" Margin="10,5,0,0"
+                       Visibility="{Binding Path=HTTPCheck,Converter={StaticResource VisibilityConverter}}"/>
+            <StackPanel Grid.Row="3" Grid.Column="1" Margin="0,5,0,20"
+                        Visibility="{Binding Path=HTTPCheck,Converter={StaticResource VisibilityConverter}}">
+                <TextBox x:Name="TCPHealthCheckURI" Width="240" Height="32" MaxLength="80"
+                         VerticalContentAlignment="Center" HorizontalAlignment="Left"
+                         Text="{Binding Path=HealthCheckURI, Mode=TwoWay}"
+                         InputMethod.IsInputMethodEnabled="False"/>
+                <TextBlock Text="用于健康检查页面文件的URI，建议对静态页面进行检查。长度限制为1-80个字符，只能使用字母、数字、'-'、'/'、'.'、'%'、'?'、'#'、'&amp;'、'＝'这些字符"
+                           TextWrapping="WrapWithOverflow" Foreground="DarkGray" Margin="0,5,0,0"/>
+            </StackPanel>
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="正常状态码:" Margin="10,0,0,0"
+                       Visibility="{Binding Path=HTTPCheck,Converter={StaticResource VisibilityConverter}}"/>
+            <StackPanel Grid.Row="4" Grid.Column="1" Margin="0,0,0,10"
+                        Visibility="{Binding Path=HTTPCheck,Converter={StaticResource VisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="http_2xx" IsChecked="{Binding http_2xx, Mode=TwoWay}"/>
+                    <CheckBox Content="http_3xx" IsChecked="{Binding http_3xx, Mode=TwoWay}" Margin="5,0,0,0"/>
+                    <CheckBox Content="http_4xx" IsChecked="{Binding http_4xx, Mode=TwoWay}" Margin="5,0,0,0"/>
+                    <CheckBox Content="http_5xx" IsChecked="{Binding http_5xx, Mode=TwoWay}" Margin="5,0,0,0"/>
+                </StackPanel>
+                <TextBlock Text="健康检查正常的http状态码" TextWrapping="WrapWithOverflow" Foreground="DarkGray" Margin="0,5,0,0"/>
+            </StackPanel>
+        </Grid>
+        <Grid Visibility="{Binding Path=Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=HTTPHTTPS}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="是否开启健康检查:" Margin="10,10,0,0"/>
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0,10,0,15">
+                <CheckBox x:Name="HTTPCheckOn" IsChecked="{Binding Path=HTTPCheckOn, Mode=TwoWay}"/>
+            </StackPanel>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="域名:" Margin="10,10,0,0"
+                       Visibility="{Binding Path=HTTPCheckOn, Converter={StaticResource VisibilityConverter}}"/>
+            <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,10,0,20" Visibility="{Binding Path=HTTPCheckOn, Converter={StaticResource VisibilityConverter}}">
+                <TextBox x:Name="HTTPHealthCheckDomain" Width="240" Height="32" MaxLength="5"
+                         VerticalContentAlignment="Center" HorizontalAlignment="Left"
+                         Text="{Binding Path=HealthCheckDomain, Mode=TwoWay}"
+                         InputMethod.IsInputMethodEnabled="False"/>
+                <TextBlock Text="长度1-80个字符" Foreground="DarkGray" Margin="0,5,0,0"/>
+                <TextBlock Text="只能使用字母、数字、'-'、'.'，默认使用各后端服务器的内网IP为域名" Foreground="DarkGray"/>
+            </StackPanel>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="检查端口:" Margin="10,0,0,0"
+                       Visibility="{Binding Path=HTTPCheckOn, Converter={StaticResource VisibilityConverter}}"/>
+            <StackPanel Grid.Row="2" Grid.Column="1" Margin="0,0,0,20"
+                        Visibility="{Binding Path=HTTPCheckOn, Converter={StaticResource VisibilityConverter}}">
+                <TextBox x:Name="HTTPHealthCheckPort" Width="80" Height="32" MaxLength="5"
+                         VerticalContentAlignment="Center" HorizontalAlignment="Left"
+                         Text="{Binding Path=HealthCheckPortStr, Mode=TwoWay}"
+                         PreviewTextInput="Digital_PreviewTextInput"
+                         InputMethod.IsInputMethodEnabled="False"/>
+                <TextBlock Text="端口输入范围为1-65535" Foreground="DarkGray" Margin="0,5,0,0"/>
+                <TextBlock Text="默认使用后端服务器的端口进行健康检查" Foreground="DarkGray"/>
+            </StackPanel>
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="检查路径:" Margin="10,0,0,0"
+                       Visibility="{Binding Path=HTTPCheckOn,Converter={StaticResource VisibilityConverter}}"/>
+            <StackPanel Grid.Row="3" Grid.Column="1" Margin="0,0,0,20"
+                        Visibility="{Binding Path=HTTPCheckOn,Converter={StaticResource VisibilityConverter}}">
+                <TextBox x:Name="HTTPHealthCheckURI" Width="240" Height="32" MaxLength="5"
+                         VerticalContentAlignment="Center" HorizontalAlignment="Left"
+                         Text="{Binding Path=HealthCheckURI, Mode=TwoWay}"
+                         InputMethod.IsInputMethodEnabled="False"/>
+                <TextBlock Text="用于健康检查页面文件的URI，建议对静态页面进行检查。长度限制为1-80个字符，只能使用字母、数字、'-'、'/'、'.'、'%'、'?'、'#'、'&amp;'、'＝'这些字符"
+                           TextWrapping="WrapWithOverflow" Foreground="DarkGray" Margin="0,5,0,0"/>
+            </StackPanel>
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="正常状态码:" Margin="10,0,0,0"
+                       Visibility="{Binding Path=HTTPCheckOn,Converter={StaticResource VisibilityConverter}}"/>
+            <StackPanel Grid.Row="4" Grid.Column="1" Margin="0,0,0,10"
+                        Visibility="{Binding Path=HTTPCheckOn,Converter={StaticResource VisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="http_2xx" IsChecked="{Binding http_2xx, Mode=TwoWay}"/>
+                    <CheckBox Content="http_3xx" IsChecked="{Binding http_3xx, Mode=TwoWay}" Margin="5,0,0,0"/>
+                    <CheckBox Content="http_4xx" IsChecked="{Binding http_4xx, Mode=TwoWay}" Margin="5,0,0,0"/>
+                    <CheckBox Content="http_5xx" IsChecked="{Binding http_5xx, Mode=TwoWay}" Margin="5,0,0,0"/>
+                </StackPanel>
+                <TextBlock Text="健康检查正常的http状态码" TextWrapping="WrapWithOverflow" Foreground="DarkGray" Margin="0,5,0,0"/>
+            </StackPanel>
+        </Grid>
+        <Grid Visibility="{Binding Path=Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=UDP}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="检查端口:" Margin="10,10,0,0"/>
+            <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,10,0,0">
+                <TextBox x:Name="UDPHealthCheckPort" Width="80" Height="32" MaxLength="5"
+                         VerticalContentAlignment="Center" HorizontalAlignment="Left"
+                         Text="{Binding Path=HealthCheckPortStr, Mode=TwoWay}"
+                         PreviewTextInput="Digital_PreviewTextInput"
+                         InputMethod.IsInputMethodEnabled="False"/>
+                <TextBlock Text="端口输入范围为1-65535" Foreground="DarkGray" Margin="0,5,0,0"/>
+                <TextBlock Text="默认使用后端服务器的端口进行健康检查" Foreground="DarkGray"/>
+            </StackPanel>
+        </Grid>
+        <Expander Header="高级设置" Margin="0,15,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="响应超时时间:" Margin="10,10,0,0"/>
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,10,0,20">
+                    <TextBox x:Name="HealthCheckTimeout" Width="80" Height="32" MaxLength="5"
+                             VerticalContentAlignment="Center" HorizontalAlignment="Left"
+                             Text="{Binding Path=HealthCheckTimeout, Mode=TwoWay}"
+                             PreviewTextInput="Digital_PreviewTextInput"
+                             InputMethod.IsInputMethodEnabled="False"/>
+                    <TextBlock Text="每次健康检查响应的最大超时时间; 输入范围1-300秒,默认为5秒"
+                               TextWrapping="WrapWithOverflow" Foreground="DarkGray" Margin="0,5,0,0"/>
+                </StackPanel>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="健康检查间隔:" Margin="10,0,0,0"/>
+                <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,0,20">
+                    <TextBox x:Name="HealthCheckInterval" Width="80" Height="32" MaxLength="5"
+                             VerticalContentAlignment="Center" HorizontalAlignment="Left"
+                             Text="{Binding Path=HealthCheckInterval, Mode=TwoWay}"
+                             PreviewTextInput="Digital_PreviewTextInput"
+                             InputMethod.IsInputMethodEnabled="False"/>
+                    <TextBlock Text="进行健康检查的时间间隔; 输入范围1-50秒,默认为2秒"
+                               TextWrapping="WrapWithOverflow" Foreground="DarkGray" Margin="0,5,0,0"/>
+                </StackPanel>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="不健康阈值:" Margin="10,0,0,0"/>
+                <StackPanel Grid.Row="2" Grid.Column="1" Margin="0,0,0,20">
+                    <TextBox x:Name="UnhealthyThreshold" Width="80" Height="32" MaxLength="5"
+                             VerticalContentAlignment="Center" HorizontalAlignment="Left"
+                             Text="{Binding Path=UnhealthyThreshold, Mode=TwoWay}"
+                             PreviewTextInput="Digital_PreviewTextInput"
+                             InputMethod.IsInputMethodEnabled="False"/>
+                    <TextBlock Text="表示云服务器从成功到失败的连续健康检查失败次数"
+                               TextWrapping="WrapWithOverflow" Foreground="DarkGray" Margin="0,5,0,0"/>
+                </StackPanel>
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="健康阈值:" Margin="10,0,0,0"/>
+                <StackPanel Grid.Row="3" Grid.Column="1" Margin="0,0,0,0">
+                    <TextBox x:Name="HealthyThreshold" Width="80" Height="32" MaxLength="5"
+                             VerticalContentAlignment="Center" HorizontalAlignment="Left"
+                             Text="{Binding Path=HealthyThreshold, Mode=TwoWay}"
+                             PreviewTextInput="Digital_PreviewTextInput"
+                             InputMethod.IsInputMethodEnabled="False"/>
+                    <TextBlock Text="表示云服务器从失败到成功的连续健康检查成功次数"
+                               TextWrapping="WrapWithOverflow" Foreground="DarkGray" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Grid>
+        </Expander>
+        <Expander Header="更多高级设置" Margin="0,15,0,0"
+                  Visibility="{Binding Path=Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=UDP}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="健康检查请求:" Margin="10,10,0,0"/>
+                <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,10,0,20">
+                    <TextBox x:Name="HealthCheckReq" Width="240" Height="32" MaxLength="500"
+                             VerticalContentAlignment="Center" HorizontalAlignment="Left"
+                             Text="{Binding Path=HealthCheckReq, Mode=TwoWay}"
+                             InputMethod.IsInputMethodEnabled="False"/>
+                </StackPanel>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="健康检查返回结果:" Margin="10,0,0,0"/>
+                <StackPanel Grid.Row="1" Grid.Column="1">
+                    <TextBox x:Name="HealthCheckExp" Width="240" Height="32" MaxLength="500"
+                             VerticalContentAlignment="Center" HorizontalAlignment="Left"
+                             Text="{Binding Path=HealthCheckExp, Mode=TwoWay}"
+                             InputMethod.IsInputMethodEnabled="False"/>
+                    <TextBlock Text="只允许包含字母、数字字符，最大长度限制为500字符" Foreground="DarkGray" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Grid>
+        </Expander>
+        <StackPanel Grid.Row="11" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,20">
+            <Button x:Name="Next" Width="80" Height="32" Content="上一步" Click="Previous_Click"/>
+            <Button x:Name="Submmit" Width="80" Height="32" Content="确定" Click="Submmit_Click" Margin="10,0,0,0"/>
+            <Button x:Name="Cancel" Width="80" Height="32" Content="取消" Click="Cancel_Click" Margin="10,0,10,0"/>
+        </StackPanel>
+    </StackPanel>
+</Page>

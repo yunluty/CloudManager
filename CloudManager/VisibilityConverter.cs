@@ -13,11 +13,107 @@ namespace CloudManager
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string status = value as string;
-            if (status != null)
+            if (typeof(string).IsInstanceOfType(value))
             {
+                string status = value as string;
                 if (status.Equals("Running"))
                 {
+                    return Visibility.Visible;
+                }
+                else if (status.Equals("TCP"))
+                {
+                    string tcp = parameter as string;
+                    if (tcp != null && tcp.Contains("TCP"))
+                    {
+                        return Visibility.Visible;
+                    }
+                    else
+                    {
+                        return Visibility.Collapsed;
+                    }
+                }
+                else if (status.Equals("HTTP"))
+                {
+                    string http = parameter as string;
+                    if (http != null && http.Contains("HTTP") && !http.Equals("HTTPS"))
+                    {
+                        return Visibility.Visible;
+                    }
+                    else
+                    {
+                        return Visibility.Collapsed;
+                    }
+                }
+                else if (status.Equals("HTTPS"))
+                {
+                    string https = parameter as string;
+                    if (https != null && https.Contains("HTTPS"))
+                    {
+                        return Visibility.Visible;
+                    }
+                    else
+                    {
+                        return Visibility.Collapsed;
+                    }
+                }
+                else if (status.Equals("UDP"))
+                {
+                    string udp = parameter as string;
+                    if (udp != null && udp.Contains("UDP"))
+                    {
+                        return Visibility.Visible;
+                    }
+                    else
+                    {
+                        return Visibility.Collapsed;
+                    }
+                }
+                else if (status.Equals("insert"))
+                {
+                    string insert = parameter as string;
+                    if (insert != null && insert.Contains("Time"))
+                    {
+                        return Visibility.Visible;
+                    }
+                    else
+                    {
+                        return Visibility.Collapsed;
+                    }
+                }
+                else if (status.Equals("server"))
+                {
+                    string udp = parameter as string;
+                    if (udp != null && udp.Contains("Cookie"))
+                    {
+                        return Visibility.Visible;
+                    }
+                    else
+                    {
+                        return Visibility.Collapsed;
+                    }
+                }
+                else
+                {
+                    return Visibility.Collapsed;
+                }
+            }
+            else if (typeof(int).IsInstanceOfType(value))
+            {
+                int? count = value as int?;
+                if (count > 0)
+                {
+                    return Visibility.Visible;
+                }
+                else
+                {
+                    return Visibility.Collapsed;
+                }
+            }
+            else if (typeof(bool).IsInstanceOfType(value))
+            {
+                bool? show = value as bool?;
+                if (show == true)
+                { 
                     return Visibility.Visible;
                 }
                 else
@@ -27,15 +123,7 @@ namespace CloudManager
             }
             else
             {
-                int? count = value as int?;
-                if (count == null || count == 0)
-                {
-                    return Visibility.Collapsed;
-                }
-                else
-                {
-                    return Visibility.Visible;
-                }
+                return Visibility.Collapsed;
             }
         }
 

@@ -30,6 +30,8 @@ namespace CloudManager
     {
         private string mAki, mAks;
 
+        public MainWindow mMainWindow { get; set; }
+
         public SLBPage()
         {
             InitializeComponent();

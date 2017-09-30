@@ -80,12 +80,15 @@
     <Compile Include="AccessWindow.xaml.cs">
       <DependentUpon>AccessWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AddListenerParams.cs" />
     <Compile Include="AddListenerWindow.xaml.cs">
       <DependentUpon>AddListenerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ControlConverter.cs" />
+    <Compile Include="DescribeDBInstance.cs" />
     <Compile Include="DescribeInstance.cs" />
     <Compile Include="DescribeLoadBalancer.cs" />
+    <Compile Include="DescribeRule.cs" />
     <Compile Include="ECSPage.xaml.cs">
       <DependentUpon>ECSPage.xaml</DependentUpon>
     </Compile>
@@ -94,6 +97,15 @@
       <DependentUpon>ForgotWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="IsEnableConverter.cs" />
+    <Compile Include="ListenerBasePage.xaml.cs">
+      <DependentUpon>ListenerBasePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ListenerSubmmitPage.xaml.cs">
+      <DependentUpon>ListenerSubmmitPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ListenerHealthCheckPage.xaml.cs">
+      <DependentUpon>ListenerHealthCheckPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LoginedData.cs" />
     <Compile Include="PasswordWindow.xaml.cs">
       <DependentUpon>PasswordWindow.xaml</DependentUpon>
@@ -122,6 +134,7 @@
       <DependentUpon>VerifyPhonePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="VisibilityConverter.cs" />
+    <Compile Include="VisibilityProtocolConvert.cs" />
     <Page Include="AccessWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -135,6 +148,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ForgotWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ListenerBasePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ListenerSubmmitPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ListenerHealthCheckPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -239,6 +264,22 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="images\abnormal.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\doing.png" />
+    <Resource Include="images\doing_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\success.png" />
+    <Resource Include="images\success_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="error.png" />
+    <Resource Include="error_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\error.png" />
+    <Resource Include="images\error_32.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

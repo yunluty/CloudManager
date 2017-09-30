@@ -25,6 +25,8 @@ using System.Collections.ObjectModel;
 using Aliyun.Acs.Slb.Model.V20140515;
 using static Aliyun.Acs.Slb.Model.V20140515.DescribeLoadBalancersResponse;
 using static Aliyun.Acs.Slb.Model.V20140515.DescribeZonesResponse;
+using Aliyun.Acs.Rds.Model.V20140815;
+using static Aliyun.Acs.Rds.Model.V20140815.DescribeDBInstancesResponse;
 
 namespace CloudManager
 {
@@ -42,18 +44,12 @@ namespace CloudManager
         private DescribeLoadBalancer mSelBalancer;
         private SLBPage mSLBPage;
         private SLBServersPage mSLBServersPage;
+        private ObservableCollection<DescribeDBInstance> mDBInstances = new ObservableCollection<DescribeDBInstance>();
+
 
         public MainWindow()
         {
             InitializeComponent();
-        }
-
-        private void Window_ContentRendered(object sender, EventArgs e)
-        {
-            ECSList.ItemsSource = mECSInstances; //Display the ECSs list
-            SLBList.ItemsSource = mLoadBalancers;
-            Thread t = new Thread(GetRegions);
-            t.Start();
         }
 
         public MainWindow(string aki, string aks)
@@ -61,9 +57,19 @@ namespace CloudManager
             InitializeComponent();
             mAki = aki;
             mAks = aks;
+
+            ECSList.ItemsSource = mECSInstances; //Display the ECSs list
+            SLBList.ItemsSource = mLoadBalancers;
+            RDSList.ItemsSource = mDBInstances;
+            Thread t = new Thread(GetRegions);
+            t.Start();
+
             mECSPage = new ECSPage(aki, aks);
+            mECSPage.mMainWindow = this;
             mSLBPage = new SLBPage(aki, aks);
+            mSLBPage.mMainWindow = this;
             mSLBServersPage = new SLBServersPage(aki, aks);
+            mSLBServersPage.mMainWindow = this;
         }
 
         private void GetRegions()
@@ -89,6 +95,8 @@ namespace CloudManager
             t1.Start();
             Thread t2 = new Thread(GetLoadBalancers);
             t2.Start();
+            Thread t3 = new Thread(GetDBInstances);
+            t3.Start();
         }
 
         private void GetInstances()
@@ -184,12 +192,45 @@ namespace CloudManager
             }
         }
 
+        private void GotDBInstances(object obj)
+        {
+            DescribeDBInstance instance = obj as DescribeDBInstance;
+            if (instance != null)
+            {
+                mDBInstances.Add(instance);
+            }
+        }
+
+        private void GetDBInstances()
+        {
+            foreach (DescribeRegions_Region region in mRegions)
+            {
+                IClientProfile profile = DefaultProfile.GetProfile(region.RegionId, mAki, mAks);
+                DefaultAcsClient client = new DefaultAcsClient(profile);
+                DescribeDBInstancesRequest request = new DescribeDBInstancesRequest();
+                try
+                {
+                    DescribeDBInstancesResponse response = client.GetAcsResponse(request);
+                    foreach (DBInstance d in response.Items)
+                    {
+                        DescribeDBInstance instance = new DescribeDBInstance(d);
+                        Dispatcher.Invoke(new DelegateGot(GotDBInstances), instance);
+                    }
+                }
+                catch
+                {
+
+                }
+            }
+        }
+
         private void ECSList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ECSList.SelectedIndex == -1)
             {
                 return;
             }
+
             mSelInstance = ECSList.SelectedItem as DescribeInstance;
             if (Information.Content != mECSPage)
             {
@@ -197,7 +238,6 @@ namespace CloudManager
             }
 
             Process.Content = null;
-            
             mECSPage.mInstance = mSelInstance;
             /*if (mSelInstance.Status.CompareTo("Running") == 0)
             {

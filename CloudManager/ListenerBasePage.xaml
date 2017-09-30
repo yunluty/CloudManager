@@ -1,0 +1,372 @@
+﻿<Page x:Class="CloudManager.ListenerBasePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:sys="clr-namespace:System;assembly=mscorlib"
+      xmlns:c="clr-namespace:System.Collections;assembly=mscorlib"
+      xmlns:local="clr-namespace:CloudManager"
+      mc:Ignorable="d" 
+      d:DesignHeight="1600" d:DesignWidth="600"
+      Title="ListenerBasePage">
+
+    <Page.Resources>
+        <x:Array x:Key="Protocols" Type="sys:String">
+            <sys:String>TCP</sys:String>
+            <sys:String>HTTP</sys:String>
+            <sys:String>HTTPS</sys:String>
+            <sys:String>UDP</sys:String>
+        </x:Array>
+        <c:ArrayList x:Key="StickySessions">
+            <local:StickySessionId StickySessionType="insert" StickySessionName="植入Cookie"/>
+            <local:StickySessionId StickySessionType="server" StickySessionName="重写Cookie"/>
+        </c:ArrayList> 
+        <c:ArrayList x:Key="Schedulers">
+            <local:SchedulerType SchedulerId="wrr" SchedulerName="加权轮询"/>
+            <local:SchedulerType SchedulerId="wlc" SchedulerName="加权最小连接数"/>
+            <local:SchedulerType SchedulerId="rr" SchedulerName="轮询"/>
+        </c:ArrayList>
+    </Page.Resources>
+    
+    <StackPanel Margin="10">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Height="32" Grid.Row="0" Grid.ColumnSpan="2">
+                <StackPanel.Background>
+                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                        <GradientStop Color="#3CC3F5" Offset="0"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </StackPanel.Background>
+                <TextBlock Text="基本配置" FontSize="16" Margin="10,4,0,0"/>
+            </StackPanel>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="前段协议[端口]:" Margin="10,10,0,0"/>
+            <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,10,0,20">
+                <StackPanel Orientation="Horizontal" Visibility="{Binding Path=AddListener, Converter={StaticResource VisibilityConverter}}">
+                    <ComboBox x:Name="Protocol" Width="80" Height="32" 
+                              ItemsSource="{StaticResource Protocols}" 
+                              VerticalContentAlignment="Center"
+                              SelectedValue="{Binding Path=Protocol, Mode=TwoWay}"/>
+                    <TextBlock Text=":" Margin="10,8,10,0"/>
+                    <TextBox x:Name="ListenerPort" Width="80" Height="32" MaxLength="5"
+                         VerticalContentAlignment="Center"
+                         Text="{Binding Path=ListenerPort, Mode=TwoWay}"
+                         PreviewTextInput="Digital_PreviewTextInput"
+                         InputMethod.IsInputMethodEnabled="False"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Visibility="{Binding Path=ConfigureListener, Converter={StaticResource VisibilityConverter}}">
+                    <TextBlock Text="{Binding Protocol}"/>
+                    <TextBlock Text=":" Margin="10,0,10,0"/>
+                    <TextBlock Text="{Binding Path=ListenerPort}"/>
+                </StackPanel>
+                <TextBlock Text="端口输入范围为1-65535" Foreground="DarkGray" Margin="0,5,0,0"
+                           Visibility="{Binding Path=AddListener, Converter={StaticResource VisibilityConverter}}"/>
+                <TextBlock Text="四层监听请选择TCP、UDP；七层监听请选择HTTP、HTTPS；" Foreground="DarkGray"
+                           Visibility="{Binding Path=AddListener, Converter={StaticResource VisibilityConverter}}"/>
+            </StackPanel>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="后端协议[端口]:" Margin="10,0,0,0"/>
+            <StackPanel Grid.Row="2" Grid.Column="1" Margin="0,0,0,20">
+                <StackPanel Orientation="Horizontal"
+                            Visibility="{Binding Path=AddListener, Converter={StaticResource VisibilityConverter}}">
+                    <TextBlock Text="{Binding Protocol}" Width="80" Margin="0,10,0,0"/>
+                    <TextBlock Text=":" Margin="10,8,10,0"/>
+                    <TextBox x:Name="BackendServerPort" Width="80" Height="32" MaxLength="5"
+                         VerticalContentAlignment="Center"
+                         Text="{Binding Path=BackendServerPort, Mode=TwoWay}"
+                         PreviewTextInput="Digital_PreviewTextInput"
+                         InputMethod.IsInputMethodEnabled="False"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal"
+                            Visibility="{Binding Path=ConfigureListener, Converter={StaticResource VisibilityConverter}}">
+                    <TextBlock Text="{Binding Protocol}"/>
+                    <TextBlock Text=":" Margin="10,0,10,0"/>
+                    <TextBlock Text="{Binding Path=BackendServerPort}"/>
+                </StackPanel>
+                <TextBlock Text="端口输入范围为1-65535" Foreground="DarkGray" Margin="0,5,0,0"
+                           Visibility="{Binding Path=AddListener, Converter={StaticResource VisibilityConverter}}"/>
+            </StackPanel>
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="带宽峰值:" Margin="10,0,0,0"/>
+            <StackPanel Grid.Row="3" Grid.Column="1" Margin="0,0,0,20">
+                <StackPanel Orientation="Horizontal">
+                    <Grid>
+                        <TextBlock x:Name="Unlimited" Text="不限制"/>
+                        <TextBox x:Name="BandWidth" VerticalContentAlignment="Center" Width="40" Height="32"
+                                 Text="{Binding Path=BandWidthStr, Mode=TwoWay}"
+                                 Visibility="{Binding Path=ConfigureBand, Converter={StaticResource VisibilityConverter}}"
+                                 PreviewTextInput="Digital_PreviewTextInput"
+                                 InputMethod.IsInputMethodEnabled="False"/>
+                    </Grid>
+                    <TextBlock x:Name="BandM" Text="M" Margin="0,8,0,0"
+                               Visibility="{Binding Path=ConfigureBand, Converter={StaticResource VisibilityConverter}}"/>
+                    <Button x:Name="Configure" Content="{Binding Path=ConfigureBand, Converter={StaticResource StatusTextConverter}}" 
+                            VerticalAlignment="Center" Margin="10,0,10,0" Click="Configure_Click" Style="{StaticResource ClickTex}"/>
+                </StackPanel>
+                <TextBlock Text="使用流量计费方式的实例默认不限制带宽峰值;峰值输入范围1-5000" Foreground="DarkGray" Margin="0,5,0,0"/>
+            </StackPanel>
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="调度算法:" Margin="10,0,0,0"/>
+            <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
+                <ComboBox x:Name="Scheduler" Width="100" Height="32" 
+                          ItemsSource="{StaticResource Schedulers}" VerticalContentAlignment="Center"
+                          DisplayMemberPath="SchedulerName" SelectedValuePath="SchedulerId"
+                          SelectedValue="{Binding Path=Scheduler, Mode=TwoWay}"/>
+            </StackPanel>
+        </Grid>
+        <Grid Visibility="{Binding Path=Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=TCPUDP}"
+              Margin="0,20,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="使用服务器组:" Margin="10,0,0,0"/>
+            <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,20">
+                <CheckBox x:Name="UseServerGroup" IsChecked="{Binding Path=UseServerGroup, Mode=TwoWay}"/>
+                <TextBlock Text="当使用了服务器组，流量将转发至服务器组，而忽略实例上绑定的后端服务器" Foreground="DarkGray" Margin="0,5,0,0"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Grid.Column="0" Visibility="{Binding Path=Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=TCP}">
+                <TextBlock Text="服务器组类型:" Visibility="{Binding Path=UseServerGroup,Converter={StaticResource VisibilityConverter}}" Margin="10,0,0,0"/>
+            </StackPanel>
+            <StackPanel Grid.Row="1" Grid.Column="1" Visibility="{Binding Path=Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=TCP}">
+                <StackPanel Orientation="Horizontal" Visibility="{Binding Path=UseServerGroup,Converter={StaticResource VisibilityConverter}}" Margin="0,0,0,20">
+                    <RadioButton x:Name="VServeGroup" Content="虚拟服务器组" GroupName="GroupType" 
+                                 IsChecked="{Binding Path=VServerGroup, Mode=TwoWay}"
+                                 Checked="VServeGroup_Checked"/>
+                    <RadioButton x:Name="MServerGroup" Content="主备服务器组" GroupName="GroupType" 
+                                 IsChecked="{Binding Path=MServerGroup, Mode=TwoWay}"
+                                 Checked="MServerGroup_Checked" Margin="10,0,0,0"/>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Grid.Row="2" Grid.Column="0" Visibility="{Binding Path=Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=TCP}">
+                <TextBlock Text="服务器组ID:" Visibility="{Binding Path=UseServerGroup,Converter={StaticResource VisibilityConverter}}" Margin="10,0,0,0"/>
+            </StackPanel>
+            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+                <ComboBox x:Name="ServerGroupId" Width="100" Height="32" VerticalContentAlignment="Center"
+                          SelectedValuePath="ServerGroupId" DisplayMemberPath="ServerGroupName"
+                          SelectedValue="{Binding Path=ServerGroupId, Mode=TwoWay}"
+                          Visibility="{Binding Path=UseServerGroup,Converter={StaticResource VisibilityConverter}}"/>
+            </StackPanel>
+        </Grid>
+        <Grid Visibility="{Binding Path=Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=HTTPHTTPS}"
+              Margin="0,20,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="使用虚拟服务器组:" Margin="10,0,0,0"/>
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                <CheckBox x:Name="UseVServerGroup" IsChecked="{Binding Path=UseVServerGroup, Mode=TwoWay}"
+                          Checked="UseVServerGroup_Checked"/>
+                <ComboBox x:Name="VServerGroupId" Width="100" Height="32" VerticalContentAlignment="Center"
+                          SelectedValuePath="ServerGroupId" DisplayMemberPath="ServerGroupName"
+                          SelectedValue="{Binding Path=ServerGroupId, Mode=TwoWay}" Margin="10,0,0,0"
+                          Visibility="{Binding Path=UseVServerGroup, Converter={StaticResource VisibilityConverter}}"/>
+            </StackPanel>
+        </Grid>
+        <Grid Visibility="{Binding Path=Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=HTTPS}"
+              Margin="0,20,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="双向认证:" Margin="10,0,0,0"/>
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,20">
+                <CheckBox x:Name="UseTwoWayAuth" IsChecked="{Binding Path=UseTwoWayAuth, Mode=TwoWay}"/>
+            </StackPanel>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="服务器证书:" Margin="10,0,0,0"/>
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                <ComboBox x:Name="ServerCertificateId" Width="100" Height="32" VerticalContentAlignment="Center"
+                          SelectedValuePath="ServerCertificateId" DisplayMemberPath="ServerCertificateName"
+                          SelectedValue="{Binding Path=ServerCertificateId, Mode=TwoWay}"/>
+            </StackPanel>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="CA证书:" Margin="10,20,0,0"
+                       Visibility="{Binding Path=UseTwoWayAuth, Converter={StaticResource VisibilityConverter}}"/>
+            <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,20,0,0"
+                        Visibility="{Binding Path=UseTwoWayAuth, Converter={StaticResource VisibilityConverter}}">
+                <ComboBox x:Name="CACertificateId" Width="100" Height="32" VerticalContentAlignment="Center"
+                          SelectedValuePath="CACertificateId" DisplayMemberPath="CACertificateName"
+                          SelectedValue="{Binding Path=CACertificateId, Mode=TwoWay}"/>
+            </StackPanel>
+        </Grid>
+        <Grid Visibility="{Binding Path=AddListener, Converter={StaticResource VisibilityConverter}}"
+              Margin="0,20,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="创建完毕自动启动监听:" Margin="10,0,0,0"/>
+            <StackPanel Grid.Row="0" Grid.Column="1">
+                <CheckBox IsChecked="{Binding Path=AutoStart, Mode=TwoWay}"/>
+            </StackPanel>
+        </Grid>
+        <Expander Header="高级设置" Margin="0,15,0,0">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="获取真实IP:" Margin="10,10,0,0"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="已开启(默认开启)" Margin="0,10,0,20"/>
+                </Grid>
+                <Grid Visibility="{Binding Path=Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=TCPUDP}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="会话保持:" Margin="10,0,0,0"/>
+                    <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,20">
+                        <CheckBox x:Name="KeepSession" IsChecked="{Binding KeepSession}"/>
+                        <TextBlock Foreground="DarkGray"  Margin="0,5,0,0"
+                               Text="TCP协议会话保持基于IP地址,将同一IP地址的请求转发到同一台后端云服务器处理"/>
+                    </StackPanel>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="超时时间:"
+                           Visibility="{Binding Path=KeepSession,Converter={StaticResource VisibilityConverter}}" Margin="10,0,0,0"/>
+                    <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,0,20"
+                            Visibility="{Binding Path=KeepSession,Converter={StaticResource VisibilityConverter}}">
+                        <TextBox Width="80" Height="32" Text="{Binding Path=PersistenceTimeout, Mode=TwoWay}"
+                             HorizontalAlignment="Left" VerticalContentAlignment="Center"
+                             PreviewTextInput="Digital_PreviewTextInput"
+                             InputMethod.IsInputMethodEnabled="False"/>
+                        <TextBlock Text="输入范围为1-3600秒" Foreground="DarkGray" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Grid>
+                <Grid Visibility="{Binding Path=Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=TCP}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="连接超时时间:" Margin="10,0,0,0"/>
+                    <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,20">
+                        <TextBox Width="80" Height="32" Text="{Binding Path=EstablishedTimeout, Mode=TwoWay}"
+                             HorizontalAlignment="Left" VerticalContentAlignment="Center"
+                             PreviewTextInput="Digital_PreviewTextInput"
+                             InputMethod.IsInputMethodEnabled="False"/>
+                        <TextBlock Text="TCP超时时间输入范围为10-900秒" Foreground="DarkGray" Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Grid>
+                <Grid Visibility="{Binding Path=Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=HTTPHTTPS}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="3*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="会话保持:" Margin="10,0,0,0"/>
+                    <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,20">
+                        <CheckBox x:Name="StickySession" IsChecked="{Binding StickySession}"/>
+                        <TextBlock Foreground="DarkGray"  Margin="0,5,0,0" Text="HTTP 协议会话保持基于cookie"/>
+                    </StackPanel>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Cookie处理方式:" Margin="10,0,0,0"
+                       Visibility="{Binding Path=StickySession, Converter={StaticResource VisibilityConverter}}"/>
+                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,20"
+                                Visibility="{Binding Path=StickySession, Converter={StaticResource VisibilityConverter}}">
+                        <ComboBox x:Name="StickySessionType" Width="100" Height="32" VerticalContentAlignment="Center"
+                                  ItemsSource="{StaticResource StickySessions}" DisplayMemberPath="StickySessionName"
+                                  SelectedValuePath="StickySessionType" SelectedValue="{Binding Path=StickySessionType, Mode=TwoWay}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="0" Visibility="{Binding Path=StickySession, Converter={StaticResource VisibilityConverter}}">
+                        <TextBlock Text="超时时间:" Margin="10,0,0,0"
+                                   Visibility="{Binding Path=StickySessionType, Converter={StaticResource VisibilityConverter}, ConverterParameter=Time}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="1"  Visibility="{Binding Path=StickySession, Converter={StaticResource VisibilityConverter}}">
+                        <StackPanel Margin="0,0,0,20" Visibility="{Binding Path=StickySessionType, Converter={StaticResource VisibilityConverter}, ConverterParameter=Time}">
+                            <TextBox Width="80" Height="32" Text="{Binding Path=CookieTimeout, Mode=TwoWay}"
+                                 HorizontalAlignment="Left" VerticalContentAlignment="Center" MaxLength="5"
+                                 PreviewTextInput="Digital_PreviewTextInput"
+                                 InputMethod.IsInputMethodEnabled="False"/>
+                            <TextBlock Text="输入范围为1-86400秒" Foreground="DarkGray" Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Grid.Row="3" Grid.Column="0" Visibility="{Binding Path=StickySession, Converter={StaticResource VisibilityConverter}}">
+                        <TextBlock Text="Cookie名称:" Margin="10,0,0,0" Visibility="{Binding Path=StickySessionType, Converter={StaticResource VisibilityConverter}, ConverterParameter=Cookie}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="3" Grid.Column="1" Visibility="{Binding Path=StickySession, Converter={StaticResource VisibilityConverter}}">
+                        <StackPanel Margin="0,0,0,20" Visibility="{Binding Path=StickySessionType, Converter={StaticResource VisibilityConverter}, ConverterParameter=Cookie}">
+                            <TextBox Width="240" Height="32" Text="{Binding Path=Cookie, Mode=TwoWay}"
+                                     HorizontalAlignment="Left" VerticalContentAlignment="Center"
+                                     InputMethod.IsInputMethodEnabled="False"/>
+                            <TextBlock Text="$不能作为起始字符，不可以有';'，','，' '(空格)这三种字符" Foreground="DarkGray" Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Gzip数据压缩:" Margin="10,0,0,0"/>
+                    <StackPanel Grid.Row="4" Grid.Column="1" Margin="0,0,0,20">
+                        <CheckBox x:Name="Gzip" IsChecked="{Binding Gzip}"/>
+                        <TextBlock Foreground="DarkGray"  Margin="0,5,0,0"
+                                   Text="开启将对特定文件类型进行压缩；关闭则不会对任何文件类型进行压缩"/>
+                        <TextBlock Foreground="DarkGray"  Margin="0,5,0,0" TextWrapping="WrapWithOverflow"
+                                   Text="目前Gzip支持压缩的类型包括：text/xml text/plain text/css application/javascript application/x-javascript application/rss+xml application/atom+xml application/xml"/>
+                    </StackPanel>
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="附加HTTP头字段:" Margin="10,0,0,0"/>
+                    <StackPanel Grid.Row="5" Grid.Column="1">
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="XForwardedFor" Content="客户端真实IP" IsEnabled="False"
+                                      IsChecked="{Binding XForwardedFor, Mode=TwoWay}"/>
+                            <TextBlock Text="通过X-Forwarded-For头字段获取客户端真实IP" Margin="20,0,0,0" Foreground="DarkGray"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <CheckBox x:Name="XForwardedFor_SLBID" Content="SLB实例ID"
+                                      IsChecked="{Binding XForwardedFor_SLBID, Mode=TwoWay}"/>
+                            <TextBlock Text="通过SLB-ID头字段获取SLB实例ID" Margin="20,0,0,0" Foreground="DarkGray"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <CheckBox x:Name="XForwardedFor_SLBIP" Content="SLB实例入口IP"
+                                      IsChecked="{Binding XForwardedFor_SLBIP, Mode=TwoWay}"/>
+                            <TextBlock Text="通过SLB-IP头字段获取SLB实例公网IP地址" Margin="20,0,0,0" Foreground="DarkGray"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <CheckBox x:Name="XForwardedFor_proto" Content="SLB监听协议"
+                                      IsChecked="{Binding XForwardedFor_proto, Mode=TwoWay}"/>
+                            <TextBlock Text="通过X-Forwarded-Proto头字段获取SLB的监听协议" Margin="20,0,0,0" Foreground="DarkGray"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Expander>
+        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,20">
+            <Button x:Name="Next" Width="80" Height="32" Content="下一步" Click="Next_Click"/>
+            <Button x:Name="Cancel" Width="80" Height="32" Content="取消" Click="Cancel_Click" Margin="10,0,10,0"/>
+        </StackPanel>
+    </StackPanel>
+</Page>

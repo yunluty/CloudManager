@@ -1,6 +1,9 @@
-﻿using Aliyun.Acs.Slb.Model.V20140515;
+﻿using Aliyun.Acs.Core;
+using Aliyun.Acs.Core.Profile;
+using Aliyun.Acs.Slb.Model.V20140515;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -15,6 +18,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using static Aliyun.Acs.Slb.Model.V20140515.DescribeMasterSlaveServerGroupsResponse;
+using static Aliyun.Acs.Slb.Model.V20140515.DescribeVServerGroupsResponse;
 
 namespace CloudManager
 {
@@ -24,359 +29,288 @@ namespace CloudManager
     public partial class AddListenerWindow : Window
     {
         private AddListenerParams mParams = new AddListenerParams();
-        public DescribeLoadBalancer mBalancer;
+        private DefaultAcsClient mClient;
+        private ListenerBasePage mBasePage;
+        private ListenerHealthCheckPage mHealthPage;
+        private ListenerSubmmitPage mSubmmitPage;
 
-        public AddListenerWindow()
+        public delegate void DelegateGot(object obj);
+
+        public AddListenerWindow(string aki, string aks, DescribeLoadBalancer balancer)
         {
+            InitListenerParams(balancer);
             InitializeComponent();
-            BindingDataContext();
+            IClientProfile profile = DefaultProfile.GetProfile(balancer.RegionId, aki, aks);
+            mClient = new DefaultAcsClient(profile);
+            mBasePage = new ListenerBasePage(mClient, mParams);
+            mBasePage.mOwner = this;
+            PageContent.Navigate(mBasePage);
         }
 
-        public AddListenerWindow(DescribeLoadBalancer balancer)
+        public AddListenerWindow(string aki, string aks, DescribeLoadBalancer balancer, SLBListener listener)
         {
+            InitListenerParams(balancer, listener);
             InitializeComponent();
-            BindingDataContext();
-            mBalancer = balancer;
+            IClientProfile profile = DefaultProfile.GetProfile(balancer.RegionId, aki, aks);
+            mClient = new DefaultAcsClient(profile);
+            mBasePage = new ListenerBasePage(mClient, mParams);
+            mBasePage.mOwner = this;
+            PageContent.Navigate(mBasePage);
         }
 
-        private void BindingDataContext()
+        private void InitListenerParams(DescribeLoadBalancer balancer)
         {
-            this.DataContext = mParams;
-            mParams.RegionId = mBalancer.RegionId;
-            mParams.LoadBalancerId = mBalancer.LoadBalancerId;
+            mParams.RegionId = balancer.RegionId;
+            mParams.LoadBalancerId = balancer.LoadBalancerId;
+            mParams.AddListener = true;
+            mParams.Protocol = "TCP";
+            mParams.Scheduler = "wrr";
             mParams.AutoStart = true;
-            mParams.ShowGroup = Visibility.Collapsed;
-            mParams.ShowKeppSession = Visibility.Collapsed;
-            mParams.ShowUnlimit = Visibility.Visible;
-            mParams.ShowConfigure = Visibility.Collapsed;
+            mParams.PersistenceTimeout = 1000;
+            mParams.EstablishedTimeout = 900;
+            mParams.StickySessionType = "insert";
+            mParams.Gzip = true;
+            mParams.XForwardedFor = true;
+            mParams.TCPCheck = true;
+            mParams.http_2xx = true;
+            mParams.http_3xx = true;
+            mParams.HealthCheckTimeout = 5;
+            mParams.HealthCheckInterval = 2;
+            mParams.UnhealthyThreshold = 3;
+            mParams.HealthyThreshold = 3;
         }
 
-        private void Configure_Click(object sender, RoutedEventArgs e)
+        private void InitListenerParams(DescribeLoadBalancer balancer, SLBListener listener)
         {
-            mParams.ConfigureBand = !mParams.ConfigureBand;
-            if (mParams.ConfigureBand)
+            mParams.RegionId = balancer.RegionId;
+            mParams.LoadBalancerId = balancer.LoadBalancerId;
+            mParams.ConfigureListener = true;
+            mParams.Protocol = listener.Protocol.ToUpper();
+            mParams.ListenerPort = listener.ListenerPort;
+            mParams.BackendServerPort = listener.BackendServerPort;
+            mParams.BandWidth = listener.Bandwidth;
+            mParams.Scheduler = listener.Scheduler;
+            if (mParams.Protocol.Equals("TCP")
+                || mParams.Protocol.Equals("UDP"))
             {
-                mParams.ShowUnlimit = Visibility.Collapsed;
-                mParams.ShowConfigure = Visibility.Visible;
-                Configure.Content = "取消";
+                if (listener.VServerGroupId != null)
+                {
+                    mParams.UseServerGroup = true;
+                    mParams.VServerGroup = true;
+                    mParams.ServerGroupId = listener.VServerGroupId;
+                }
+                else if (listener.MasterSlaveServerGroupId != null)
+                {
+                    mParams.UseServerGroup = true;
+                    mParams.MServerGroup = true;
+                    mParams.ServerGroupId = listener.MasterSlaveServerGroupId;
+                }
+
+                if (listener.PersistenceTimeout > 0)
+                {
+                    mParams.KeepSession = true;
+                    mParams.PersistenceTimeout = listener.PersistenceTimeout;
+                }
+                else
+                {
+                    mParams.KeepSession = false;
+                    mParams.PersistenceTimeout = 1000;
+                }
+                
+                if (mParams.Protocol.Equals("TCP"))
+                {
+                    mParams.EstablishedTimeout = listener.EstablishedTimeout;
+                    if (listener.HealthCheckType.ToUpper().Equals("TCP"))
+                    {
+                        mParams.TCPCheck = true;
+                    }
+                    else if (listener.HealthCheckType.ToUpper().Equals("HTTP"))
+                    {
+                        mParams.HTTPCheck = true;
+                    }
+                }
+            }
+            else if (mParams.Protocol.Equals("HTTP")
+                || mParams.Protocol.Equals("HTTPS"))
+            {
+                if (listener.VServerGroupId != null)
+                {
+                    mParams.UseVServerGroup = true;
+                    mParams.ServerGroupId = listener.VServerGroupId;
+                }
+
+                if (mParams.Protocol.Equals("HTTPS"))
+                {
+                    mParams.ServerCertificateId = listener.ServerCertificateId;
+                    if (listener.CACertificateId != null)
+                    {
+                        mParams.UseTwoWayAuth = true;
+                        mParams.CACertificateId = listener.CACertificateId;
+                    }
+                }
+
+                if (listener.StickySession.Equals("on"))
+                {
+                    mParams.StickySession = true;
+                    mParams.StickySessionType = listener.StickySessionType;
+                    mParams.Cookie = listener.Cookie;
+                    mParams.CookieTimeout = listener.CookieTimeout;
+                }
+
+                if (listener.Gzip.Equals("on"))
+                {
+                    mParams.Gzip = true;
+                }
+
+                if (listener.XForwardedFor.Equals("on"))
+                {
+                    mParams.XForwardedFor = true;
+                }
+
+                if (listener.XForwardedFor_SLBID.Equals("on"))
+                {
+                    mParams.XForwardedFor_SLBID = true;
+                }
+
+                if (listener.XForwardedFor_SLBIP.Equals("on"))
+                {
+                    mParams.XForwardedFor_SLBIP = true;
+                }
+
+                if (listener.XForwardedFor_proto.Equals("on"))
+                {
+                    mParams.XForwardedFor_proto = true;
+                }
+
+                if (listener.HealthCheck.Equals("on"))
+                {
+                    mParams.HTTPCheckOn = true;
+                }
+            }
+
+            mParams.HealthCheckPortStr = listener.HealthCheckConnectPort.ToString();
+
+            if (mParams.HTTPCheck || mParams.HTTPCheckOn)
+            {
+                mParams.HealthCheckDomain = listener.HealthCheckDomain;
+                mParams.HealthCheckURI = listener.HealthCheckURI;
+                if (listener.HealthCheckHttpCode.Contains("http_2xx"))
+                {
+                    mParams.http_2xx = true;
+                }
+                if (listener.HealthCheckHttpCode.Contains("http_3xx"))
+                {
+                    mParams.http_3xx = true;
+                }
+                if (listener.HealthCheckHttpCode.Contains("http_4xx"))
+                {
+                    mParams.http_4xx = true;
+                }
+                if (listener.HealthCheckHttpCode.Contains("http_5xx"))
+                {
+                    mParams.http_5xx = true;
+                }
             }
             else
             {
-                mParams.ShowUnlimit = Visibility.Visible;
-                mParams.ShowConfigure = Visibility.Collapsed;
-                Configure.Content = "配置";
+                mParams.http_2xx = true;
+                mParams.http_3xx = true;
             }
-        }
 
-        private void DoAddListener(object obj)
-        {
-            AddListenerParams para = obj as AddListenerParams;
-            switch (para.Protocol)
+            if (listener.HealthCheckTimeout != null)
             {
-                case "TCP":
-                    int value;
-                    CreateLoadBalancerTCPListenerRequest request = new CreateLoadBalancerTCPListenerRequest();
-                    request.LoadBalancerId = para.LoadBalancerId;
-                    request.RegionId = para.RegionId; 
-                    int.TryParse(para.ForPort, out value);
-                    request.ListenerPort = value;
-                    int.TryParse(para.BackPort, out value);
-                    request.BackendServerPort = value;
-                    if (para.ConfigureBand)
-                    {
-                        int.TryParse(para.BandWidth, out value);
-                        request.Bandwidth = value;
-                    }
-                    else
-                    {
-                        request.Bandwidth = -1;
-                    }
-                    request.Scheduler = para.Scheduler;
-                    if (para.UseServerGroup)
-                    {
-                        if (para.MServerGroup)
-                        {
-                            request.MasterSlaveServerGroupId = para.ServerGroupId;
-                        }
-                        else if (para.VServerGroup)
-                        {
-                            request.VServerGroupId = para.ServerGroupId;
-                        }
-                    }
-                    int.TryParse(para.PersistenceTimeout, out value);
-                    request.PersistenceTimeout = value;
-                    int.TryParse(para.EstablishedTimeout, out value);
-                    request.EstablishedTimeout = value;
-                    break;
+                mParams.HealthCheckTimeout = listener.HealthCheckTimeout;
+            }
+            else
+            {
+                mParams.HealthCheckTimeout = 5;
+            }
 
-                case "HTTP":
-                    break;
-                case "HTTPS":
-                    break;
-                case "UDP":
-                    break;
-                default:
-                    return;
+            if (listener.HealthCheckInterval != null)
+            {
+                mParams.HealthCheckInterval = listener.HealthCheckInterval;
+            }
+            else
+            {
+                mParams.HealthCheckInterval = 2;
+            }
+
+            if (listener.UnhealthyThreshold != null)
+            {
+                mParams.UnhealthyThreshold = listener.UnhealthyThreshold;
+            }
+            else
+            {
+                mParams.UnhealthyThreshold = 3;
+            }
+
+            if (listener.HealthyThreshold != null)
+            {
+                mParams.HealthyThreshold = listener.HealthyThreshold;
+            }
+            else
+            {
+                mParams.HealthyThreshold = 3;
+            }
+
+            if (mParams.Protocol.Equals("UDP"))
+            {
+                mParams.HealthCheckReq = listener.HealthCheckReq;
+                mParams.HealthCheckExp = listener.HealthCheckExp;
             }
         }
 
-        private void AddListener_Click(object sender, RoutedEventArgs e)
+        public void NextPage()
         {
-            Thread t = new Thread(new ParameterizedThreadStart(DoAddListener));
-            t.Start(mParams);
+            if (mHealthPage == null)
+            {
+                mHealthPage = new ListenerHealthCheckPage(mParams);
+                mHealthPage.mOwner = this;
+            }
+            PageContent.Navigate(mHealthPage);
         }
 
-        private void UseServerGroup_Checked(object sender, RoutedEventArgs e)
+        public void PreviousPage()
         {
-            mParams.ShowGroup = Visibility.Visible;
+            PageContent.Navigate(mBasePage);
         }
 
-        private void UseServerGroup_Unchecked(object sender, RoutedEventArgs e)
+        public void Ensure()
         {
-            mParams.ShowGroup = Visibility.Collapsed;
+            if (mSubmmitPage == null)
+            {
+                mSubmmitPage = new ListenerSubmmitPage(mClient, mParams);
+                mSubmmitPage.mOwner = this;
+            }
+            PageContent.Navigate(mSubmmitPage);
         }
 
-        private void KeepSession_Checked(object sender, RoutedEventArgs e)
+        public void Cancel()
         {
-            mParams.ShowKeppSession = Visibility.Visible;
+            this.Close();
         }
 
-        private void KeepSession_Unchecked(object sender, RoutedEventArgs e)
+        public void NotifyUpdate()
         {
-            mParams.ShowKeppSession = Visibility.Collapsed;
-        }
-
-        private void Digital_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            Regex regex = new Regex(@"^[0-9]*$");
-            e.Handled = !regex.IsMatch(e.Text);
-        }
-
-        private void VServeGroup_Checked(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void MServerGroup_Checked(object sender, RoutedEventArgs e)
-        {
-
+            
         }
     }
 
-    class Schedulers
+    class SchedulerType
     {
         public string SchedulerId { get; set; }
         public string SchedulerName { get; set; }
     }
 
-    class AddListenerParams : INotifyPropertyChanged
+    class StickySessionId
     {
-        public string RegionId { get; set; }
+        public string StickySessionType { get; set; }
+        public string StickySessionName { get; set; }
+    }
 
-        public string LoadBalancerId { get; set; }
-
-        private string _Protocol;
-        public string Protocol
-        {
-            get { return _Protocol; }
-            set
-            {
-                _Protocol = value;
-                NotifyPropertyChanged("Protocol");
-            }
-        }
-
-        private string _ForPort;
-        public string ForPort
-        {
-            get { return _ForPort; }
-            set
-            {
-                _ForPort = value;
-                NotifyPropertyChanged("ForPort");
-            }
-        }
-
-        private string _BackPort;
-        public string BackPort
-        {
-            get { return _BackPort; }
-            set
-            {
-                _BackPort = value;
-                NotifyPropertyChanged("BackPort");
-            }
-        }
-
-        private string _BandWidth;
-        public string BandWidth
-        {
-            get { return _BandWidth; }
-            set
-            {
-                _BandWidth = value;
-                NotifyPropertyChanged("BandWidth");
-            }
-        }
-
-        private bool _ConfigureBand;
-        public bool ConfigureBand
-        {
-            get { return _ConfigureBand; }
-            set
-            {
-                _ConfigureBand = value;
-                NotifyPropertyChanged("ConfigureBand");
-            }
-        }
-
-        private Visibility _ShowUnlimit;
-        public Visibility ShowUnlimit
-        {
-            get { return _ShowUnlimit; }
-            set
-            {
-                _ShowUnlimit = value;
-                NotifyPropertyChanged("ShowUnlimit");
-            }
-        }
-
-        private Visibility _ShowConfigure;
-        public Visibility ShowConfigure
-        {
-            get { return _ShowConfigure; }
-            set
-            {
-                _ShowConfigure = value;
-                NotifyPropertyChanged("ShowConfigure");
-            }
-        }
-
-        private string _Scheduler;
-        public string Scheduler
-        {
-            get { return _Scheduler; }
-            set
-            {
-                _Scheduler = value;
-                NotifyPropertyChanged("Scheduler");
-            }
-        }
-
-        private bool _UseServerGroup;
-        public bool UseServerGroup
-        {
-            get { return _UseServerGroup; }
-            set
-            {
-                _UseServerGroup = value;
-                NotifyPropertyChanged("UseServerGroup");
-            }
-        }
-
-        private Visibility _ShowGroup;
-        public Visibility ShowGroup
-        {
-            get { return _ShowGroup; }
-            set
-            {
-                _ShowGroup = value;
-                NotifyPropertyChanged("ShowGroup");
-            }
-        }
-
-        private bool _VServerGroup;
-        public bool VServerGroup
-        {
-            get { return _VServerGroup; }
-            set
-            {
-                _VServerGroup = value;
-                NotifyPropertyChanged("VServerGroup");
-            }
-        }
-
-        private bool _MServerGroup;
-        public bool MServerGroup
-        {
-            get { return _MServerGroup; }
-            set
-            {
-                _MServerGroup = value;
-                NotifyPropertyChanged("MServerGroup");
-            }
-        }
-
-        private string _ServerGroupId;
-        public string ServerGroupId
-        {
-            get { return _ServerGroupId; }
-            set
-            {
-                _ServerGroupId = value;
-                NotifyPropertyChanged("ServerGroupId");
-            }
-        }
- 
-        private bool _AutoStart;
-        public bool AutoStart
-        {
-            get { return _AutoStart; }
-            set
-            {
-                _AutoStart = value;
-                NotifyPropertyChanged("AutoStart");
-            }
-        }
-
-        private bool _KeepSession;
-        public bool KeepSession
-        {
-            get { return _KeepSession; }
-            set
-            {
-                _KeepSession = value;
-                NotifyPropertyChanged("KeepSession");
-            }
-        }
-
-        private Visibility _ShowKeppSession;
-        public Visibility ShowKeppSession
-        {
-            get { return _ShowKeppSession; }
-            set
-            {
-                _ShowKeppSession = value;
-                NotifyPropertyChanged("ShowKeppSession");
-            }
-        }
-
-        private string _PersistenceTimeout;
-        public string PersistenceTimeout
-        {
-            get { return _PersistenceTimeout; }
-            set
-            {
-                _PersistenceTimeout = value;
-                NotifyPropertyChanged("PersistenceTimeout");
-            }
-        }
-
-        private string _EstablishedTimeout;
-        public string EstablishedTimeout
-        {
-            get { return _EstablishedTimeout; }
-            set
-            {
-                _EstablishedTimeout = value;
-                NotifyPropertyChanged("EstablishedTimeout");
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void NotifyPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+    class ServerGroup
+    {
+        public string ServerGroupId { get; set; }
+        public string ServerGroupName { get; set; }
     }
 }
