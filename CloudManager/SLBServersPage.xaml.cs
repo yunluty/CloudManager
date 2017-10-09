@@ -765,6 +765,15 @@ namespace CloudManager
             t.Start(rule);
         }
 
+        private void AddRule_Click(object sender, RoutedEventArgs e)
+        {
+            CreateRuleWindow win = new CreateRuleWindow(mAki, mAks);
+            win.mListener = mSelListener;
+            win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            win.Owner = mMainWindow;
+            win.ShowDialog();
+        }
+
         private void ListenersSelectAll_Click(object sender, RoutedEventArgs e)
         {
             if (ListenersSelectAll.IsChecked == true)

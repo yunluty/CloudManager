@@ -1,0 +1,48 @@
+﻿<Window x:Class="CloudManager.CreateRuleWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CloudManager"
+        mc:Ignorable="d"
+        Title="CreateRuleWindow" Height="300" Width="600">
+
+    <Window.Resources>
+        <DataTemplate x:Key="RuleName">
+            <TextBox Text="{Binding RuleName, Mode=TwoWay}" Width="120" Height="32"
+                     VerticalContentAlignment="Center"/>
+        </DataTemplate>
+        <DataTemplate x:Key="RuleDomain">
+            <TextBox Text="{Binding Domain, Mode=TwoWay}" Width="120" Height="32"
+                     VerticalContentAlignment="Center"/>
+        </DataTemplate>
+        <DataTemplate x:Key="RuleUrl">
+            <TextBox Text="{Binding Url, Mode=TwoWay}" Width="120" Height="32"
+                     VerticalContentAlignment="Center"/>
+        </DataTemplate>
+        <DataTemplate x:Key="RuleVServer">
+            <ComboBox VerticalContentAlignment="Center" Width="80" Height="32"
+                      SelectedValue="{Binding VServerGroupId, Mode=TwoWay}"
+                      SelectedValuePath="ServerGroupId" DisplayMemberPath="ServerGroupName"
+                      ItemsSource="{Binding VServerGrou}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="DeleteRule">
+            <Button x:Name="Delete" Content="删除" Click="Delete_Click" Style="{StaticResource ClickTex}"/>
+        </DataTemplate>
+    </Window.Resources>
+    
+    <StackPanel>
+        <ListView x:Name="Rules">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="规则名称" CellTemplate="{StaticResource RuleName}"/>
+                    <GridViewColumn Header="域名" CellTemplate="{StaticResource RuleDomain}"/>
+                    <GridViewColumn Header="URL" CellTemplate="{StaticResource RuleUrl}"/>
+                    <GridViewColumn Header="虚拟服务器组" CellTemplate="{StaticResource RuleVServer}"/>
+                    <GridViewColumn Header="操作" CellTemplate="{StaticResource DeleteRule}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Button x:Name="AddRule" Content="添加转发策略+" Click="AddRule_Click"/>
+    </StackPanel>
+</Window>

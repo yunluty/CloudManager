@@ -85,6 +85,9 @@
       <DependentUpon>AddListenerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ControlConverter.cs" />
+    <Compile Include="CreateRuleWindow.xaml.cs">
+      <DependentUpon>CreateRuleWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DescribeDBInstance.cs" />
     <Compile Include="DescribeInstance.cs" />
     <Compile Include="DescribeLoadBalancer.cs" />
@@ -140,6 +143,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AddListenerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CreateRuleWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -272,10 +279,6 @@
   <ItemGroup>
     <Resource Include="images\success.png" />
     <Resource Include="images\success_32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="error.png" />
-    <Resource Include="error_32.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="images\error.png" />

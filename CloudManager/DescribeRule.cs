@@ -9,6 +9,11 @@ namespace CloudManager
 {
     public class DescribeRule
     {
+        public DescribeRule()
+        {
+
+        }
+
         public DescribeRule(DescribeRules_Rule r)
         {
             RuleId = r.RuleId;
