@@ -5,44 +5,67 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CloudManager"
         mc:Ignorable="d"
-        Title="CreateRuleWindow" Height="300" Width="600">
+        Title="添加转发策略" Height="300" Width="600" SizeToContent="Height"
+        Loaded="Window_Loaded">
 
     <Window.Resources>
         <DataTemplate x:Key="RuleName">
             <TextBox Text="{Binding RuleName, Mode=TwoWay}" Width="120" Height="32"
-                     VerticalContentAlignment="Center"/>
+                     VerticalContentAlignment="Center" IsEnabled="{Binding AddNew}"/>
         </DataTemplate>
         <DataTemplate x:Key="RuleDomain">
             <TextBox Text="{Binding Domain, Mode=TwoWay}" Width="120" Height="32"
-                     VerticalContentAlignment="Center"/>
+                     VerticalContentAlignment="Center" IsEnabled="{Binding AddNew}"/>
         </DataTemplate>
         <DataTemplate x:Key="RuleUrl">
             <TextBox Text="{Binding Url, Mode=TwoWay}" Width="120" Height="32"
-                     VerticalContentAlignment="Center"/>
+                     VerticalContentAlignment="Center" IsEnabled="{Binding AddNew}"/>
         </DataTemplate>
         <DataTemplate x:Key="RuleVServer">
             <ComboBox VerticalContentAlignment="Center" Width="80" Height="32"
+                      ItemsSource="{Binding VServerGroups}"
                       SelectedValue="{Binding VServerGroupId, Mode=TwoWay}"
-                      SelectedValuePath="ServerGroupId" DisplayMemberPath="ServerGroupName"
-                      ItemsSource="{Binding VServerGrou}"/>
+                      SelectedValuePath="ServerGroupId" DisplayMemberPath="ServerGroupName"/>
         </DataTemplate>
         <DataTemplate x:Key="DeleteRule">
             <Button x:Name="Delete" Content="删除" Click="Delete_Click" Style="{StaticResource ClickTex}"/>
         </DataTemplate>
     </Window.Resources>
     
-    <StackPanel>
+    <StackPanel Margin="20">
         <ListView x:Name="Rules">
             <ListView.View>
-                <GridView>
+                <GridView  x:Name="RulesView">
                     <GridViewColumn Header="规则名称" CellTemplate="{StaticResource RuleName}"/>
                     <GridViewColumn Header="域名" CellTemplate="{StaticResource RuleDomain}"/>
                     <GridViewColumn Header="URL" CellTemplate="{StaticResource RuleUrl}"/>
                     <GridViewColumn Header="虚拟服务器组" CellTemplate="{StaticResource RuleVServer}"/>
-                    <GridViewColumn Header="操作" CellTemplate="{StaticResource DeleteRule}"/>
+                    <GridViewColumn x:Name="Process" Header="操作" CellTemplate="{StaticResource DeleteRule}"/>
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button x:Name="AddRule" Content="添加转发策略+" Click="AddRule_Click"/>
+        <Button x:Name="AddRule" Content="添加转发策略+" Click="AddRule_Click"
+                Visibility="{Binding Path=AddNew, Converter={StaticResource VisibilityConverter}}"/>
+        <TextBlock Foreground="DarkGray" Visibility="{Binding Path=AddNew, Converter={StaticResource VisibilityConverter}}">
+            <Run>* 域名规范：</Run>
+            <LineBreak/>
+            <Run>只能使用字母、数字、'-'、'.'，只支持以下两种形式的domain形式</Run>
+            <LineBreak/>
+            <Run>- 标准域名：www.test.com;</Run>
+            <LineBreak/>
+            <Run>- 泛解析域名：*.test.com，*一定在第一个字符，并且是*.的格式，*不能在最后。</Run>
+            <LineBreak/>
+            <LineBreak/>
+            <Run>* URL规范：</Run>
+            <LineBreak/>
+            <Run>长度限制为2-80个字符，只能使用字母、数字、'-'、'/'、'.'、'%'、'?'、'#'、'&amp;'这些字符; URL不能只为/,但必须以/开头。</Run>
+            <LineBreak/>
+            <LineBreak/>
+            <Run>* 域名与URL请至少填写一项。</Run>
+        </TextBlock>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="OK" Content="确认" Click="OK_Click"/>
+            <Button x:Name="Cancel" Content="取消" Margin="10,0,0,0" Click="Cancel_Click"/>
+        </StackPanel>
     </StackPanel>
 </Window>

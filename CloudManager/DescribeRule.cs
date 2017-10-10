@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,6 @@ namespace CloudManager
     {
         public DescribeRule()
         {
-
         }
 
         public DescribeRule(DescribeRules_Rule r)
@@ -23,6 +23,7 @@ namespace CloudManager
             VServerGroupId = r.VServerGroupId;
         }
 
+        public bool? AddNew { get; set; }
         public SLBListener Listener { get; set; }
         public string RuleId { get; set; }
         public string RuleName { get; set; }
@@ -30,5 +31,6 @@ namespace CloudManager
         public string Url { get; set; }
         public string VServerGroupId { get; set; }
         public string VServerGroupName { get; set; }
+        public ObservableCollection<ServerGroup> VServerGroups { get; set; }
     }
 }

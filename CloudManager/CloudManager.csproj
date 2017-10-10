@@ -113,6 +113,9 @@
     <Compile Include="PasswordWindow.xaml.cs">
       <DependentUpon>PasswordWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RDSPage.xaml.cs">
+      <DependentUpon>RDSPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ResetPasswordPage.xaml.cs">
       <DependentUpon>ResetPasswordPage.xaml</DependentUpon>
     </Compile>
@@ -124,9 +127,6 @@
     <Compile Include="SLBPage.xaml.cs">
       <DependentUpon>SLBPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SLBServersPage.xaml.cs">
-      <DependentUpon>SLBServersPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="StatusColorConverter.cs" />
     <Compile Include="StatusImageConverter.cs" />
     <Compile Include="StatusTextConverter.cs" />
@@ -137,7 +137,6 @@
       <DependentUpon>VerifyPhonePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="VisibilityConverter.cs" />
-    <Compile Include="VisibilityProtocolConvert.cs" />
     <Page Include="AccessWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -193,6 +192,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="RDSPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ResetPasswordPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -206,10 +209,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SLBPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="SLBServersPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

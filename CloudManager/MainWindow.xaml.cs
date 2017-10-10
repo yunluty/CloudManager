@@ -43,7 +43,6 @@ namespace CloudManager
         private ObservableCollection<DescribeLoadBalancer> mLoadBalancers = new ObservableCollection<DescribeLoadBalancer>();
         private DescribeLoadBalancer mSelBalancer;
         private SLBPage mSLBPage;
-        private SLBServersPage mSLBServersPage;
         private ObservableCollection<DescribeDBInstance> mDBInstances = new ObservableCollection<DescribeDBInstance>();
 
 
@@ -68,8 +67,6 @@ namespace CloudManager
             mECSPage.mMainWindow = this;
             mSLBPage = new SLBPage(aki, aks);
             mSLBPage.mMainWindow = this;
-            mSLBServersPage = new SLBServersPage(aki, aks);
-            mSLBServersPage.mMainWindow = this;
         }
 
         private void GetRegions()
@@ -268,18 +265,17 @@ namespace CloudManager
             }
 
             mSelBalancer = SLBList.SelectedItem as DescribeLoadBalancer;
-            if (Information.Content != mSLBPage)
+            if (Process.Content != mSLBPage)
             {
-                Information.Content = mSLBPage;
-            }
-
-            if (Information.Content != mSLBServersPage)
-            {
-                Process.Content = mSLBServersPage;
+                Process.Content = mSLBPage;
             }
             mSLBPage.mBalancer = mSelBalancer;
-            mSLBServersPage.mBalancer = mSelBalancer;
             SLBList.SelectedIndex = -1;
+        }
+
+        private void Certificates_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
 
         private void DomainList_SelectionChanged(object sender, SelectionChangedEventArgs e)

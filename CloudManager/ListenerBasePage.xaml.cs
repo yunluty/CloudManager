@@ -31,13 +31,47 @@ namespace CloudManager
     {
         private AddListenerParams mParams;
         private DefaultAcsClient mClient;
-        private ObservableCollection<ServerGroup> mVServerGroups;
-        private ObservableCollection<ServerGroup> mMServerGroups;
+        
         private ObservableCollection<DescribeServerCertificates_ServerCertificate> mServerCertificates;
         private ObservableCollection<DescribeCACertificates_CACertificate> mCACertificates;
 
         public AddListenerWindow mOwner { get; set; }
         public delegate void DelegateGot(object obj);
+
+        private ObservableCollection<ServerGroup> _mVServerGroups;
+        public ObservableCollection<ServerGroup> mVServerGroups
+        {
+            get { return _mVServerGroups; }
+            set
+            {
+                _mVServerGroups = value;
+                if (mParams.VServerGroup)
+                {
+                    ServerGroupId.ItemsSource = mVServerGroups;
+                    ServerGroupId.SelectedIndex = 0;
+                }
+                if (mParams.UseVServerGroup)
+                {
+                    VServerGroupId.ItemsSource = mVServerGroups;
+                    VServerGroupId.SelectedIndex = 0;
+                }
+            }
+        }
+
+        private ObservableCollection<ServerGroup> _mMServerGroups;
+        public ObservableCollection<ServerGroup> mMServerGroups
+        {
+            get { return _mMServerGroups; }
+            set
+            {
+                _mMServerGroups = value;
+                if (mParams.MServerGroup)
+                {
+                    ServerGroupId.ItemsSource = mMServerGroups;
+                    ServerGroupId.SelectedIndex = 0;
+                }
+            }
+        }
 
         public ListenerBasePage(DefaultAcsClient c, AddListenerParams p)
         {
@@ -50,10 +84,6 @@ namespace CloudManager
 
         private void PreLoadSources()
         {
-            Thread t1 = new Thread(GetVServerGroups);
-            t1.Start();
-            Thread t2 = new Thread(GetMServerGroups);
-            t2.Start();
             Thread t3 = new Thread(GetCertificates);
             t3.Start();
         }
@@ -115,75 +145,6 @@ namespace CloudManager
             catch
             { 
             } 
-        }
-
-        private void GotVServerGroups(object obj)
-        {
-            mVServerGroups = obj as ObservableCollection<ServerGroup>;
-            if (mParams.VServerGroup)
-            {
-                ServerGroupId.ItemsSource = mVServerGroups;
-                ServerGroupId.SelectedIndex = 0;
-            }
-            if (mParams.UseVServerGroup)
-            {
-                VServerGroupId.ItemsSource = mVServerGroups;
-                VServerGroupId.SelectedIndex = 0;
-            }
-        }
-
-        private void GetVServerGroups()
-        {
-            DescribeVServerGroupsRequest request = new DescribeVServerGroupsRequest();
-            request.LoadBalancerId = mParams.LoadBalancerId;
-            try
-            {
-                DescribeVServerGroupsResponse response = mClient.GetAcsResponse(request);
-                ObservableCollection<ServerGroup> groups = new ObservableCollection<ServerGroup>();
-                foreach (DescribeVServerGroups_VServerGroup g in response.VServerGroups)
-                {
-                    ServerGroup group = new ServerGroup();
-                    group.ServerGroupId = g.VServerGroupId;
-                    group.ServerGroupName = g.VServerGroupName;
-                    groups.Add(group);
-                }
-                Dispatcher.Invoke(new DelegateGot(GotVServerGroups), groups);
-            }
-            catch
-            {
-            }
-        }
-
-        private void GotMServerGroups(object obj)
-        {
-            mMServerGroups = obj as ObservableCollection<ServerGroup>;
-            if (mParams.MServerGroup)
-            {
-                ServerGroupId.ItemsSource = mMServerGroups;
-                ServerGroupId.SelectedIndex = 0;
-            }
-        }
-
-        private void GetMServerGroups()
-        {
-            DescribeMasterSlaveServerGroupsRequest request = new DescribeMasterSlaveServerGroupsRequest();
-            request.LoadBalancerId = mParams.LoadBalancerId;
-            try
-            {
-                DescribeMasterSlaveServerGroupsResponse response = mClient.GetAcsResponse(request);
-                ObservableCollection<ServerGroup> groups = new ObservableCollection<ServerGroup>();
-                foreach (DescribeMasterSlaveServerGroups_MasterSlaveServerGroup g in response.MasterSlaveServerGroups)
-                {
-                    ServerGroup group = new ServerGroup();
-                    group.ServerGroupId = g.MasterSlaveServerGroupId;
-                    group.ServerGroupName = g.MasterSlaveServerGroupName;
-                    groups.Add(group);
-                }
-                Dispatcher.Invoke(new DelegateGot(GotMServerGroups), groups);
-            }
-            catch
-            {
-            }
         }
 
         private void VServeGroup_Checked(object sender, RoutedEventArgs e)

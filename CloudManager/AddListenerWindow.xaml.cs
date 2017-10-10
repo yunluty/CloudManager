@@ -34,7 +34,10 @@ namespace CloudManager
         private ListenerHealthCheckPage mHealthPage;
         private ListenerSubmmitPage mSubmmitPage;
 
+        public ObservableCollection<ServerGroup> mVServerGroups { get; set; } //Must
+        public ObservableCollection<ServerGroup> mMServerGroups { get; set; }
         public delegate void DelegateGot(object obj);
+
 
         public AddListenerWindow(string aki, string aks, DescribeLoadBalancer balancer)
         {
@@ -42,9 +45,6 @@ namespace CloudManager
             InitializeComponent();
             IClientProfile profile = DefaultProfile.GetProfile(balancer.RegionId, aki, aks);
             mClient = new DefaultAcsClient(profile);
-            mBasePage = new ListenerBasePage(mClient, mParams);
-            mBasePage.mOwner = this;
-            PageContent.Navigate(mBasePage);
         }
 
         public AddListenerWindow(string aki, string aks, DescribeLoadBalancer balancer, SLBListener listener)
@@ -53,7 +53,13 @@ namespace CloudManager
             InitializeComponent();
             IClientProfile profile = DefaultProfile.GetProfile(balancer.RegionId, aki, aks);
             mClient = new DefaultAcsClient(profile);
+        }
+
+        private void Window_ContentRendered(object sender, EventArgs e)
+        {
             mBasePage = new ListenerBasePage(mClient, mParams);
+            mBasePage.mVServerGroups = mVServerGroups;
+            mBasePage.mMServerGroups = mMServerGroups;
             mBasePage.mOwner = this;
             PageContent.Navigate(mBasePage);
         }
@@ -308,7 +314,7 @@ namespace CloudManager
         public string StickySessionName { get; set; }
     }
 
-    class ServerGroup
+    public class ServerGroup
     {
         public string ServerGroupId { get; set; }
         public string ServerGroupName { get; set; }

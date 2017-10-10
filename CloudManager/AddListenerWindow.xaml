@@ -7,7 +7,8 @@
         xmlns:c="clr-namespace:System.Collections;assembly=mscorlib"
         xmlns:local="clr-namespace:CloudManager"
         mc:Ignorable="d"
-        Title="AddListenerWindow" Width="600" SizeToContent="Height">
+        Title="AddListenerWindow" Width="600" SizeToContent="Height"
+        ContentRendered="Window_ContentRendered">
 
     <Frame x:Name="PageContent"  NavigationUIVisibility="Hidden"/>
 </Window>

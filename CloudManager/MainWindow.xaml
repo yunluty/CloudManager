@@ -12,7 +12,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="6*"/>
+            <ColumnDefinition Width="10*"/>
         </Grid.ColumnDefinitions>
         <StackPanel  Grid.Column="0">
             <Expander x:Name="ECSExpander">
@@ -65,14 +65,25 @@
                     <TextBlock Text="负载均衡 SLB"/>
                 </Expander.Header>
                 <Expander.Content>
-                    <ListBox x:Name="SLBList" BorderThickness="0" BorderBrush="Transparent"
+                    <StackPanel>
+                        <ListBox x:Name="SLBList" BorderThickness="0" BorderBrush="Transparent"
                              SelectionChanged="SLBList_SelectionChanged">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding LoadBalanceTitle}"/>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding LoadBalanceTitle}"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <ListBox x:Name="Certificates" BorderThickness="0" BorderBrush="Transparent"
+                                 SelectionChanged="Certificates_SelectionChanged">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding LoadBalanceTitle}"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                    
                 </Expander.Content>
             </Expander>
             <Expander>
