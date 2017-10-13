@@ -41,21 +41,6 @@
     <ApplicationIcon>CloudManager.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="aliyun-net-sdk-Core">
-      <HintPath>..\Aliyun\aliyun-net-sdk-Core.dll</HintPath>
-    </Reference>
-    <Reference Include="aliyun-net-sdk-Domain">
-      <HintPath>..\Aliyun\aliyun-net-sdk-Domain.dll</HintPath>
-    </Reference>
-    <Reference Include="aliyun-net-sdk-Ecs">
-      <HintPath>..\Aliyun\aliyun-net-sdk-Ecs.dll</HintPath>
-    </Reference>
-    <Reference Include="aliyun-net-sdk-rds">
-      <HintPath>..\Aliyun\aliyun-net-sdk-rds.dll</HintPath>
-    </Reference>
-    <Reference Include="aliyun-net-sdk-Slb">
-      <HintPath>..\Aliyun\aliyun-net-sdk-Slb.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
@@ -282,6 +267,34 @@
   <ItemGroup>
     <Resource Include="images\error.png" />
     <Resource Include="images\error_32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\aliyun-net-sdk-core\aliyun-net-sdk-core.csproj">
+      <Project>{bb84cecb-295d-4772-a669-3726e511ccfa}</Project>
+      <Name>aliyun-net-sdk-core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\aliyun-net-sdk-domain\aliyun-net-sdk-domain.csproj">
+      <Project>{f1832ac0-c2c8-4893-9cd2-d885729e2f72}</Project>
+      <Name>aliyun-net-sdk-domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\aliyun-net-sdk-ecs\aliyun-net-sdk-ecs.csproj">
+      <Project>{c085bd5d-de6a-44af-9f60-4b00f541e8d5}</Project>
+      <Name>aliyun-net-sdk-ecs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\aliyun-net-sdk-rds\aliyun-net-sdk-rds.csproj">
+      <Project>{3997d824-56ed-40a3-8f0a-6ab01da07e86}</Project>
+      <Name>aliyun-net-sdk-rds</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\aliyun-net-sdk-slb\aliyun-net-sdk-slb.csproj">
+      <Project>{72948d04-fdf8-4237-b8ce-62aa235c06ac}</Project>
+      <Name>aliyun-net-sdk-slb</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\question.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

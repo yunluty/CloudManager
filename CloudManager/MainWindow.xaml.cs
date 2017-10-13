@@ -44,6 +44,8 @@ namespace CloudManager
         private DescribeLoadBalancer mSelBalancer;
         private SLBPage mSLBPage;
         private ObservableCollection<DescribeDBInstance> mDBInstances = new ObservableCollection<DescribeDBInstance>();
+        private DescribeDBInstance mSelDBInstance;
+        private RDSPage mRDSPage;
 
 
         public MainWindow()
@@ -67,6 +69,8 @@ namespace CloudManager
             mECSPage.mMainWindow = this;
             mSLBPage = new SLBPage(aki, aks);
             mSLBPage.mMainWindow = this;
+            mRDSPage = new RDSPage(aki, aks);
+            mRDSPage.mMainWindow = this;
         }
 
         private void GetRegions()
@@ -208,7 +212,7 @@ namespace CloudManager
                 try
                 {
                     DescribeDBInstancesResponse response = client.GetAcsResponse(request);
-                    foreach (DBInstance d in response.Items)
+                    foreach (DescribeDBInstances_DBInstance d in response.Items)
                     {
                         DescribeDBInstance instance = new DescribeDBInstance(d);
                         Dispatcher.Invoke(new DelegateGot(GotDBInstances), instance);
@@ -228,13 +232,11 @@ namespace CloudManager
                 return;
             }
 
-            mSelInstance = ECSList.SelectedItem as DescribeInstance;
-            if (Information.Content != mECSPage)
+            if (Process.Content != mECSPage)
             {
-                Information.Content = mECSPage;
+                Process.Content = mECSPage;
             }
-
-            Process.Content = null;
+            mSelInstance = ECSList.SelectedItem as DescribeInstance;
             mECSPage.mInstance = mSelInstance;
             /*if (mSelInstance.Status.CompareTo("Running") == 0)
             {
@@ -249,7 +251,18 @@ namespace CloudManager
 
         private void RDSList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+            if (RDSList.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            if (Process.Content != mRDSPage)
+            {
+                Process.Content = mRDSPage;
+            }
+            mSelDBInstance = RDSList.SelectedItem as DescribeDBInstance;
+            mRDSPage.mDBInstance = mSelDBInstance;
+            RDSList.SelectedIndex = -1;
         }
 
         private void OSSList_SelectionChanged(object sender, SelectionChangedEventArgs e)

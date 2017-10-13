@@ -141,14 +141,30 @@ namespace CloudManager
             else if (typeof(bool?).IsInstanceOfType(value))
             {
                 bool? config = value as bool?;
-                if (config == true)
+                string type = parameter as string;
+                if (type != null && type.Equals("YESNO"))
                 {
-                    return "取消";
+                    if (config == true)
+                    {
+                        return "是";
+                    }
+                    else
+                    {
+                        return "否";
+                    }
                 }
                 else
                 {
-                    return "配置";
+                    if (config == true)
+                    {
+                        return "取消";
+                    }
+                    else
+                    {
+                        return "配置";
+                    }
                 }
+                    
             }
             else if (typeof(int?).IsInstanceOfType(value))
             {

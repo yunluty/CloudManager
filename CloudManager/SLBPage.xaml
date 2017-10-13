@@ -94,7 +94,7 @@
 
     <TabControl>
         <TabItem x:Name="SLBInfo" Header="详情">
-            <StackPanel Grid.Column="1">
+            <StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
                     <TextBlock Text="ID :" Style="{StaticResource ResourceKey=TitleText}"/>
                     <TextBlock Text="{Binding Path=LoadBalancerId}"/>
