@@ -15,6 +15,7 @@
             <ColumnDefinition Width="10*"/>
         </Grid.ColumnDefinitions>
         <StackPanel  Grid.Column="0">
+            <TextBlock Text="云资源" FontSize="18"/>
             <Expander x:Name="ECSExpander">
                 <Expander.Header>
                     <TextBlock Text="云服务器 ECS"/>
@@ -101,6 +102,7 @@
                     </ListBox>
                 </Expander.Content>
             </Expander>
+            <TextBlock Text="任务" FontSize="18"/>
         </StackPanel>
         <Frame x:Name="Information" Grid.Column="1" NavigationUIVisibility="Hidden"/>
         <StackPanel Grid.Column="2">

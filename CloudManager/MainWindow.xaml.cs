@@ -1,32 +1,20 @@
-﻿using System;
+﻿using Aliyun.Acs.Core;
+using Aliyun.Acs.Core.Exceptions;
+using Aliyun.Acs.Core.Profile;
+using Aliyun.Acs.Ecs.Model.V20140526;
+using Aliyun.Acs.Rds.Model.V20140815;
+using Aliyun.Acs.Slb.Model.V20140515;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Collections.ObjectModel;
+using System.Net;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Aliyun.Acs.Core;
-using Aliyun.Acs.Core.Profile;
-using Aliyun.Acs.Core.Exceptions;
-using Aliyun.Acs.Ecs.Model.V20140526;
-using static Aliyun.Acs.Ecs.Model.V20140526.DescribeRegionsResponse;
 using static Aliyun.Acs.Ecs.Model.V20140526.DescribeInstancesResponse;
-using System.Net;
-using System.Collections.ObjectModel;
-using Aliyun.Acs.Slb.Model.V20140515;
-using static Aliyun.Acs.Slb.Model.V20140515.DescribeLoadBalancersResponse;
-using static Aliyun.Acs.Slb.Model.V20140515.DescribeZonesResponse;
-using Aliyun.Acs.Rds.Model.V20140815;
+using static Aliyun.Acs.Ecs.Model.V20140526.DescribeRegionsResponse;
 using static Aliyun.Acs.Rds.Model.V20140815.DescribeDBInstancesResponse;
+using static Aliyun.Acs.Slb.Model.V20140515.DescribeLoadBalancersResponse;
 
 namespace CloudManager
 {

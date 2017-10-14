@@ -86,7 +86,11 @@ namespace CloudManager
                 else if (status.Equals("success", StringComparison.CurrentCultureIgnoreCase))
                 {
                     string success = parameter as string;
-                    if (success.Equals("All"))
+                    if (success.Equals("None"))
+                    {
+                        return "成功";
+                    }
+                    else if (success.Equals("All"))
                     {
                         return "恭喜，监听配置成功";
                     }
@@ -103,6 +107,10 @@ namespace CloudManager
                         return "监听配置成功";
                     }
                     return null;
+                }
+                else if (status.Equals("failed", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return "失败";
                 }
                 else if (status.Equals("error", StringComparison.CurrentCultureIgnoreCase))
                 {
@@ -132,6 +140,22 @@ namespace CloudManager
                 else if (status.Equals("off", StringComparison.CurrentCultureIgnoreCase))
                 {
                     return "关闭";
+                }
+                else if (status.Equals("Logical", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return "逻辑备份";
+                }
+                else if (status.Equals("Physical", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return "物理备份";
+                }
+                else if (status.Equals("FullBackup", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return "全量";
+                }
+                else if (status.Equals("IncrementalBackup", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return "增量";
                 }
                 else
                 {

@@ -2,27 +2,17 @@
 using Aliyun.Acs.Core.Profile;
 using Aliyun.Acs.Rds.Model.V20140815;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using static Aliyun.Acs.Rds.Model.V20140815.DescribeBackupsResponse;
 using static Aliyun.Acs.Rds.Model.V20140815.DescribeDBInstanceAttributeResponse;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using static Aliyun.Acs.Rds.Model.V20140815.DescribeParameterTemplatesResponse;
 using static Aliyun.Acs.Rds.Model.V20140815.DescribeParametersResponse;
-using System.Text.RegularExpressions;
+using static Aliyun.Acs.Rds.Model.V20140815.DescribeParameterTemplatesResponse;
 
 namespace CloudManager
 {
@@ -33,6 +23,7 @@ namespace CloudManager
     {
         private string mAki, mAks;
         private ObservableCollection<DBParameter> mParameters;
+        private ObservableCollection<DBBackup> mBackups;
 
         public MainWindow mMainWindow { get; set; }
         public delegate void DelegateGot(object obj);
@@ -256,7 +247,25 @@ namespace CloudManager
 
         private void GotBackups(object obj)
         {
+            mBackups = obj as ObservableCollection<DBBackup>;
+            Backups.ItemsSource = mBackups;
+        }
 
+        private void Download_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void DownloadURL_Click(object sender, RoutedEventArgs e)
+        {
+            DBBackup backup = (sender as Button).DataContext as DBBackup;
+            Clipboard.SetText(backup.BackupDownloadURL);
+        }
+
+        private void IntranetDownloadURL_Click(object sender, RoutedEventArgs e)
+        {
+            DBBackup backup = (sender as Button).DataContext as DBBackup;
+            Clipboard.SetText(backup.BackupIntranetDownloadURL);
         }
 
         private void GetBackups(object obj)
@@ -274,11 +283,23 @@ namespace CloudManager
             try
             {
                 DescribeBackupsResponse resp1 = client.GetAcsResponse(r1);
+                ObservableCollection<DBBackup> backups = new ObservableCollection<DBBackup>();
+                foreach (DescribeBackups_Backup b in resp1.Items)
+                {
+                    DBBackup backup = new DBBackup(b);
+                    backups.Add(backup);
+                }
+                Dispatcher.Invoke(new DelegateGot(GotBackups), backups);
             }
             catch (Exception ex)
             {
 
             }
+        }
+
+        private void GetBackupPolicy()
+        {
+
         }
     }
 
@@ -356,6 +377,113 @@ namespace CloudManager
         }
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public class DBBackup : INotifyPropertyChanged
+    {
+        public DBBackup(DescribeBackups_Backup b)
+        {
+            BackupId = b.BackupId;
+            DBInstanceId = b.DBInstanceId;
+            BackupStatus = b.BackupStatus;
+            BackupStartTime = b.BackupStartTime;
+            BackupEndTime = b.BackupEndTime;
+            BackupType = b.BackupType;
+            BackupMode = b.BackupMode;
+            BackupMethod = b.BackupMethod;
+            BackupDownloadURL = b.BackupDownloadURL;
+            BackupIntranetDownloadURL = b.BackupIntranetDownloadURL;
+            BackupLocation = b.BackupLocation;
+            BackupExtractionStatus = b.BackupExtractionStatus;
+            BackupScale = b.BackupScale;
+            BackupDBNames = b.BackupDBNames;
+            TotalBackupSize = b.TotalBackupSize;
+            BackupSize = b.BackupSize;
+            HostInstanceID = b.HostInstanceID;
+            StoreStatus = b.StoreStatus;
+        }
+
+        public string BackupId { get; set; }
+
+        public string DBInstanceId { get; set; }
+
+        public string BackupStatus { get; set; }
+
+        private string backupStartTime;
+        public string BackupStartTime
+        {
+            get { return backupStartTime; }
+            set
+            {
+                DateTime.TryParse(value, out DateTime dt);
+                backupStartTime = dt.ToString("yyyy-MM-dd hh:mm:ss");
+            }
+        }
+
+        private string backupEndTime;
+        public string BackupEndTime
+        {
+            get { return backupEndTime; }
+            set
+            {
+                DateTime.TryParse(value, out DateTime dt);
+                backupEndTime = dt.ToString("yyyy-MM-dd hh:mm:ss");
+            }
+        }
+
+        public string BackupType { get; set; }
+
+        public string BackupMode { get; set; }
+
+        public string BackupMethod { get; set; }
+
+        public string BackupDownloadURL { get; set; }
+
+        public string BackupIntranetDownloadURL { get; set; }
+
+        public string BackupLocation { get; set; }
+
+        public string BackupExtractionStatus { get; set; }
+
+        public string BackupScale { get; set; }
+
+        public string BackupDBNames { get; set; }
+
+        public long? TotalBackupSize { get; set; }
+
+        public long? backupSize;
+        public long? BackupSize
+        {
+            get { return backupSize; }
+            set
+            {
+                backupSize = value;
+                if (value >= 1024 * 1024)
+                {
+                    BackupSizeStr = ((double)value / (1024 * 1024)).ToString("0.00") + " MB";
+                }
+                else if (value >= 1024)
+                {
+                    BackupSizeStr = ((double)value / 1024).ToString("0.00") + " KB";
+                }
+                else
+                {
+                    BackupSizeStr = value + " B";
+                }
+            }
+        }
+
+        public string BackupSizeStr { get; set; }
+
+        public string HostInstanceID { get; set; }
+
+        public string StoreStatus { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

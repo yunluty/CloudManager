@@ -32,6 +32,15 @@
                 </Image.ToolTip>
             </Image>
         </DataTemplate>
+        <DataTemplate x:Key="ProcessBackup">
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="Download" Content="下载" Click="Download_Click" Style="{StaticResource ClickTex}"/>
+                <Button x:Name="DownloadURL" Content="外网地址" Click="DownloadURL_Click"
+                        Style="{StaticResource ClickTex}" Margin="5,0,0,0"/>
+                <Button x:Name="IntranetDownloadURL" Content="内网地址" Click="IntranetDownloadURL_Click"
+                        Style="{StaticResource ClickTex}" Margin="5,0,0,0"/>
+            </StackPanel>
+        </DataTemplate>
     </Page.Resources>
 
     <TabControl>
@@ -159,12 +168,12 @@
             </StackPanel>
         </TabItem>
         <TabItem Header="参数设置">
-            <StackPanel>
+            <StackPanel  Height="650">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button x:Name="Submit" Content="提交参数" Click="Submit_Click"/>
                     <Button x:Name="Undo" Content="撤销" Margin="10,0,20,0" Click="Undo_Click"/>
                 </StackPanel>
-                <ListView x:Name="Parameters" Height="650">
+                <ListView x:Name="Parameters">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="参数名" DisplayMemberBinding="{Binding Name}"/>
@@ -179,7 +188,21 @@
             </StackPanel>
         </TabItem>
         <TabItem Header="备份">
-            
+            <StackPanel>
+                <ListView x:Name="Backups" Height="650">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="备份开始" DisplayMemberBinding="{Binding BackupStartTime}"/>
+                            <GridViewColumn Header="备份结束" DisplayMemberBinding="{Binding BackupEndTime}"/>
+                            <GridViewColumn Header="备份大小" DisplayMemberBinding="{Binding BackupSizeStr}"/>
+                            <GridViewColumn Header="备份方法" DisplayMemberBinding="{Binding BackupMethod, Converter={StaticResource StatusTextConverter}}"/>
+                            <GridViewColumn Header="备份类型" DisplayMemberBinding="{Binding BackupType, Converter={StaticResource StatusTextConverter}}"/>
+                            <GridViewColumn Header="状态" DisplayMemberBinding="{Binding BackupStatus, Converter={StaticResource StatusTextConverter}, ConverterParameter=None}"/>
+                            <GridViewColumn Header="操作" CellTemplate="{StaticResource ProcessBackup}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </StackPanel>
         </TabItem>
     </TabControl>
 </Page>
