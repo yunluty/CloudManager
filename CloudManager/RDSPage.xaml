@@ -188,8 +188,8 @@
             </StackPanel>
         </TabItem>
         <TabItem Header="备份">
-            <StackPanel>
-                <ListView x:Name="Backups" Height="650">
+            <StackPanel Height="650">
+                <ListView x:Name="Backups">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="备份开始" DisplayMemberBinding="{Binding BackupStartTime}"/>
@@ -202,6 +202,43 @@
                         </GridView>
                     </ListView.View>
                 </ListView>
+                <Grid x:Name="BackupPolicy" Margin="0,20,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
+                        <TextBlock Text="数据备份保留天数:" Foreground="DarkGray"/>
+                        <TextBlock Text="{Binding BackupRetentionPeriod}" Margin="10,0,0,0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                        <TextBlock Text="备份周期:" Foreground="DarkGray"/>
+                        <TextBlock Text="{Binding PreferredBackupPeriodCN}" Margin="10,0,0,0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0"  Margin="0,10,0,0">
+                        <TextBlock Text="备份时间:" Foreground="DarkGray"/>
+                        <TextBlock Text="{Binding PreferredBackupTime}" Margin="10,0,0,0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0,10,0,0">
+                        <TextBlock Text="预计下次备份时间:" Foreground="DarkGray"/>
+                        <TextBlock Text="{Binding PreferredNextBackupTime}" Margin="10,0,0,0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Margin="0,10,0,0">
+                        <TextBlock Text="日志备份:" Foreground="DarkGray"/>
+                        <TextBlock Text="{Binding BackupLog, Converter={StaticResource StatusTextConverter}}" Margin="10,0,0,0"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="0,10,0,0">
+                        <TextBlock Text="日志备份保留天数:" Foreground="DarkGray"/>
+                        <TextBlock Text="{Binding LogBackupRetentionPeriod}" Margin="10,0,0,0"/>
+                    </StackPanel>
+                </Grid>
+                <Button x:Name="EditPolicy" Content="编辑" HorizontalAlignment="Right" Margin="0,0,20,0"
+                        Click="EditPolicy_Click"/>
             </StackPanel>
         </TabItem>
     </TabControl>

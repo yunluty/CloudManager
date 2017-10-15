@@ -157,6 +157,14 @@ namespace CloudManager
                 {
                     return "增量";
                 }
+                else if (status.Equals("enable", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return "开启";
+                }
+                else if (status.Equals("disable", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return "关闭";
+                }
                 else
                 {
                     return null;

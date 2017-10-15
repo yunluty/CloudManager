@@ -1,0 +1,93 @@
+﻿<Window x:Class="CloudManager.EditBackupPolicyWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:CloudManager"
+        mc:Ignorable="d"
+        Title="备份设置" Height="352" Width="500">
+    <Window.Resources>
+        <x:Array x:Key="BackupTimes" Type="sys:String">
+            <sys:String>00:00-01:00</sys:String>
+            <sys:String>01:00-02:00</sys:String>
+            <sys:String>02:00-03:00</sys:String>
+            <sys:String>03:00-04:00</sys:String>
+            <sys:String>04:00-05:00</sys:String>
+            <sys:String>05:00-06:00</sys:String>
+            <sys:String>06:00-07:00</sys:String>
+            <sys:String>07:00-08:00</sys:String>
+            <sys:String>08:00-09:00</sys:String>
+            <sys:String>09:00-10:00</sys:String>
+            <sys:String>10:00-11:00</sys:String>
+            <sys:String>11:00-12:00</sys:String>
+            <sys:String>12:00-13:00</sys:String>
+            <sys:String>13:00-14:00</sys:String>
+            <sys:String>14:00-15:00</sys:String>
+            <sys:String>15:00-16:00</sys:String>
+            <sys:String>16:00-17:00</sys:String>
+            <sys:String>17:00-18:00</sys:String>
+            <sys:String>18:00-19:00</sys:String>
+            <sys:String>19:00-20:00</sys:String>
+            <sys:String>20:00-21:00</sys:String>
+            <sys:String>21:00-22:00</sys:String>
+            <sys:String>22:00-23:00</sys:String>
+            <sys:String>23:00-24:00</sys:String>
+        </x:Array>
+    </Window.Resources>
+    <StackPanel Margin="20">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="数据备份保留:" Grid.Row="0" Grid.Column="0"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                <TextBox Width="60" Height="32"  VerticalContentAlignment="Center"
+                         Text="{Binding BackupRetentionPeriod, Mode=TwoWay}"/>
+                <TextBlock Text="天" Margin="5,8,0,0"/>
+            </StackPanel>
+            <TextBlock Text="备份周期:" Grid.Row="1" Grid.Column="0" Margin="0,20,0,0"/>
+            <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,20,0,0">
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="星期一" IsChecked="{Binding Monday, Mode=TwoWay}"/>
+                    <CheckBox Content="星期二" IsChecked="{Binding Tuesday, Mode=TwoWay}" Margin="10,0,0,0"/>
+                    <CheckBox Content="星期三" IsChecked="{Binding Wednesday, Mode=TwoWay}" Margin="10,0,0,0"/>
+                    <CheckBox Content="星期四" IsChecked="{Binding Thursday, Mode=TwoWay}" Margin="10,0,0,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Content="星期五" IsChecked="{Binding Friday, Mode=TwoWay}"/>
+                    <CheckBox Content="星期六" IsChecked="{Binding Saturday, Mode=TwoWay}" Margin="10,0,0,0"/>
+                    <CheckBox Content="星期日" IsChecked="{Binding Sunday, Mode=TwoWay}" Margin="10,0,0,0"/>
+                </StackPanel>
+            </StackPanel>
+            <TextBlock Text="备份时间:" Grid.Row="2" Grid.Column="0" Margin="0,20,0,0"/>
+            <ComboBox Grid.Row="2" Grid.Column="1" Width="100" Height="32"
+                      VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="0,20,0,0"
+                      ItemsSource="{StaticResource BackupTimes}" SelectedValue="{Binding PreferredBackupTime, Mode=TwoWay}"/>
+            <TextBlock Text="日志备份:" Grid.Row="3" Grid.Column="0" Margin="0,20,0,0"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" Margin="0,20,0,0">
+                <RadioButton Content="开启" GroupName="LogBackup" IsChecked="{Binding Enable, Mode=TwoWay}"/>
+                <RadioButton Content="关闭" GroupName="LogBackup" Margin="10,0,0,0"
+                             IsChecked="{Binding Disable, Mode=TwoWay}"/>
+            </StackPanel>
+            <TextBlock Text="日志备份保留:" Grid.Row="4" Grid.Column="0" Margin="0,20,0,0"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" Margin="0,20,0,0">
+                <TextBox Width="60" Height="32" VerticalContentAlignment="Center"
+                         Text="{Binding BackupRetentionPeriod, Mode=TwoWay}"/>
+                <TextBlock Text="天" Margin="5,8,0,0"/>
+            </StackPanel>
+        </Grid>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,20">
+            <Button x:Name="OK" Width="80" Height="32" Content="下一步" Click="OK_Click"/>
+            <Button x:Name="Cancel" Width="80" Height="32" Content="取消" Click="Cancel_Click" Margin="10,0,10,0"/>
+        </StackPanel>
+    </StackPanel>
+</Window>

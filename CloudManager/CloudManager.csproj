@@ -80,6 +80,9 @@
     <Compile Include="ECSPage.xaml.cs">
       <DependentUpon>ECSPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="EditBackupPolicyWindow.xaml.cs">
+      <DependentUpon>EditBackupPolicyWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ExceptionMessage.cs" />
     <Compile Include="ForgotWindow.xaml.cs">
       <DependentUpon>ForgotWindow.xaml</DependentUpon>
@@ -135,6 +138,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ECSPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="EditBackupPolicyWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

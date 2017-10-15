@@ -4,6 +4,7 @@ using Aliyun.Acs.Rds.Model.V20140815;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
@@ -24,6 +25,7 @@ namespace CloudManager
         private string mAki, mAks;
         private ObservableCollection<DBParameter> mParameters;
         private ObservableCollection<DBBackup> mBackups;
+        private DBBackupPolicy mPolicy;
 
         public MainWindow mMainWindow { get; set; }
         public delegate void DelegateGot(object obj);
@@ -290,6 +292,8 @@ namespace CloudManager
                     backups.Add(backup);
                 }
                 Dispatcher.Invoke(new DelegateGot(GotBackups), backups);
+
+                GetBackupPolicy(db);
             }
             catch (Exception ex)
             {
@@ -297,9 +301,36 @@ namespace CloudManager
             }
         }
 
-        private void GetBackupPolicy()
+        private void GotBackupPolicy(object obj)
         {
+            mPolicy = obj as DBBackupPolicy;
+            BackupPolicy.DataContext = mPolicy;
+        }
 
+        private void GetBackupPolicy(object obj)
+        {
+            DescribeDBInstance db = obj as DescribeDBInstance;
+            IClientProfile profile = DefaultProfile.GetProfile(db.RegionId, mAki, mAks);
+            DefaultAcsClient client = new DefaultAcsClient(profile);
+            DescribeBackupPolicyRequest request = new DescribeBackupPolicyRequest();
+            request.DBInstanceId = db.DBInstanceId;
+            try
+            {
+                DescribeBackupPolicyResponse response = client.GetAcsResponse(request);
+                DBBackupPolicy policy = new DBBackupPolicy(response);
+                Dispatcher.Invoke(new DelegateGot(GotBackupPolicy), policy);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        private void EditPolicy_Click(object sender, RoutedEventArgs e)
+        {
+            EditBackupPolicyWindow win = new EditBackupPolicyWindow(mPolicy);
+            win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            win.Owner = mMainWindow;
+            win.ShowDialog();
         }
     }
 
@@ -487,5 +518,197 @@ namespace CloudManager
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+    }
+
+    public class DBBackupPolicy
+    {
+        public DBBackupPolicy(DescribeBackupPolicyResponse r)
+        {
+            BackupRetentionPeriod = r.BackupRetentionPeriod.ToString();
+            PreferredNextBackupTime = r.PreferredNextBackupTime;
+            PreferredBackupTime = r.PreferredBackupTime;
+            PreferredBackupPeriod = r.PreferredBackupPeriod;
+            BackupLog = r.BackupLog;
+            LogBackupRetentionPeriod = r.LogBackupRetentionPeriod.ToString();
+        }
+
+        public DBBackupPolicy(DBBackupPolicy p)
+        {
+            BackupRetentionPeriod = p.BackupRetentionPeriod;
+            PreferredNextBackupTime = p.PreferredNextBackupTime;
+            PreferredBackupTime = p.PreferredBackupTime;
+            PreferredBackupPeriod = p.PreferredBackupPeriod;
+            BackupLog = p.BackupLog;
+            LogBackupRetentionPeriod = p.LogBackupRetentionPeriod;
+        }
+
+        private string backupRetentionPeriod;
+
+        private string preferredNextBackupTime;
+
+        private string preferredBackupTime;
+
+        private string preferredBackupPeriod;
+
+        private string backupLog;
+
+        private string logBackupRetentionPeriod;
+
+        public string BackupRetentionPeriod
+        {
+            get
+            {
+                return backupRetentionPeriod;
+            }
+            set
+            {
+                backupRetentionPeriod = value;
+            }
+        }
+
+        public string PreferredNextBackupTime
+        {
+            get
+            {
+                return preferredNextBackupTime;
+            }
+            set
+            {
+                if (value.IndexOf('Z') >= 0 && value.IndexOf('T') >= 0) //UTC time, convert to local time
+                {
+                    DateTime.TryParse(value, out DateTime dt);
+                    preferredNextBackupTime = dt.ToString("yyyy-MM-dd hh:mm:ss");
+                }
+                else
+                {
+                    preferredNextBackupTime = value;
+                }
+            }
+        }
+
+        public string PreferredBackupTime
+        {
+            get
+            {
+                return preferredBackupTime;
+            }
+            set
+            {
+                if (value.IndexOf('Z') >= 0) //UTC time, convert to local time
+                {
+                    int index = value.LastIndexOf('-');
+                    string start = value.Substring(0, index - 1); //The last char is 'Z'
+                    string end = value.Substring(index + 1, value.Length - index - 2);
+                    TimeZoneInfo info = TimeZoneInfo.Local;
+
+                    start += ":00";
+                    end += ":00";
+                    TimeSpan.TryParse(start, out TimeSpan t1);
+                    TimeSpan.TryParse(end, out TimeSpan t2);
+
+                    t1 += info.BaseUtcOffset;
+                    t2 += info.BaseUtcOffset;
+                    preferredBackupTime = t1.ToString().Substring(2, 5) + '-' + t2.ToString().Substring(2, 5);
+                }
+                else
+                {
+                    preferredBackupTime = value;
+                }
+            }
+        }
+
+        public string PreferredBackupPeriod
+        {
+            get
+            {
+                return preferredBackupPeriod;
+            }
+            set
+            {
+                preferredBackupPeriod = value;
+                PreferredBackupPeriodCN = "";
+                if (value.Contains("Monday"))
+                {
+                    Monday = true;
+                    PreferredBackupPeriodCN += "周一 ";
+                }
+                if (value.Contains("Tuesday"))
+                {
+                    Tuesday = true;
+                    PreferredBackupPeriodCN += "周二 ";
+                }
+                if (value.Contains("Wednesday"))
+                {
+                    Wednesday = true;
+                    PreferredBackupPeriodCN += "周三 ";
+                }
+                if (value.Contains("Thursday"))
+                {
+                    Thursday = true;
+                    PreferredBackupPeriodCN += "周四 ";
+                }
+                if (value.Contains("Friday"))
+                {
+                    Friday = true;
+                    PreferredBackupPeriodCN += "周五 ";
+                }
+                if (value.Contains("Saturday"))
+                {
+                    Saturday = true;
+                    PreferredBackupPeriodCN += "周六 ";
+                }
+                if (value.Contains("Sunday"))
+                {
+                    Sunday = true;
+                    PreferredBackupPeriodCN += "周日 ";
+                }
+            }
+        }
+
+        public string PreferredBackupPeriodCN { get; set; }
+
+        public string BackupLog
+        {
+            get
+            {
+                return backupLog;
+            }
+            set
+            {
+                backupLog = value;
+                if (value.Equals("Enable", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    Enable = true; //For Enable button
+                    Disable = false; //For Disable button
+                }
+                else
+                {
+                    Enable = false;
+                    Disable = true;
+                }
+            }
+        }
+
+        public string LogBackupRetentionPeriod
+        {
+            get
+            {
+                return logBackupRetentionPeriod;
+            }
+            set
+            {
+                logBackupRetentionPeriod = value;
+            }
+        }
+
+        public bool Monday { get; set; }
+        public bool Tuesday { get; set; }
+        public bool Wednesday { get; set; }
+        public bool Thursday { get; set; }
+        public bool Friday { get; set; }
+        public bool Saturday { get; set; }
+        public bool Sunday { get; set; }
+        public bool Enable { get; set; }
+        public bool Disable { get; set; }
     }
 }
