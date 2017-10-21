@@ -27,9 +27,8 @@ namespace CloudManager
     /// </summary>
     public partial class AccessWindow : Window
     {
-        string mAki;
-        string mAks;
-        string mRegion = "cn-shanghai";
+        private string mRegion = "cn-shanghai";
+        private delegate void DelegateDone(object obj);
 
         public AccessWindow()
         {
@@ -39,17 +38,14 @@ namespace CloudManager
         private void AccessButton_Click(object sender, RoutedEventArgs e)
         {
             Message.Text = "";
-            mAki = AKI.Text;
-            mAks = AKS.Text;
-
             Thread t = new Thread(new ParameterizedThreadStart(AccessCloud));
-            string[] s = new string[2] { mAki, mAks };
+            string[] s = new string[2] { AKI.Text, AKS.Text };
             t.Start(s);
         }
 
-        private void AccessCloud(object ob)
+        private void AccessCloud(object obj)
         {
-            string[] s = (string[])ob;
+            string[] s = obj as string[];
             IClientProfile profile = DefaultProfile.GetProfile(mRegion, s[0], s[1]);
             DefaultAcsClient client = new DefaultAcsClient(profile);
             DescribeInstancesRequest request = new DescribeInstancesRequest();
@@ -57,28 +53,29 @@ namespace CloudManager
             try
             {
                 DescribeInstancesResponse response = client.GetAcsResponse(request);
-                Dispatcher.Invoke(AccessSuccess);
+                Dispatcher.Invoke(new DelegateDone(AccessSuccess), obj);
             }
             catch (ServerException ex)
             {
                 //MessageBox.Show(ex.ToString());
-                Dispatcher.Invoke(new delegateAccessFail(AccessFail), ex);
+                Dispatcher.Invoke(new DelegateDone(AccessFail), ex);
             }
             catch (ClientException ex)
             {
                 //MessageBox.Show(ex.ToString());
-                Dispatcher.Invoke(new delegateAccessFail(AccessFail), ex);
+                Dispatcher.Invoke(new DelegateDone(AccessFail), ex);
             }
         }
 
-        private void AccessSuccess()
+        private void AccessSuccess(object obj)
         {
-            Window win = new MainWindow(mAki, mAks);
+            string[] s = (string[])obj;
+            App.AKI = s[0];
+            App.AKS = s[1];
+            Window win = new MainWindow(s[0], s[1]);
             win.Show();
             Close();
         }
-
-        public delegate void delegateAccessFail(object obj);//Define delegate
 
         private void AccessFail(object obj)
         {

@@ -4,6 +4,7 @@ using Aliyun.Acs.Core.Profile;
 using Aliyun.Acs.Ecs.Model.V20140526;
 using Aliyun.Acs.Rds.Model.V20140815;
 using Aliyun.Acs.Slb.Model.V20140515;
+using Aliyun.OSS;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -34,6 +35,12 @@ namespace CloudManager
         private ObservableCollection<DescribeDBInstance> mDBInstances = new ObservableCollection<DescribeDBInstance>();
         private DescribeDBInstance mSelDBInstance;
         private RDSPage mRDSPage;
+        private BackupTaskPage mBackupPage;
+        private BucketPage mBucketPage;
+        private ObservableCollection<DescribeBucket> mBuckets = new ObservableCollection<DescribeBucket>();
+        private DescribeBucket mSelBucket;
+
+        private delegate void DelegateGot(object obj);
 
 
         public MainWindow()
@@ -59,6 +66,10 @@ namespace CloudManager
             mSLBPage.mMainWindow = this;
             mRDSPage = new RDSPage(aki, aks);
             mRDSPage.mMainWindow = this;
+            mRDSPage.BackupTaskEvent += new RDSPage.BackupTaskHandler(DoBackupTask);
+            mBucketPage = new BucketPage();
+
+            mBackupPage = new BackupTaskPage();
         }
 
         private void GetRegions()
@@ -86,6 +97,8 @@ namespace CloudManager
             t2.Start();
             Thread t3 = new Thread(GetDBInstances);
             t3.Start();
+            Thread t4 = new Thread(GetBuckets);
+            t4.Start();
         }
 
         private void GetInstances()
@@ -117,8 +130,6 @@ namespace CloudManager
                 }
             }
         }
-
-        private delegate void DelegateGot(object obj);
 
         private void GotInstances(object obj)
         {
@@ -213,6 +224,25 @@ namespace CloudManager
             }
         }
 
+        private void GotBuckets(object obj)
+        {
+            mBuckets = obj as ObservableCollection<DescribeBucket>;
+            BucketList.ItemsSource = mBuckets;
+        }
+
+        private void GetBuckets()
+        {
+            ObservableCollection<DescribeBucket> buckets = new ObservableCollection<DescribeBucket>();
+            string endpoint = "http://oss-cn-hangzhou.aliyuncs.com";
+            OssClient client = new OssClient(endpoint, mAki, mAks);
+            foreach (Bucket b in client.ListBuckets())
+            {
+                DescribeBucket bucket = new DescribeBucket(b);
+                buckets.Add(bucket);
+            }
+            Dispatcher.Invoke(new DelegateGot(GotBuckets), buckets);
+        }
+
         private void ECSList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ECSList.SelectedIndex == -1)
@@ -253,9 +283,24 @@ namespace CloudManager
             RDSList.SelectedIndex = -1;
         }
 
-        private void OSSList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void BucketList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (BucketList.SelectedIndex == -1)
+            {
+                return;
+            }
 
+            if (Process.Content != mBucketPage)
+            {
+                Process.Content = mBucketPage;
+            }
+            mSelBucket = BucketList.SelectedItem as DescribeBucket;
+            mBucketPage.mBucket = mSelBucket;
+        }
+
+        private void BucketList_LostFocus(object sender, RoutedEventArgs e)
+        {
+            BucketList.SelectedIndex = -1;
         }
 
         private void SLBList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -282,6 +327,29 @@ namespace CloudManager
         private void DomainList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+        }
+
+        private void TaskMenus_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TaskMenuList.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            if (Process.Content != mBackupPage)
+            {
+                Process.Content = mBackupPage;
+            }
+
+            if (TaskMenuList.SelectedIndex == 0)
+            {
+
+            }
+        }
+
+        private void DoBackupTask(object obj, BackupTask task)
+        {
+            mBackupPage.AddNewTask(task);
         }
     }
 }

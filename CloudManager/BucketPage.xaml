@@ -1,0 +1,170 @@
+﻿<Page x:Class="CloudManager.BucketPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:CloudManager"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="600"
+      Title="OSSPage">
+
+    <TabControl>
+        <TabItem x:Name="OverView" Header="概览">
+            <StackPanel>
+                <!--TextBlock Text="基础数据" FontWeight="Bold" FontSize="14"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
+                        <TextBlock Text="储存容量:" VerticalAlignment="Center"/>
+                        <TextBlock Text="0" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        <TextBlock Text="Byte" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                        <TextBlock Text="本月外网流量:" VerticalAlignment="Center"/>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="0" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                <TextBlock Text="Byte" VerticalAlignment="Center"/>
+                                <TextBlock Text="(流入)" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="0" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                <TextBlock Text="Byte" VerticalAlignment="Center"/>
+                                <TextBlock Text="(流出)" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="0" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                <TextBlock Text="Byte" VerticalAlignment="Center"/>
+                                <TextBlock Text="(CDN 回源)" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
+                        <TextBlock Text="本月请求次数:" VerticalAlignment="Center"/>
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="0" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                <TextBlock Text="Byte" VerticalAlignment="Center"/>
+                                <TextBlock Text="(PUT)" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="0" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                <TextBlock Text="Byte" VerticalAlignment="Center"/>
+                                <TextBlock Text="(GET)" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
+                        <TextBlock Text="文件数量:" VerticalAlignment="Center"/>
+                        <TextBlock Text="0" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        <TextBlock Text="Byte" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0">
+                        <TextBlock Text="碎片数量:" VerticalAlignment="Center"/>
+                        <TextBlock Text="0" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        <TextBlock Text="Byte" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid-->
+                <TextBlock Text="访问域名" FontWeight="Bold" FontSize="14"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="1*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="EndPoint" Grid.Row="0" Grid.Column="1"/>
+                    <TextBlock Text="访问域名" Grid.Row="0" Grid.Column="2"/>
+                    <TextBlock Text="HTTPS" Grid.Row="0" Grid.Column="3"/>
+                    <TextBlock Text="外网访问" Grid.Row="1" Grid.Column="0"/>
+                    <TextBlock Text="{Binding InternetEndPoint}" TextWrapping="Wrap" Grid.Row="1" Grid.Column="1"/>
+                    <TextBlock Text="{Binding InternetDomain}" TextWrapping="Wrap" Grid.Row="1" Grid.Column="2"/>
+                    <TextBlock Text="支持" Grid.Row="1" Grid.Column="3"/>
+                    <TextBlock Text="ECS 的经典网络访问（内网）" Grid.Row="2" Grid.Column="0"/>
+                    <TextBlock Text="{Binding InternalEndPoint}" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1"/>
+                    <TextBlock Text="{Binding InternalDomain}" TextWrapping="Wrap" Grid.Row="2" Grid.Column="2"/>
+                    <TextBlock Text="不支持" Grid.Row="2" Grid.Column="3"/>
+                    <TextBlock Text="ECS 的 VPC 网络访问（内网）" Grid.Row="3" Grid.Column="0"/>
+                    <TextBlock Text="{Binding VPCEndPoint}" TextWrapping="Wrap" Grid.Row="3" Grid.Column="1"/>
+                    <TextBlock Text="{Binding VPCDomain}" TextWrapping="Wrap" Grid.Row="3" Grid.Column="2"/>
+                    <TextBlock Text="不支持" Grid.Row="3" Grid.Column="3"/>
+                </Grid>
+                <TextBlock Text="基础设置" FontWeight="Bold" FontSize="14"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="4*"/>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="4*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="读写权限" Grid.Row="0" Grid.Column="0"/>
+                    <TextBlock Text="{Binding ACL, Converter={StaticResource StatusTextConverter}}" Grid.Row="0" Grid.Column="1"/>
+                    <TextBlock Text="跨域访问" Grid.Row="0" Grid.Column="2"/>
+                    <TextBlock Text="{Binding CORSRule, Converter={StaticResource StatusTextConverter}}" Grid.Row="0" Grid.Column="3"/>
+                    <TextBlock Text="防盗链" Grid.Row="1" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Referer, Converter={StaticResource StatusTextConverter}}" Grid.Row="1" Grid.Column="1"/>
+                    <TextBlock Text="生命周期" Grid.Row="1" Grid.Column="2"/>
+                    <TextBlock Text="{Binding LifecycleRule, Converter={StaticResource StatusTextConverter}}" Grid.Row="1" Grid.Column="3"/>
+                    <TextBlock Text="日志管理" Grid.Row="2" Grid.Column="0"/>
+                    <TextBlock Text="{Binding Logging, Converter={StaticResource StatusTextConverter}}" Grid.Row="2" Grid.Column="1"/>
+                    <TextBlock Text="静态页面" Grid.Row="2" Grid.Column="2"/>
+                    <TextBlock Text="{Binding Website, Converter={StaticResource StatusTextConverter}}" Grid.Row="2" Grid.Column="3"/>
+                </Grid>
+            </StackPanel>
+        </TabItem>
+        <TabItem x:Name="FileManager" Header="文件管理">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="6*" />
+                        <ColumnDefinition Width="1.8*" />
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="0.2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid Grid.Column="0" x:Name="Column1"/>
+                    <Grid Grid.Column="1" x:Name="Column2"/>
+                    <Grid Grid.Column="2" x:Name="Column3"/>
+                </Grid>
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <Button x:Name="Previous" Click="Previous_Click" Style="{StaticResource PreviousButton}"/>
+                    <Button x:Name="Next" Click="Next_Click"  Style="{StaticResource NextButton}" Margin="5,0,0,0"/>
+                    <Grid>
+                        <TextBox x:Name="Path" Text="{Binding Key, Mode=OneWay}" Margin="0,0,20,0" HorizontalAlignment="Right" VerticalContentAlignment="Center"/>
+                    </Grid>
+                </StackPanel>
+                <ListView x:Name="FileList" MouseDoubleClick="FileList_MouseDoubleClick">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="文件名" DisplayMemberBinding="{Binding Name}"
+                                            Width="{Binding ElementName=Column1, Path=ActualWidth}"/>
+                            <GridViewColumn Header="大小" DisplayMemberBinding="{Binding Size, Converter={StaticResource FileSizeConverter}}"
+                                            Width="{Binding ElementName=Column2, Path=ActualWidth}"/>
+                            <GridViewColumn Header="创建时间" DisplayMemberBinding="{Binding CreatTime}"
+                                            Width="{Binding ElementName=Column3, Path=ActualWidth}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </StackPanel>
+        </TabItem>
+    </TabControl>
+</Page>

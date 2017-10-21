@@ -13,5 +13,7 @@ namespace CloudManager
     /// </summary>
     public partial class App : Application
     {
+        public static string AKI;
+        public static string AKS;
     }
 }

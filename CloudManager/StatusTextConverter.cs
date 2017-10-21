@@ -17,7 +17,7 @@ namespace CloudManager
                 string status = (string)value;
 
                 if (status.Equals("Running", StringComparison.CurrentCultureIgnoreCase)
-                || status.Equals("active", StringComparison.CurrentCultureIgnoreCase))
+                    || status.Equals("active", StringComparison.CurrentCultureIgnoreCase))
                 {
                     return "运行中";
                 }
@@ -133,11 +133,13 @@ namespace CloudManager
                     }
                     return null;
                 }
-                else if (status.Equals("on", StringComparison.CurrentCultureIgnoreCase))
+                else if (status.Equals("on", StringComparison.CurrentCultureIgnoreCase)
+                    || status.Equals("enable", StringComparison.CurrentCultureIgnoreCase))
                 {
                     return "开启";
                 }
-                else if (status.Equals("off", StringComparison.CurrentCultureIgnoreCase))
+                else if (status.Equals("off", StringComparison.CurrentCultureIgnoreCase)
+                    || status.Equals("disable", StringComparison.CurrentCultureIgnoreCase))
                 {
                     return "关闭";
                 }
@@ -157,13 +159,25 @@ namespace CloudManager
                 {
                     return "增量";
                 }
-                else if (status.Equals("enable", StringComparison.CurrentCultureIgnoreCase))
+                else if (status.Equals("Enabled", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    return "开启";
+                    return "已开启";
                 }
-                else if (status.Equals("disable", StringComparison.CurrentCultureIgnoreCase))
+                else if (status.Equals("Disabled", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    return "关闭";
+                    return "未开启";
+                }
+                else if (status.Equals("Private", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return "私有";
+                }
+                else if (status.Equals("PublicRead", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return "公共读";
+                }
+                else if (status.Equals("PublicReadWrite", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return "公共读写";
                 }
                 else
                 {

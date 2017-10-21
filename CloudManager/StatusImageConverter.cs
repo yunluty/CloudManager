@@ -19,8 +19,15 @@ namespace CloudManager
             if (typeof(string).IsInstanceOfType(value))
             {
                 string status = (string)value;
-
-                if (status.Equals("Running", StringComparison.CurrentCultureIgnoreCase)
+                if (status.Equals("ECS"))
+                {
+                    return "images/ecs.png";
+                }
+                else if (status.Equals("RDS"))
+                {
+                    return "images/rds.png";
+                }
+                else if (status.Equals("Running", StringComparison.CurrentCultureIgnoreCase)
                     || status.Equals("active", StringComparison.CurrentCultureIgnoreCase))
                 {
                     return "images/running.png";

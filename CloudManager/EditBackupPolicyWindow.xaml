@@ -86,7 +86,7 @@
             </StackPanel>
         </Grid>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,20">
-            <Button x:Name="OK" Width="80" Height="32" Content="下一步" Click="OK_Click"/>
+            <Button x:Name="OK" Width="80" Height="32" Content="确定" Click="OK_Click"/>
             <Button x:Name="Cancel" Width="80" Height="32" Content="取消" Click="Cancel_Click" Margin="10,0,10,0"/>
         </StackPanel>
     </StackPanel>

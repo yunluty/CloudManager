@@ -1,6 +1,7 @@
 ﻿using Aliyun.Acs.Core;
 using Aliyun.Acs.Core.Profile;
 using Aliyun.Acs.Rds.Model.V20140815;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -29,6 +30,8 @@ namespace CloudManager
 
         public MainWindow mMainWindow { get; set; }
         public delegate void DelegateGot(object obj);
+        public delegate void BackupTaskHandler(object sender, BackupTask task);
+        public event BackupTaskHandler BackupTaskEvent;
 
 
         public RDSPage()
@@ -243,7 +246,6 @@ namespace CloudManager
             }
             catch (Exception ex)
             {
-
             }
         }
 
@@ -253,9 +255,32 @@ namespace CloudManager
             Backups.ItemsSource = mBackups;
         }
 
+        private string GetFileNameByUrl(string url)
+        {
+            int start = url.LastIndexOf('/') + 1;
+            int end = url.IndexOf('?');
+            return url.Substring(start, end - start);
+        }
+
         private void Download_Click(object sender, RoutedEventArgs e)
         {
-
+            DBBackup backup = (sender as Button).DataContext as DBBackup;
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.IsFolderPicker = true;
+            dialog.Title = "选择保存位置";
+            dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                BackupTask task = new BackupTask();
+                task.InstanceType = "RDS";
+                task.InstanceID = mDBInstance.DBInstanceId;
+                task.InstanceName = mDBInstance.DBInstanceDescription;
+                task.URL = backup.BackupDownloadURL;
+                task.SavePath = dialog.FileName;
+                task.FileName = GetFileNameByUrl(task.URL);
+                task.FileType = "File";
+                BackupTaskEvent?.Invoke(this, task);
+            }
         }
 
         private void DownloadURL_Click(object sender, RoutedEventArgs e)
@@ -318,6 +343,7 @@ namespace CloudManager
             {
                 DescribeBackupPolicyResponse response = client.GetAcsResponse(request);
                 DBBackupPolicy policy = new DBBackupPolicy(response);
+                policy.DBInstanceId = db.DBInstanceId;
                 Dispatcher.Invoke(new DelegateGot(GotBackupPolicy), policy);
             }
             catch (Exception ex)
@@ -327,7 +353,9 @@ namespace CloudManager
 
         private void EditPolicy_Click(object sender, RoutedEventArgs e)
         {
-            EditBackupPolicyWindow win = new EditBackupPolicyWindow(mPolicy);
+            IClientProfile profile = DefaultProfile.GetProfile(mDBInstance.RegionId, mAki, mAks);
+            DefaultAcsClient client = new DefaultAcsClient(profile);
+            EditBackupPolicyWindow win = new EditBackupPolicyWindow(mPolicy, client);
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             win.Owner = mMainWindow;
             win.ShowDialog();
@@ -485,7 +513,7 @@ namespace CloudManager
 
         public long? TotalBackupSize { get; set; }
 
-        public long? backupSize;
+        private long? backupSize;
         public long? BackupSize
         {
             get { return backupSize; }
@@ -534,6 +562,7 @@ namespace CloudManager
 
         public DBBackupPolicy(DBBackupPolicy p)
         {
+            DBInstanceId = p.DBInstanceId;
             BackupRetentionPeriod = p.BackupRetentionPeriod;
             PreferredNextBackupTime = p.PreferredNextBackupTime;
             PreferredBackupTime = p.PreferredBackupTime;
@@ -543,16 +572,13 @@ namespace CloudManager
         }
 
         private string backupRetentionPeriod;
-
         private string preferredNextBackupTime;
-
         private string preferredBackupTime;
-
         private string preferredBackupPeriod;
-
         private string backupLog;
-
         private string logBackupRetentionPeriod;
+
+        public string DBInstanceId { get; set; }
 
         public string BackupRetentionPeriod
         {
@@ -566,7 +592,7 @@ namespace CloudManager
             }
         }
 
-        public string PreferredNextBackupTime
+        public string PreferredNextBackupTime //Local time
         {
             get
             {
@@ -586,7 +612,7 @@ namespace CloudManager
             }
         }
 
-        public string PreferredBackupTime
+        public string PreferredBackupTime //Local time
         {
             get
             {
@@ -597,18 +623,36 @@ namespace CloudManager
                 if (value.IndexOf('Z') >= 0) //UTC time, convert to local time
                 {
                     int index = value.LastIndexOf('-');
-                    string start = value.Substring(0, index - 1); //The last char is 'Z'
-                    string end = value.Substring(index + 1, value.Length - index - 2);
+                    string start = value.Substring(0, index - 1) + ":00"; //The last char is 'Z'
+                    string end = value.Substring(index + 1, value.Length - index - 2) + ":00";
                     TimeZoneInfo info = TimeZoneInfo.Local;
 
-                    start += ":00";
-                    end += ":00";
                     TimeSpan.TryParse(start, out TimeSpan t1);
                     TimeSpan.TryParse(end, out TimeSpan t2);
-
                     t1 += info.BaseUtcOffset;
                     t2 += info.BaseUtcOffset;
-                    preferredBackupTime = t1.ToString().Substring(2, 5) + '-' + t2.ToString().Substring(2, 5);
+
+                    TimeSpan t3 = TimeSpan.FromDays(1);
+
+                    if (t1 < TimeSpan.FromSeconds(0))
+                    {
+                        t1 += TimeSpan.FromDays(1);
+                    }
+                    else if (t1 >= TimeSpan.FromDays(1))
+                    {
+                        t1 -= TimeSpan.FromDays(1);
+                    }
+
+                    if (t2 < TimeSpan.FromSeconds(0))
+                    {
+                        t2 += TimeSpan.FromDays(1);
+                    }
+                    else if (t2 >= TimeSpan.FromDays(1))
+                    {
+                        t2 -= TimeSpan.FromDays(1);
+                    }
+
+                    preferredBackupTime = t1.ToString().Substring(0, 5) + '-' + t2.ToString().Substring(0, 5);
                 }
                 else
                 {
@@ -710,5 +754,73 @@ namespace CloudManager
         public bool Sunday { get; set; }
         public bool Enable { get; set; }
         public bool Disable { get; set; }
+
+        public string GetBackupPeriod()
+        {
+            string period = "";
+            if (Monday)
+            {
+                period += "Monday,";
+            }
+            if (Tuesday)
+            {
+                period += "Tuesday,";
+            }
+            if (Wednesday)
+            {
+                period += "Wednesday,";
+            }
+            if (Thursday)
+            {
+                period += "Thursday,";
+            }
+            if (Friday)
+            {
+                period += "Friday,";
+            }
+            if (Saturday)
+            {
+                period += "Saturday,";
+            }
+            if (Sunday)
+            {
+                period += "Sunday,";
+            }
+            period = period.Substring(0, period.Length - 1); //Rmove the last ','
+            return period;
+        }
+        
+        public string GetBackupTimeUTC()
+        {
+            int index = PreferredBackupTime.LastIndexOf('-');
+            string start = PreferredBackupTime.Substring(0, index) + ":00"; //The last char is 'Z'
+            string end = PreferredBackupTime.Substring(index + 1, PreferredBackupTime.Length - index - 1) + ":00";
+            TimeZoneInfo info = TimeZoneInfo.Local;
+
+            TimeSpan.TryParse(start, out TimeSpan t1);
+            TimeSpan.TryParse(end, out TimeSpan t2);
+            t1 -= info.BaseUtcOffset;
+            t2 -= info.BaseUtcOffset;
+
+            if (t1 < TimeSpan.FromSeconds(0))
+            {
+                t1 += TimeSpan.FromDays(1);
+            }
+            else if (t1 >= TimeSpan.FromDays(1))
+            {
+                t1 -= TimeSpan.FromDays(1);
+            }
+
+            if (t2 < TimeSpan.FromSeconds(0))
+            {
+                t2 += TimeSpan.FromDays(1);
+            }
+            else if (t2 >= TimeSpan.FromDays(1))
+            {
+                t2 -= TimeSpan.FromDays(1);
+            }
+
+            return t1.ToString().Substring(0, 5) + 'Z' + '-' + t2.ToString().Substring(0, 5) + 'Z';
+        }
     }
 }

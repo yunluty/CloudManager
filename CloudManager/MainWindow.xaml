@@ -3,10 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:CloudManager"
         mc:Ignorable="d"
         Title="CloudManager" Height="720" Width="1024"
         WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <x:Array x:Key="TaskMenus" Type="sys:String">
+            <sys:String>正在备份</sys:String>
+            <sys:String>已完成</sys:String>
+        </x:Array>
+    </Window.Resources>
     
     <Grid>
         <Grid.ColumnDefinitions>
@@ -14,7 +22,7 @@
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="10*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel  Grid.Column="0">
+        <StackPanel Grid.Column="0">
             <TextBlock Text="云资源" FontSize="18"/>
             <Expander x:Name="ECSExpander">
                 <Expander.Header>
@@ -51,11 +59,12 @@
                     <TextBlock Text="对象储存 OSS"/>
                 </Expander.Header>
                 <Expander.Content>
-                    <ListBox x:Name="OSSList" BorderThickness="0" BorderBrush="Transparent"
-                             SelectionChanged="OSSList_SelectionChanged">
+                    <ListBox x:Name="BucketList" BorderThickness="0" BorderBrush="Transparent"
+                             SelectionChanged="BucketList_SelectionChanged"
+                             LostFocus="BucketList_LostFocus">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding InstanceName}"/>
+                                <TextBlock Text="{Binding Name}"/>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
@@ -84,10 +93,9 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
                     </StackPanel>
-                    
                 </Expander.Content>
             </Expander>
-            <Expander>
+            <!--<Expander>
                 <Expander.Header>
                     <TextBlock Text="域名"/>
                 </Expander.Header>
@@ -101,8 +109,13 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </Expander.Content>
-            </Expander>
+            </Expander>-->
             <TextBlock Text="任务" FontSize="18"/>
+            <ListBox x:Name="TaskMenuList"  BorderThickness="0" BorderBrush="Transparent"
+                     ItemsSource="{StaticResource TaskMenus}"
+                     SelectionChanged="TaskMenus_SelectionChanged">
+
+            </ListBox>
         </StackPanel>
         <Frame x:Name="Information" Grid.Column="1" NavigationUIVisibility="Hidden"/>
         <StackPanel Grid.Column="2">
