@@ -43,7 +43,7 @@
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Grid>
                         <Border Name="Border" Background="#09A3DC">
-                            <ContentPresenter Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" />
+                            <ContentPresenter Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" />
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>

@@ -26,6 +26,7 @@ namespace CloudManager
         private delegate void DelegateGot(object obj);
         private DescribeOSSObject mRootDirectory;
         private DescribeOSSObject mCurrDirectory;
+        private DescribeOSSObject mLastDirectory;
 
         public BucketPage()
         {
@@ -197,12 +198,13 @@ namespace CloudManager
         {
             ListView view = sender as ListView;
             DescribeOSSObject obj = view.SelectedItem as DescribeOSSObject;
-            mCurrDirectory = obj;
 
             if (obj.ObjectType == DescribeOSSObject.OSSObjectType.Directory)
             {
+                mCurrDirectory = obj;
                 view.ItemsSource = obj.ChildObjects;
                 FileManager.DataContext = mCurrDirectory;
+                mLastDirectory = mCurrDirectory;
             }
         }
 
@@ -217,6 +219,105 @@ namespace CloudManager
         }
 
         private void Next_Click(object sender, RoutedEventArgs e)
+        {
+            if (mLastDirectory != null && mLastDirectory != mCurrDirectory)
+            {
+                int index = -1;
+                string key = null;
+
+                if (mCurrDirectory.Key == mCurrDirectory.BucketName)
+                {
+                    index = mLastDirectory.Key.IndexOf('/');
+                    key = mLastDirectory.Key.Substring(0, index + 1);
+                }
+                else
+                {
+                    if (mLastDirectory.Key.Contains(mCurrDirectory.Key))
+                    {
+                        string next = mLastDirectory.Key.Substring(mCurrDirectory.Key.Length);
+                        index = next.IndexOf('/');
+                        next = next.Substring(0, index + 1);
+                        key = mCurrDirectory.Key + next;
+                    }
+                }
+
+                foreach (DescribeOSSObject obj in mCurrDirectory.ChildObjects)
+                {
+                    if (key != null && key == obj.Key)
+                    {
+                        mCurrDirectory = obj;
+                        FileList.ItemsSource = mCurrDirectory.ChildObjects;
+                        FileManager.DataContext = mCurrDirectory;
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void UploadFile_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CreateDirectory_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Download_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        
+        private void DeleteObject(object para)
+        {
+            DescribeOSSObject obj = para as DescribeOSSObject;
+            DescribeBucket bucket = mBucket;
+            if (obj.BucketName != bucket.Name)
+            {
+                return;
+            }
+
+            string endpoint = "http://" + bucket.InternetEndPoint;
+            OssClient client = new OssClient(endpoint, App.AKI, App.AKS);
+            try
+            {
+                client.DeleteObject(bucket.Name, obj.Key);
+                Dispatcher.Invoke(new DelegateGot(DeletedObject), obj);
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void DeletedObject(object para)
+        {
+            DescribeOSSObject obj = para as DescribeOSSObject;
+            if (obj != null && obj.ParentObject != null)
+            {
+                obj.ParentObject.ChildObjects.Remove(obj);
+            }
+        }
+
+        private void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            DescribeOSSObject obj = FileList.SelectedItem as DescribeOSSObject;
+            if (obj == null)
+            {
+                return;
+            }
+
+            Thread t = new Thread(new ParameterizedThreadStart(DeleteObject));
+            t.Start(obj);
+        }
+
+        private void GetUrl_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void HttpHeader_Click(object sender, RoutedEventArgs e)
         {
 
         }
