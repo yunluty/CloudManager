@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Aliyun.OSS;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CloudManager
 {
-    public class BackupTask : INotifyPropertyChanged
+    public class BackupTask : EventArgs, INotifyPropertyChanged
     {
         public string InstanceType { get; set; }
 
@@ -15,9 +16,11 @@ namespace CloudManager
 
         public string InstanceName { get; set; }
 
+        public object Instance { get; set; }
+
         public string URL { get; set; }
 
-        public string SavePath { get; set; }
+        public string FilePath { get; set; }
 
         public string Status { get; set; }
 
@@ -46,7 +49,7 @@ namespace CloudManager
 
         public string FileName { get; set; }
 
-        public string FileType { get; set; }
+        public FileTypeMode FileType { get; set; }
 
         private long totalsize;
         public long TotalSize
@@ -55,33 +58,7 @@ namespace CloudManager
             set
             {
                 totalsize = value;
-                if (value > 1024 * 1024 * 1024)
-                {
-                    TotalSizeUnit = ((double)value / (1024 * 1024 * 1024)).ToString("0.00") + " GB";
-                }
-                else if (value > 1024 * 1024)
-                {
-                    TotalSizeUnit = ((double)value / (1024 * 1024)).ToString("0.00") + " MB";
-                }
-                else if (value >= 1024)
-                {
-                    TotalSizeUnit = ((double)value / 1024).ToString("0.00") + " KB";
-                }
-                else
-                {
-                    TotalSizeUnit = value + " B";
-                }
-            }
-        }
-
-        private string totalSizeUnit;
-        public string TotalSizeUnit
-        {
-            get { return totalSizeUnit; }
-            set
-            {
-                totalSizeUnit = value;
-                NotifyPropertyChanged("TotalSizeUnit");
+                NotifyPropertyChanged("TotalSize");
             }
         }
 
@@ -99,12 +76,32 @@ namespace CloudManager
             }
         }
 
+        public TaskTypeMode TaskType { get; set; }
+
         public string CompleteTime { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void StreamTransferProgress(object sender, StreamTransferProgressArgs args)
+        {
+            TotalSize = args.TotalBytes;
+            DownloadSize = args.TransferredBytes;
+        }
+
+        public enum TaskTypeMode
+        {
+            Upload = 0,
+            Download = 1
+        }
+
+        public enum FileTypeMode
+        {
+            File = 0,
+            Directory = 1
         }
     }
 }

@@ -1,0 +1,249 @@
+﻿using Aliyun.OSS;
+using Aliyun.OSS.Common;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using static CloudManager.BackupTask;
+
+namespace CloudManager
+{
+    /// <summary>
+    /// BackupTaskPage.xaml 的交互逻辑
+    /// </summary>
+    public partial class TaskPage : Page
+    {
+        private static int DOWNLOAD_SIZE = 4096;
+
+        private ObservableCollection<BackupTask> mRunningTasks = new ObservableCollection<BackupTask>();
+        private ObservableCollection<BackupTask> mCompeleteTasks = new ObservableCollection<BackupTask>();
+
+        public delegate void DelegateResult(object obj);
+        public string TaskType { get; set; }
+
+        public TaskPage()
+        {
+            InitializeComponent();
+            RunningList.ItemsSource = mRunningTasks;
+            CompleteList.ItemsSource = mCompeleteTasks;
+        }
+
+        public void AddNewTask(BackupTask task)
+        {
+            mRunningTasks.Add(task);
+            Thread t = new Thread(StartDownload);
+            t.Start(task);
+        }
+
+        private void StartDownload(object obj)
+        {
+            BackupTask task = obj as BackupTask;
+            switch (task.InstanceType)
+            {
+                case "RDS":
+                    HttpDownload(task);
+                    break;
+
+                case "OSS":
+                    if (task.TaskType == BackupTask.TaskTypeMode.Upload)
+                    {
+                        OssUpload(task);
+                    }
+                    else if (task.TaskType == BackupTask.TaskTypeMode.Download)
+                    {
+                        OssDownload(task);
+                    }
+                    break;
+            }
+        }
+
+        private void TaskSuccess(object obj)
+        {
+            BackupTask task = obj as BackupTask;
+            task.Status = "Success";
+            task.CompleteTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+            mRunningTasks.Remove(task);
+            mCompeleteTasks.Add(task);
+        }
+
+        private void TaskFail(object obj)
+        {
+            BackupTask task = obj as BackupTask;
+            task.Status = "Failed";
+            task.CompleteTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+        }
+
+        private void OssUpload(BackupTask task)
+        {
+            DescribeBucket bucket = task.Instance as DescribeBucket;
+            string endpoint = "http://" + bucket.InternetEndPoint;
+            OssClient client = new OssClient(endpoint, App.AKI, App.AKS);
+            string key = task.URL;
+            Stream stream = null;
+            try
+            {
+                if (task.FileType == FileTypeMode.Directory)
+                {
+                    stream = new MemoryStream();
+                    client.PutObject(bucket.Name, key, stream);
+                }
+                else
+                {
+
+                    stream = File.Open(task.FilePath, FileMode.Open);
+                    var request = new PutObjectRequest(bucket.Name, key, stream);
+                    request.StreamTransferProgress += task.StreamTransferProgress;
+                    client.PutObject(request);
+                }
+                Dispatcher.Invoke(new DelegateResult(TaskSuccess), task);
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke(new DelegateResult(TaskFail), task);
+            }
+            finally
+            {
+                if (stream != null)
+                {
+                    stream.Close();
+                }
+            }
+        }
+
+        private void OssDownload(BackupTask task)
+        {
+            DescribeBucket bucket = task.Instance as DescribeBucket;
+            string endpoint = "http://" + bucket.InternetEndPoint;
+            OssClient client = new OssClient(endpoint, App.AKI, App.AKS);
+            string path = task.FilePath;
+            string key = task.URL;
+            Stream stream = null;
+            FileStream fs = null;
+            try
+            {
+                if (task.FileType == FileTypeMode.Directory)
+                {
+                    if (!Directory.Exists(task.FilePath))
+                    {
+                        Directory.CreateDirectory(task.FilePath);
+                    }
+                }
+                else
+                {
+                    if (File.Exists(path))
+                    {
+                        File.Delete(path);
+                    }
+
+                    fs = File.Open(path, FileMode.Create);
+                    var request = new GetObjectRequest(bucket.Name, key);
+                    request.StreamTransferProgress += task.StreamTransferProgress;
+                    var obj = client.GetObject(request);
+                    stream = obj.Content;
+                    byte[] bytes = new byte[DOWNLOAD_SIZE];
+                    int size = 0;
+                    while ((size = stream.Read(bytes, 0, DOWNLOAD_SIZE)) > 0)
+                    {
+                        fs.Write(bytes, 0, size);
+                    }
+                }     
+                Dispatcher.Invoke(new DelegateResult(TaskSuccess), task);
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke(new DelegateResult(TaskFail), task);
+            }
+            finally
+            {
+                if (stream != null)
+                {
+                    stream.Close();
+                }
+
+                if (fs != null)
+                {
+                    fs.Close();
+                }
+            }
+        }
+
+        private void HttpDownload(BackupTask task)
+        {
+            string path = task.FilePath;
+            FileStream fs = null;
+            HttpWebRequest request = null;
+            Stream rs = null;
+            WebResponse response = null;
+
+            if (File.Exists(path))
+            {
+                File.Delete(path); //Redownload
+            }
+
+            try
+            {
+                fs = new FileStream(path, FileMode.Create);
+
+                request = WebRequest.Create(task.URL) as HttpWebRequest;
+                request.ReadWriteTimeout = 2000;
+                request.Timeout = 5000;
+                response = request.GetResponse();
+                rs = response.GetResponseStream();
+
+                task.TotalSize = response.ContentLength;
+                task.DownloadSize = 0;
+
+                byte[] bytes = new byte[DOWNLOAD_SIZE];
+                int size = 0;
+                while ((size = rs.Read(bytes, 0, DOWNLOAD_SIZE)) > 0)
+                { 
+                    fs.Write(bytes, 0, size);
+                    task.DownloadSize += size;
+                    Thread.Sleep(10);
+                }
+
+                Dispatcher.Invoke(new DelegateResult(TaskSuccess), task);
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke(new DelegateResult(TaskFail), task);
+            }
+            finally
+            {
+                if (fs != null)
+                {
+                    fs.Close();
+                }
+
+                if (rs != null)
+                {
+                    rs.Close();
+                }
+                
+                if (request != null)
+                {
+                    request.Abort();
+                }
+
+                if (response != null)
+                {
+                    response.Close();
+                }
+            }
+        }
+    }
+}

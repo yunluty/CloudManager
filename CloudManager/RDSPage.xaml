@@ -34,11 +34,11 @@
         </DataTemplate>
         <DataTemplate x:Key="ProcessBackup">
             <StackPanel Orientation="Horizontal">
-                <Button x:Name="Download" Content="下载" Click="Download_Click" Style="{StaticResource ClickTex}"/>
+                <Button x:Name="Download" Content="下载" Click="Download_Click" Style="{StaticResource ClickText}"/>
                 <Button x:Name="DownloadURL" Content="外网地址" Click="DownloadURL_Click"
-                        Style="{StaticResource ClickTex}" Margin="5,0,0,0"/>
+                        Style="{StaticResource ClickText}" Margin="5,0,0,0"/>
                 <Button x:Name="IntranetDownloadURL" Content="内网地址" Click="IntranetDownloadURL_Click"
-                        Style="{StaticResource ClickTex}" Margin="5,0,0,0"/>
+                        Style="{StaticResource ClickText}" Margin="5,0,0,0"/>
             </StackPanel>
         </DataTemplate>
     </Page.Resources>

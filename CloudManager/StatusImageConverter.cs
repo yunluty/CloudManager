@@ -27,6 +27,10 @@ namespace CloudManager
                 {
                     return "images/rds.png";
                 }
+                else if (status.Equals("OSS"))
+                {
+                    return "images/oss.png";
+                }
                 else if (status.Equals("Running", StringComparison.CurrentCultureIgnoreCase)
                     || status.Equals("active", StringComparison.CurrentCultureIgnoreCase))
                 {

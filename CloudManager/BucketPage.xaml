@@ -145,14 +145,17 @@
                             <Button x:Name="Next" Click="Next_Click"  Style="{StaticResource NextButton}" Margin="5,0,0,0"/>
                         </StackPanel>
                         <TextBox x:Name="Path" Grid.Column="1" Height="30"
-                            Text="{Binding Key, Mode=OneWay}" Margin="0,0,30,0" VerticalContentAlignment="Center"/>
+                            Text="{Binding Path, Mode=OneWay}" Margin="0,0,30,0" VerticalContentAlignment="Center"/>
                     </Grid>
                     <StackPanel Orientation="Horizontal" Margin="10,10,10,10">
                         <Button x:Name="UploadFile" Content="上传文件"
                                 Click="UploadFile_Click"
                                 Style="{StaticResource ProcessButton}"/>
-                        <Button x:Name="CreateDirectory" Content="新建文件夹"
-                                Click="CreateDirectory_Click"
+                        <Button x:Name="UploadFolder" Content="上传文件"
+                                Click="UploadFolder_Click"
+                                Style="{StaticResource ProcessButton}" Margin="10,0,0,0"/>
+                        <Button x:Name="CreateFolder" Content="新建文件夹"
+                                Click="CreateFolder_Click"
                                 Style="{StaticResource ProcessButton}" Margin="10,0,0,0"/>
                         <Button x:Name="Download" Content="下载"
                                 Click="Download_Click"

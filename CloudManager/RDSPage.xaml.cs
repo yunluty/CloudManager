@@ -15,6 +15,7 @@ using static Aliyun.Acs.Rds.Model.V20140815.DescribeBackupsResponse;
 using static Aliyun.Acs.Rds.Model.V20140815.DescribeDBInstanceAttributeResponse;
 using static Aliyun.Acs.Rds.Model.V20140815.DescribeParametersResponse;
 using static Aliyun.Acs.Rds.Model.V20140815.DescribeParameterTemplatesResponse;
+using static CloudManager.BackupTask;
 
 namespace CloudManager
 {
@@ -30,8 +31,9 @@ namespace CloudManager
 
         public MainWindow mMainWindow { get; set; }
         public delegate void DelegateGot(object obj);
-        public delegate void BackupTaskHandler(object sender, BackupTask task);
-        public event BackupTaskHandler BackupTaskEvent;
+        //public delegate void BackupTaskHandler(object sender, BackupTask task);
+        //public event BackupTaskHandler BackupTaskEvent;
+        public EventHandler<BackupTask> BackupTaskEvent;
 
 
         public RDSPage()
@@ -276,9 +278,9 @@ namespace CloudManager
                 task.InstanceID = mDBInstance.DBInstanceId;
                 task.InstanceName = mDBInstance.DBInstanceDescription;
                 task.URL = backup.BackupDownloadURL;
-                task.SavePath = dialog.FileName;
                 task.FileName = GetFileNameByUrl(task.URL);
-                task.FileType = "File";
+                task.FilePath = task.FilePath + '\\' + task.FileName;
+                task.FileType = FileTypeMode.File;
                 BackupTaskEvent?.Invoke(this, task);
             }
         }

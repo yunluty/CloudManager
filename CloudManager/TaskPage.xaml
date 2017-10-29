@@ -1,4 +1,4 @@
-﻿<Page x:Class="CloudManager.BackupTaskPage"
+﻿<Page x:Class="CloudManager.TaskPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -15,12 +15,10 @@
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{Binding InstanceType, Converter={StaticResource StatusImageConverter}}"/>
-                        <StackPanel  Margin="20,0,0,0">
-                            <TextBlock Text="{Binding InstanceID}"/>
-                            <TextBlock Text="{Binding InstanceName}"/>
-                        </StackPanel>
-                        <TextBlock/>
-                        <TextBlock Text="{Binding TotalSizeUnit}" VerticalAlignment="Center" Margin="20,0,0,0"/>
+                        <TextBlock Text="{Binding InstanceName}" Margin="20,0,0,0"/>
+                        <TextBlock Text="{Binding FileName}" Margin="20,0,0,0"/>
+                        <TextBlock Text="{Binding TotalSize, Converter={StaticResource FileSizeConverter}}"
+                                   VerticalAlignment="Center" Margin="20,0,0,0"/>
                         <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
                             <ProgressBar Value="{Binding Progress}" Width="100" Height="10"/>
                             <TextBlock Text="{Binding ProgressPercent}"  VerticalAlignment="Center"  Margin="10,0,0,0"/>
@@ -34,11 +32,10 @@
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{Binding InstanceType, Converter={StaticResource StatusImageConverter}}"/>
-                        <StackPanel Margin="20,0,0,0">
-                            <TextBlock Text="{Binding InstanceID}"/>
-                            <TextBlock Text="{Binding InstanceName}"/>
-                        </StackPanel>
-                        <TextBlock Text="{Binding TotalSizeUnit}" VerticalAlignment="Center" Margin="20,0,0,0"/>
+                        <TextBlock Text="{Binding InstanceName}" Margin="20,0,0,0"/>
+                        <TextBlock Text="{Binding FileName}" Margin="20,0,0,0"/>
+                        <TextBlock Text="{Binding TotalSize, Converter={StaticResource FileSizeConverter}}"
+                                   VerticalAlignment="Center" Margin="20,0,0,0"/>
                         <TextBlock Text="{Binding CompleteTime}" VerticalAlignment="Center" Margin="20,0,0,0"/>
                     </StackPanel>
                 </DataTemplate>

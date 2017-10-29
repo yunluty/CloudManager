@@ -146,7 +146,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="ClickTex" TargetType="{x:Type Button}">
+    <Style x:Key="ClickText" TargetType="{x:Type Button}">
         <Setter Property="Foreground" Value="#09A3DC"/>
         <Setter Property="Template">
             <Setter.Value>

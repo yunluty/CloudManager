@@ -35,7 +35,7 @@ namespace CloudManager
         private ObservableCollection<DescribeDBInstance> mDBInstances = new ObservableCollection<DescribeDBInstance>();
         private DescribeDBInstance mSelDBInstance;
         private RDSPage mRDSPage;
-        private BackupTaskPage mBackupPage;
+        private TaskPage mBackupPage;
         private BucketPage mBucketPage;
         private ObservableCollection<DescribeBucket> mBuckets = new ObservableCollection<DescribeBucket>();
         private DescribeBucket mSelBucket;
@@ -66,10 +66,11 @@ namespace CloudManager
             mSLBPage.mMainWindow = this;
             mRDSPage = new RDSPage(aki, aks);
             mRDSPage.mMainWindow = this;
-            mRDSPage.BackupTaskEvent += new RDSPage.BackupTaskHandler(DoBackupTask);
+            mRDSPage.BackupTaskEvent += DoBackupTask;
             mBucketPage = new BucketPage();
-
-            mBackupPage = new BackupTaskPage();
+            mBucketPage.BackupTaskEvent += DoBackupTask;
+            mBucketPage.mMainWindow = this;
+            mBackupPage = new TaskPage();
         }
 
         private void GetRegions()

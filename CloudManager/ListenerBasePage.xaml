@@ -110,7 +110,7 @@
                     <TextBlock x:Name="BandM" Text="M" Margin="0,8,0,0"
                                Visibility="{Binding Path=ConfigureBand, Converter={StaticResource VisibilityConverter}}"/>
                     <Button x:Name="Configure" Content="{Binding Path=ConfigureBand, Converter={StaticResource StatusTextConverter}}" 
-                            VerticalAlignment="Center" Margin="10,0,10,0" Click="Configure_Click" Style="{StaticResource ClickTex}"/>
+                            VerticalAlignment="Center" Margin="10,0,10,0" Click="Configure_Click" Style="{StaticResource ClickText}"/>
                 </StackPanel>
                 <TextBlock Text="使用流量计费方式的实例默认不限制带宽峰值;峰值输入范围1-5000" Foreground="DarkGray" Margin="0,5,0,0"/>
             </StackPanel>

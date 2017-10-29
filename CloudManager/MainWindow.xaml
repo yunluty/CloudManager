@@ -11,7 +11,7 @@
 
     <Window.Resources>
         <x:Array x:Key="TaskMenus" Type="sys:String">
-            <sys:String>正在备份</sys:String>
+            <sys:String>正在进行</sys:String>
             <sys:String>已完成</sys:String>
         </x:Array>
     </Window.Resources>
@@ -118,8 +118,6 @@
             </ListBox>
         </StackPanel>
         <Frame x:Name="Information" Grid.Column="1" NavigationUIVisibility="Hidden"/>
-        <StackPanel Grid.Column="2">
-            <Frame x:Name="Process" NavigationUIVisibility="Hidden"/>
-        </StackPanel>
+        <Frame x:Name="Process" Grid.Column="2" NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>

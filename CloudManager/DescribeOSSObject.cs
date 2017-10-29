@@ -10,13 +10,14 @@ namespace CloudManager
 {
     public class DescribeOSSObject
     {
-        public DescribeOSSObject(string bucketName)
+        public DescribeOSSObject(DescribeBucket bucket)
         {
-            BucketName = bucketName;
-            Key = bucketName;
+            Bucket = bucket;
+            BucketName = bucket.Name;
+            Key = "";
+            Path = bucket.Name;
             ObjectType = OSSObjectType.Directory;
-            Name = bucketName;
-            ChildObjects = new ObservableCollection<DescribeOSSObject>();
+            Name = bucket.Name;
         }
 
         public DescribeOSSObject(OssObjectSummary summary)
@@ -24,20 +25,26 @@ namespace CloudManager
             BucketName = summary.BucketName;
             Key = summary.Key;
             GetObjectType();
-            GetDirectory();
+            GetPath();
             Size = summary.Size;
             CreatTime = summary.LastModified.ToString("yyyy-MM-dd hh:mm:ss");
-            if (ObjectType == OSSObjectType.Directory)
-            {
-                ChildObjects = new ObservableCollection<DescribeOSSObject>();
-            }
+        }
+
+        public DescribeOSSObject(string bucketName, string key)
+        {
+            BucketName = bucketName;
+            Key = key;
+            GetObjectType();
+            GetPath();
+            CreatTime = "-";
         }
 
         public string BucketName { get; }
+        public DescribeBucket Bucket { get; set; }
         public string Key { get; }
+        public string Path { get; set; }
         public OSSObjectType ObjectType { get; set; }
         public string Name { get; set; }
-        public string Directory { get; set; }
         public long Size { get; }
         public string CreatTime { get; }
         public ObservableCollection<DescribeOSSObject> ChildObjects { get; set; }
@@ -55,7 +62,7 @@ namespace CloudManager
             }
         }
 
-        private void GetDirectory()
+        private void GetPath()
         {
             string path = null;
             if (ObjectType == OSSObjectType.Directory)
@@ -66,18 +73,11 @@ namespace CloudManager
             {
                 path = Key;
             }
+            path = BucketName + '/' + path;
 
             int index = path.LastIndexOf('/');
-            if (index >= 0)
-            {
-                Name = path.Substring(index + 1);
-                Directory = path.Substring(0, index + 1);
-            }
-            else
-            {
-                Name = path;
-                Directory = BucketName;
-            }
+            Name = path.Substring(index + 1);
+            Path = path;
         }
 
         public enum OSSObjectType

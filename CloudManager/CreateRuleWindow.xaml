@@ -28,12 +28,12 @@
                       SelectedValuePath="ServerGroupId" DisplayMemberPath="ServerGroupName"/>
         </DataTemplate>
         <DataTemplate x:Key="DeleteRule">
-            <Button x:Name="Delete" Content="删除" Click="Delete_Click" Style="{StaticResource ClickTex}"/>
+            <Button x:Name="Delete" Content="删除" Click="Delete_Click" Style="{StaticResource ClickText}"/>
         </DataTemplate>
     </Window.Resources>
     
     <StackPanel Margin="20">
-        <ListView x:Name="Rules">
+        <ListView x:Name="Rules" MaxHeight="600">
             <ListView.View>
                 <GridView  x:Name="RulesView">
                     <GridViewColumn Header="规则名称" CellTemplate="{StaticResource RuleName}"/>

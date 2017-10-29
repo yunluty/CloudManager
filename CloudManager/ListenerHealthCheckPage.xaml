@@ -101,7 +101,8 @@
             </StackPanel>
             <TextBlock Grid.Row="1" Grid.Column="0" Text="域名:" Margin="10,10,0,0"
                        Visibility="{Binding Path=HTTPCheckOn, Converter={StaticResource VisibilityConverter}}"/>
-            <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,10,0,20" Visibility="{Binding Path=HTTPCheckOn, Converter={StaticResource VisibilityConverter}}">
+            <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,10,0,20"
+                        Visibility="{Binding Path=HTTPCheckOn, Converter={StaticResource VisibilityConverter}}">
                 <TextBox x:Name="HTTPHealthCheckDomain" Width="240" Height="32" MaxLength="5"
                          VerticalContentAlignment="Center" HorizontalAlignment="Left"
                          Text="{Binding Path=HealthCheckDomain, Mode=TwoWay}"
