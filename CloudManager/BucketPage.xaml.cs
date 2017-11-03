@@ -558,8 +558,8 @@ namespace CloudManager
                 else
                 {
                     client.DeleteObject(bucket.Name, obj.Key);
-                    Dispatcher.Invoke(new DelegateGot(DeletedObject), obj);
                 }
+                Dispatcher.Invoke(new DelegateGot(DeletedObject), obj);
             }
             catch
             {

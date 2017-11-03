@@ -51,23 +51,23 @@ namespace CloudManager
             }
             if (httpdata.ContainsKey("Content-Encoding"))
             {
-                mHttpHeader.Type = httpdata["Content-Encoding"] as string;
+                mHttpHeader.Encoding = httpdata["Content-Encoding"] as string;
             }
-            if (httpdata.ContainsKey("Content-Control"))
+            if (httpdata.ContainsKey("Cache-Control"))
             {
-                mHttpHeader.Type = httpdata["Content-Control"] as string;
+                mHttpHeader.Control = httpdata["Cache-Control"] as string;
             }
             if (httpdata.ContainsKey("Content-Disposition"))
             {
-                mHttpHeader.Type = httpdata["Content-Disposition"] as string;
+                mHttpHeader.Disposition = httpdata["Content-Disposition"] as string;
             }
             if (httpdata.ContainsKey("Content-Language"))
             {
-                mHttpHeader.Type = httpdata["Content-Language"] as string;
+                mHttpHeader.Language = httpdata["Content-Language"] as string;
             }
-            if (httpdata.ContainsKey("Content-Expires"))
+            if (httpdata.ContainsKey("Expires"))
             {
-                mHttpHeader.Type = httpdata["Content-Expires"] as string;
+                mHttpHeader.Expires = httpdata["Expires"] as string;
             }
 
             foreach (var userdata in metadata.UserMetadata)
@@ -112,14 +112,63 @@ namespace CloudManager
             mParameters.Add(para);
         }
 
+        private void ModifiedHttpHeader()
+        {
+            this.Close();
+        }
+
+        private void ModifyHttpHeader()
+        {
+            try
+            {
+                ObjectMetadata meta = new ObjectMetadata();
+                if (!String.IsNullOrEmpty(mHttpHeader.Type))
+                {
+                    meta.AddHeader("Content-Type", mHttpHeader.Type);
+                }
+                if (!String.IsNullOrEmpty(mHttpHeader.Encoding))
+                {
+                    meta.AddHeader("Content-Encoding", mHttpHeader.Encoding);
+                }
+                if (!String.IsNullOrEmpty(mHttpHeader.Control))
+                {
+                    meta.AddHeader("Cache-Control", mHttpHeader.Control);
+                }
+                if (!String.IsNullOrEmpty(mHttpHeader.Disposition))
+                {
+                    meta.AddHeader("Content-Disposition", mHttpHeader.Disposition);
+                }
+                if (!String.IsNullOrEmpty(mHttpHeader.Language))
+                {
+                    meta.AddHeader("Content-Language", mHttpHeader.Language);
+                }
+                if (!String.IsNullOrEmpty(mHttpHeader.Expires))
+                {
+                    meta.AddHeader("Expires", mHttpHeader.Expires);
+                }
+
+                foreach (ObjectParameter p in mParameters)
+                {
+                    meta.AddHeader("x-oss-meta-" + p.Name, p.Value);
+                }
+
+                mClient.ModifyObjectMeta(mBucket.Name, mObject.Key, meta);
+                Dispatcher.Invoke(new Action(ModifiedHttpHeader));
+            }
+            catch
+            {
+            }
+        }
+
         private void OK_Click(object sender, RoutedEventArgs e)
         {
-
+            Thread t = new Thread(ModifyHttpHeader);
+            t.Start();
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-
+            this.Close();
         }
     }
 

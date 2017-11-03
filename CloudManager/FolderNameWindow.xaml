@@ -5,13 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CloudManager"
         mc:Ignorable="d"
-        Title="BucketEditWindow" Height="300" Width="300">
+        Title="新建文件夹" Height="309" Width="437">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <TextBox Grid.Row="0" Height="32" Text="{Binding DirectoryName, Mode=TwoWay}" VerticalContentAlignment="Center"/>
-        <Button x:Name="OK" Grid.Row="1" Content="确定" Height="32" IsEnabled="{Binding EnableButton}" Click="OK_Click"/>
+        <TextBlock Grid.Row="0" Text="文件名：" VerticalAlignment="Center" Margin="40,0,0,0"/>
+        <TextBox Grid.Row="0" Height="32" Text="{Binding DirectoryName, Mode=TwoWay}"
+                 MaxLength="254" VerticalContentAlignment="Center"  Margin="110,0,60,0"/>
+        <Button x:Name="OK" Grid.Row="1" Content="确定"
+                Height="32" Margin="120,0,120,40" VerticalAlignment="Center"
+                IsEnabled="{Binding EnableButton}" Click="OK_Click" Style="{StaticResource LoginButton}"/>
     </Grid>
 </Window>
