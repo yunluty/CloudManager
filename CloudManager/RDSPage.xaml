@@ -12,14 +12,14 @@
         <DataTemplate x:Key="EditValue">
             <StackPanel Orientation="Horizontal" Width="120">
                 <TextBox x:Name="EditValue" Text="{Binding Path=OperationValue, Mode=TwoWay, UpdateSourceTrigger= Explicit}"
-                     TextChanged="EditValue_TextChanged"  Width="100"/>
+                         TextChanged="EditValue_TextChanged" Width="100"/>
                 <Image Source="{Binding Path=LegalValue, Converter={StaticResource StatusImageConverter}}"
                        Visibility="{Binding Path=Changed, Converter={StaticResource VisibilityConverter}}"
                        Margin="4,0,0,0"/>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="CheckingCode">
-            <TextBlock Text="{Binding Path=CheckingCode}" Width="100">
+            <TextBlock Text="{Binding Path=CheckingCode}" Width="130">
                 <TextBlock.ToolTip>
                     <TextBlock Text="{Binding CheckingCode}" Width="300" TextWrapping="Wrap"/>
                 </TextBlock.ToolTip>
@@ -43,203 +43,231 @@
         </DataTemplate>
     </Page.Resources>
 
-    <TabControl>
-        <TabItem Header="基本信息">
-            <StackPanel x:Name="RDSInfo">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1*"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
-                        <TextBlock Text="实例ID:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding DBInstanceId}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
-                        <TextBlock Text="名称:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding DBInstanceDescription}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0"  Margin="0,10,0,0">
-                        <TextBlock Text="地域可用区:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding ZoneId}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0,10,0,0">
-                        <TextBlock Text="实例类型:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding DBInstanceType}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Margin="0,10,0,0">
-                        <TextBlock Text="内网地址:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding ConnectionString}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="0,10,0,0">
-                        <TextBlock Text="内网端口:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding Port}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0" Margin="0,10,0,0">
-                        <TextBlock Text="外网地址:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding Bandwidth}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" Margin="0,10,0,0">
-                        <TextBlock Text="读写分离地址:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding Bandwidth}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="0" Margin="0,10,0,0">
-                        <TextBlock Text="运行状态:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding DBInstanceStatus}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" Margin="0,10,0,0">
-                        <TextBlock Text="付费类型:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding PayType}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="0" Margin="0,10,0,0">
-                        <TextBlock Text="创建时间:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding CreateTime}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="1" Margin="0,10,0,0">
-                        <TextBlock Text="到期时间:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding ExpireTime}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                </Grid>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1*"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" Margin="0,10,0,0">
-                        <TextBlock Text="规格族:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding DBInstanceClassType}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Margin="0,10,0,0">
-                        <TextBlock Text="数据库类型:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding Engine}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2" Margin="0,10,0,0">
-                        <TextBlock Text="CPU:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding DBInstanceCPU}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="0,10,0,0">
-                        <TextBlock Text="数据库内存:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding DBInstanceMemory}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0,10,0,0">
-                        <TextBlock Text="最大IOPS:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding MaxIOPS}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="2" Margin="0,10,0,0">
-                        <TextBlock Text="最大连接数:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding MaxConnections}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Margin="0,10,0,0">
-                        <TextBlock Text="实例规格:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding DBInstanceClass}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="0,10,0,0">
-                        <TextBlock Text="可维护时间段:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding MaintainTime}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0" Margin="0,10,0,0">
-                        <TextBlock Text="储存空间:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding DBInstanceStorage}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" Margin="0,10,0,0">
-                        <TextBlock Text="备份使用量:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding Bandwidth}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="2" Margin="0,10,0,0">
-                        <TextBlock Text="SQL采集量:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding Bandwidth}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                </Grid>
-            </StackPanel>
-        </TabItem>
-        <TabItem Header="参数设置">
-            <StackPanel Margin="0,10,0,0">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button x:Name="Submit" Content="提交参数" Width="60" Height="32" Click="Submit_Click"/>
-                    <Button x:Name="Undo" Content="撤销" Width="60" Height="32" Margin="10,0,20,0" Click="Undo_Click"/>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="4*"/>
+        </Grid.ColumnDefinitions>
+        <Label Grid.Column="0" Content="实例列表" FontSize="18"/>
+        <ListBox x:Name="RDSList" Grid.Column="0" BorderThickness="0" BorderBrush="Transparent"
+                 Margin="0,40,0,0" SelectionChanged="RDSList_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Label Content="{Binding DBInstanceDescription}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <TabControl Grid.Column="1">
+            <TabItem>
+                <TabItem.Header>
+                    <Label Content="基本信息" FontSize="16"/>
+                </TabItem.Header>
+                <StackPanel x:Name="RDSInfo">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
+                            <TextBlock Text="实例ID:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding DBInstanceId}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                            <TextBlock Text="名称:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding DBInstanceDescription}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0"  Margin="0,10,0,0">
+                            <TextBlock Text="地域可用区:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding ZoneId}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0,10,0,0">
+                            <TextBlock Text="实例类型:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding DBInstanceType}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Margin="0,10,0,0">
+                            <TextBlock Text="内网地址:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding ConnectionString}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="0,10,0,0">
+                            <TextBlock Text="内网端口:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding Port}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0" Margin="0,10,0,0">
+                            <TextBlock Text="外网地址:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding Bandwidth}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" Margin="0,10,0,0">
+                            <TextBlock Text="读写分离地址:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding Bandwidth}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="0" Margin="0,10,0,0">
+                            <TextBlock Text="运行状态:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding DBInstanceStatus}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" Margin="0,10,0,0">
+                            <TextBlock Text="付费类型:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding PayType}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="0" Margin="0,10,0,0">
+                            <TextBlock Text="创建时间:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding CreateTime}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.Column="1" Margin="0,10,0,0">
+                            <TextBlock Text="到期时间:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding ExpireTime}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" Margin="0,10,0,0">
+                            <TextBlock Text="规格族:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding DBInstanceClassType}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Margin="0,10,0,0">
+                            <TextBlock Text="数据库类型:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding Engine}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2" Margin="0,10,0,0">
+                            <TextBlock Text="CPU:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding DBInstanceCPU}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="0,10,0,0">
+                            <TextBlock Text="数据库内存:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding DBInstanceMemory}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0,10,0,0">
+                            <TextBlock Text="最大IOPS:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding MaxIOPS}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="2" Margin="0,10,0,0">
+                            <TextBlock Text="最大连接数:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding MaxConnections}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Margin="0,10,0,0">
+                            <TextBlock Text="实例规格:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding DBInstanceClass}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="0,10,0,0">
+                            <TextBlock Text="可维护时间段:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding MaintainTime}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0" Margin="0,10,0,0">
+                            <TextBlock Text="储存空间:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding DBInstanceStorage}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" Margin="0,10,0,0">
+                            <TextBlock Text="备份使用量:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding Bandwidth}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="2" Margin="0,10,0,0">
+                            <TextBlock Text="SQL采集量:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding Bandwidth}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
                 </StackPanel>
-                <ListView x:Name="Parameters"  Height="600" Margin="0,10,0,0">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="参数名" DisplayMemberBinding="{Binding Name}"/>
-                            <GridViewColumn Header="参数默认值" DisplayMemberBinding="{Binding DefaultValue}"/>
-                            <GridViewColumn Header="运行参数值" CellTemplate="{StaticResource EditValue}"/>
-                            <GridViewColumn Header="是否重启" DisplayMemberBinding="{Binding ForceRestart, Converter={StaticResource StatusTextConverter}, ConverterParameter=YESNO}"/>
-                            <GridViewColumn Header="可修改参数值" CellTemplate="{StaticResource CheckingCode}"/>
-                            <GridViewColumn Header="参数描述" CellTemplate="{StaticResource Description}"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-            </StackPanel>
-        </TabItem>
-        <TabItem Header="备份">
-            <StackPanel Height="650">
-                <ListView x:Name="Backups">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="备份开始" DisplayMemberBinding="{Binding BackupStartTime}"/>
-                            <GridViewColumn Header="备份结束" DisplayMemberBinding="{Binding BackupEndTime}"/>
-                            <GridViewColumn Header="备份大小" DisplayMemberBinding="{Binding BackupSizeStr}"/>
-                            <GridViewColumn Header="备份方法" DisplayMemberBinding="{Binding BackupMethod, Converter={StaticResource StatusTextConverter}}"/>
-                            <GridViewColumn Header="备份类型" DisplayMemberBinding="{Binding BackupType, Converter={StaticResource StatusTextConverter}}"/>
-                            <GridViewColumn Header="状态" DisplayMemberBinding="{Binding BackupStatus, Converter={StaticResource StatusTextConverter}, ConverterParameter=None}"/>
-                            <GridViewColumn Header="操作" CellTemplate="{StaticResource ProcessBackup}"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-                <Grid x:Name="BackupPolicy" Margin="0,20,0,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1*"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
-                        <TextBlock Text="数据备份保留天数:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding BackupRetentionPeriod}" Margin="10,0,0,0"/>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <Label Content="参数设置" FontSize="16"/>
+                </TabItem.Header>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,0">
+                        <Button x:Name="Submit" Content="提交参数" Width="60" Height="32" Click="Submit_Click" Style="{StaticResource ProcessButton}"/>
+                        <Button x:Name="Undo" Content="撤销" Width="60" Height="32" Margin="10,0,20,0" Click="Undo_Click" Style="{StaticResource ProcessButton}"/>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
-                        <TextBlock Text="备份周期:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding PreferredBackupPeriodCN}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0"  Margin="0,10,0,0">
-                        <TextBlock Text="备份时间:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding PreferredBackupTime}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0,10,0,0">
-                        <TextBlock Text="预计下次备份时间:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding PreferredNextBackupTime}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0" Margin="0,10,0,0">
-                        <TextBlock Text="日志备份:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding BackupLog, Converter={StaticResource StatusTextConverter}}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="0,10,0,0">
-                        <TextBlock Text="日志备份保留天数:" Foreground="DarkGray"/>
-                        <TextBlock Text="{Binding LogBackupRetentionPeriod}" Margin="10,0,0,0"/>
-                    </StackPanel>
-                </Grid>
-                <Button x:Name="EditPolicy" Content="编辑" HorizontalAlignment="Right" Margin="0,20,100,0"
-                        Height="32" Width="80" Click="EditPolicy_Click"/>
-            </StackPanel>
-        </TabItem>
-    </TabControl>
+                    <ListView x:Name="Parameters"  Height="590" Margin="0,5,0,0">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="参数名" DisplayMemberBinding="{Binding Name}"/>
+                                <GridViewColumn Header="参数默认值" DisplayMemberBinding="{Binding DefaultValue}" Width="100"/>
+                                <GridViewColumn Header="运行参数值" CellTemplate="{StaticResource EditValue}"/>
+                                <GridViewColumn Header="重启" DisplayMemberBinding="{Binding ForceRestart, Converter={StaticResource StatusTextConverter}, ConverterParameter=YESNO}"/>
+                                <GridViewColumn Header="可修改参数值" CellTemplate="{StaticResource CheckingCode}"/>
+                                <GridViewColumn Header="描述" CellTemplate="{StaticResource Description}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </StackPanel>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <Label Content="备份" FontSize="16"/>
+                </TabItem.Header>
+                <StackPanel Height="650">
+                    <Grid x:Name="BackupPolicy" Margin="0,5,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="备份策略" FontSize="18"/>
+                        <Button x:Name="EditPolicy" Grid.Row="0" Grid.Column="1" Content="编辑"
+                            Height="32" Width="60" HorizontalAlignment="Right" Margin="0,0,20,5"
+                            Click="EditPolicy_Click" Style="{StaticResource ProcessButton}"/>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
+                            <TextBlock Text="保留天数:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding BackupRetentionPeriod}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
+                            <TextBlock Text="备份周期:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding PreferredBackupPeriodCN}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="0"  Margin="0,10,0,0">
+                            <TextBlock Text="备份时间:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding PreferredBackupTime}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="0,10,0,0">
+                            <TextBlock Text="预计下次备份时间:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding PreferredNextBackupTime}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="0" Margin="0,10,0,0">
+                            <TextBlock Text="日志备份:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding BackupLog, Converter={StaticResource StatusTextConverter}}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" Margin="0,10,0,0">
+                            <TextBlock Text="日志备份保留天数:" Foreground="DarkGray"/>
+                            <TextBlock Text="{Binding LogBackupRetentionPeriod}" Margin="10,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                    <TextBlock Text="数据备份" FontSize="18" Margin="0,20,0,0"/>
+                    <ListView x:Name="Backups" Margin="0,10,0,0" MaxHeight="500">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="备份开始" DisplayMemberBinding="{Binding BackupStartTime}"/>
+                                <GridViewColumn Header="备份结束" DisplayMemberBinding="{Binding BackupEndTime}"/>
+                                <GridViewColumn Header="备份大小" DisplayMemberBinding="{Binding BackupSizeStr}"/>
+                                <GridViewColumn Header="备份方法" DisplayMemberBinding="{Binding BackupMethod, Converter={StaticResource StatusTextConverter}}"/>
+                                <GridViewColumn Header="备份类型" DisplayMemberBinding="{Binding BackupType, Converter={StaticResource StatusTextConverter}}"/>
+                                <GridViewColumn Header="状态" DisplayMemberBinding="{Binding BackupStatus, Converter={StaticResource StatusTextConverter}, ConverterParameter=None}"/>
+                                <GridViewColumn Header="操作" CellTemplate="{StaticResource ProcessBackup}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+    </Grid>
 </Page>

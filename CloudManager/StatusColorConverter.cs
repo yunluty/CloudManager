@@ -13,21 +13,21 @@ namespace CloudManager
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string status = (string)value;
-            if (status.Equals("Running", StringComparison.CurrentCultureIgnoreCase) 
+            string status = value as string;
+            if (status != null)
+            {
+                if (status.Equals("Running", StringComparison.CurrentCultureIgnoreCase)
                 || status.Equals("active", StringComparison.CurrentCultureIgnoreCase)
                 || status.Equals("normal", StringComparison.CurrentCultureIgnoreCase))
-            {
-                return "Green";
+                {
+                    return "Green";
+                }
+                else if (status.Equals("abnormal", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return "Red";
+                }
             }
-            else if (status.Equals("abnormal", StringComparison.CurrentCultureIgnoreCase))
-            {
-                return "Red";
-            }
-            else
-            {
-                return "#F68300";
-            }
+            return "#F68300";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

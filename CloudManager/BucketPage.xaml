@@ -5,12 +5,28 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:CloudManager"
       mc:Ignorable="d" 
-      d:DesignHeight="600" d:DesignWidth="600"
+      d:DesignHeight="600" d:DesignWidth="800"
       Title="OSSPage">
 
     <Grid>
-        <TabControl BorderThickness="0">
-            <TabItem x:Name="OverView" Header="概览">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="4*"/>
+        </Grid.ColumnDefinitions>
+        <Label Grid.Column="0" Content="Bucket列表" FontSize="18"/>
+        <ListBox x:Name="BucketList" Grid.Column="0" BorderThickness="0" BorderBrush="Transparent"
+                 Margin="0,40,0,0" SelectionChanged="BucketList_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Label Content="{Binding Name}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <TabControl Grid.Column="1" BorderThickness="0">
+            <TabItem x:Name="OverView">
+                <TabItem.Header>
+                    <Label Content="概览" FontSize="16"/>
+                </TabItem.Header>
                 <StackPanel>
                     <!--TextBlock Text="基础数据" FontWeight="Bold" FontSize="14"/>
                     <Grid>
@@ -74,7 +90,7 @@
                             <TextBlock Text="Byte" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Grid-->
-                    <TextBlock Text="访问域名" FontWeight="Bold" FontSize="14"/>
+                    <Label Content="访问域名" FontSize="18"/>
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition/>
@@ -88,23 +104,23 @@
                             <ColumnDefinition Width="3*"/>
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="EndPoint" Grid.Row="0" Grid.Column="1"/>
-                        <TextBlock Text="访问域名" Grid.Row="0" Grid.Column="2"/>
-                        <TextBlock Text="HTTPS" Grid.Row="0" Grid.Column="3"/>
-                        <TextBlock Text="外网访问" Grid.Row="1" Grid.Column="0"/>
+                        <TextBlock Text="EndPoint" Grid.Row="0" Grid.Column="1" Foreground="DarkGray"/>
+                        <TextBlock Text="访问域名" Grid.Row="0" Grid.Column="2" Foreground="DarkGray"/>
+                        <TextBlock Text="HTTPS" Grid.Row="0" Grid.Column="3" Foreground="DarkGray"/>
+                        <TextBlock Text="外网访问" Grid.Row="1" Grid.Column="0" Foreground="DarkGray"/>
                         <TextBlock Text="{Binding InternetEndPoint}" TextWrapping="Wrap" Grid.Row="1" Grid.Column="1"/>
                         <TextBlock Text="{Binding InternetDomain}" TextWrapping="Wrap" Grid.Row="1" Grid.Column="2"/>
                         <TextBlock Text="支持" Grid.Row="1" Grid.Column="3"/>
-                        <TextBlock Text="ECS 的经典网络访问（内网）" Grid.Row="2" Grid.Column="0"/>
+                        <TextBlock Text="ECS 的经典网络访问（内网）" Grid.Row="2" Grid.Column="0" Foreground="DarkGray"/>
                         <TextBlock Text="{Binding InternalEndPoint}" TextWrapping="Wrap" Grid.Row="2" Grid.Column="1"/>
                         <TextBlock Text="{Binding InternalDomain}" TextWrapping="Wrap" Grid.Row="2" Grid.Column="2"/>
                         <TextBlock Text="不支持" Grid.Row="2" Grid.Column="3"/>
-                        <TextBlock Text="ECS 的 VPC 网络访问（内网）" Grid.Row="3" Grid.Column="0"/>
+                        <TextBlock Text="ECS 的 VPC 网络访问（内网）" Grid.Row="3" Grid.Column="0" Foreground="DarkGray"/>
                         <TextBlock Text="{Binding VPCEndPoint}" TextWrapping="Wrap" Grid.Row="3" Grid.Column="1"/>
                         <TextBlock Text="{Binding VPCDomain}" TextWrapping="Wrap" Grid.Row="3" Grid.Column="2"/>
                         <TextBlock Text="不支持" Grid.Row="3" Grid.Column="3"/>
                     </Grid>
-                    <TextBlock Text="基础设置" FontWeight="Bold" FontSize="14"/>
+                    <Label Content="基础设置" FontSize="18" Margin="0,10,0,0"/>
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition/>
@@ -118,29 +134,32 @@
                             <ColumnDefinition Width="2*"/>
                             <ColumnDefinition Width="4*"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="读写权限" Grid.Row="0" Grid.Column="0"/>
+                        <TextBlock Text="读写权限 :" Grid.Row="0" Grid.Column="0" Foreground="DarkGray"/>
                         <TextBlock Text="{Binding ACL, Converter={StaticResource StatusTextConverter}}" Grid.Row="0" Grid.Column="1"/>
-                        <TextBlock Text="跨域访问" Grid.Row="0" Grid.Column="2"/>
+                        <TextBlock Text="跨域访问 :" Grid.Row="0" Grid.Column="2" Foreground="DarkGray"/>
                         <TextBlock Text="{Binding CORSRule, Converter={StaticResource StatusTextConverter}}" Grid.Row="0" Grid.Column="3"/>
-                        <TextBlock Text="防盗链" Grid.Row="1" Grid.Column="0"/>
+                        <TextBlock Text="防盗链 :" Grid.Row="1" Grid.Column="0" Foreground="DarkGray"/>
                         <TextBlock Text="{Binding Referer, Converter={StaticResource StatusTextConverter}}" Grid.Row="1" Grid.Column="1"/>
-                        <TextBlock Text="生命周期" Grid.Row="1" Grid.Column="2"/>
+                        <TextBlock Text="生命周期 :" Grid.Row="1" Grid.Column="2" Foreground="DarkGray"/>
                         <TextBlock Text="{Binding LifecycleRule, Converter={StaticResource StatusTextConverter}}" Grid.Row="1" Grid.Column="3"/>
-                        <TextBlock Text="日志管理" Grid.Row="2" Grid.Column="0"/>
+                        <TextBlock Text="日志管理 :" Grid.Row="2" Grid.Column="0" Foreground="DarkGray"/>
                         <TextBlock Text="{Binding Logging, Converter={StaticResource StatusTextConverter}}" Grid.Row="2" Grid.Column="1"/>
-                        <TextBlock Text="静态页面" Grid.Row="2" Grid.Column="2"/>
+                        <TextBlock Text="静态页面 :" Grid.Row="2" Grid.Column="2" Foreground="DarkGray"/>
                         <TextBlock Text="{Binding Website, Converter={StaticResource StatusTextConverter}}" Grid.Row="2" Grid.Column="3"/>
                     </Grid>
                 </StackPanel>
             </TabItem>
-            <TabItem x:Name="FileManager" Header="文件管理">
-                <StackPanel>
+            <TabItem x:Name="FileManager">
+                <TabItem.Header>
+                    <Label Content="文件管理" FontSize="16"/>
+                </TabItem.Header>
+                <StackPanel Margin="0,10,0,0">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="7*"/>
                         </Grid.ColumnDefinitions>
-                        <StackPanel Orientation="Horizontal" Margin="10,10,10,0">
+                        <StackPanel Orientation="Horizontal" Margin="10,0,10,0">
                             <Button x:Name="Previous" Click="Previous_Click" Style="{StaticResource PreviousButton}"/>
                             <Button x:Name="Next" Click="Next_Click"  Style="{StaticResource NextButton}" Margin="5,0,0,0"/>
                         </StackPanel>
@@ -148,25 +167,25 @@
                             Text="{Binding Path, Mode=OneWay}" Margin="0,0,30,0" VerticalContentAlignment="Center"/>
                     </Grid>
                     <StackPanel Orientation="Horizontal" Margin="10,10,10,10">
-                        <Button x:Name="UploadFile" Content="上传文件"
+                        <Button x:Name="UploadFile" Content="上传文件" Height="32"
                                 Click="UploadFile_Click"
                                 Style="{StaticResource ProcessButton}"/>
-                        <Button x:Name="UploadFolder" Content="上传文件"
+                        <Button x:Name="UploadFolder" Content="上传文件夹" Height="32"
                                 Click="UploadFolder_Click"
                                 Style="{StaticResource ProcessButton}" Margin="10,0,0,0"/>
-                        <Button x:Name="CreateFolder" Content="新建文件夹"
+                        <Button x:Name="CreateFolder" Content="新建文件夹" Height="32"
                                 Click="CreateFolder_Click"
                                 Style="{StaticResource ProcessButton}" Margin="10,0,0,0"/>
-                        <Button x:Name="Download" Content="下载"
+                        <Button x:Name="Download" Content="下载" Height="32"
                                 Click="Download_Click"
                                 Style="{StaticResource ProcessButton}" Margin="10,0,0,0"/>
-                        <Button x:Name="Delete" Content="删除"
+                        <Button x:Name="Delete" Content="删除" Height="32"
                                 Click="Delete_Click"
                                 Style="{StaticResource ProcessButton}" Margin="10,0,0,0"/>
-                        <Button x:Name="GetUrl" Content="获取地址"
+                        <Button x:Name="GetUrl" Content="获取地址" Height="32"
                                 Click="GetUrl_Click"
                                 Style="{StaticResource ProcessButton}" Margin="10,0,0,0"/>
-                        <Button x:Name="HttpHeader" Content="设置HTTP头"
+                        <Button x:Name="HttpHeader" Content="设置HTTP头" Height="32"
                                 Click="HttpHeader_Click"
                                 Style="{StaticResource ProcessButton}" Margin="10,0,0,0"/>
                     </StackPanel>

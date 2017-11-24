@@ -39,19 +39,19 @@ namespace CloudManager
         public delegate void DelegateGot(object obj);
 
 
-        public AddListenerWindow(string aki, string aks, DescribeLoadBalancer balancer)
+        public AddListenerWindow(DescribeLoadBalancer balancer)
         {
             InitListenerParams(balancer);
             InitializeComponent();
-            IClientProfile profile = DefaultProfile.GetProfile(balancer.RegionId, aki, aks);
+            IClientProfile profile = DefaultProfile.GetProfile(balancer.RegionId, App.AKI, App.AKS);
             mClient = new DefaultAcsClient(profile);
         }
 
-        public AddListenerWindow(string aki, string aks, DescribeLoadBalancer balancer, SLBListener listener)
+        public AddListenerWindow(DescribeLoadBalancer balancer, SLBListener listener)
         {
             InitListenerParams(balancer, listener);
             InitializeComponent();
-            IClientProfile profile = DefaultProfile.GetProfile(balancer.RegionId, aki, aks);
+            IClientProfile profile = DefaultProfile.GetProfile(balancer.RegionId, App.AKI, App.AKS);
             mClient = new DefaultAcsClient(profile);
         }
 

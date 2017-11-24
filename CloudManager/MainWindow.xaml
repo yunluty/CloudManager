@@ -4,97 +4,88 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:c="clr-namespace:System.Collections;assembly=mscorlib"
         xmlns:local="clr-namespace:CloudManager"
         mc:Ignorable="d"
-        Title="CloudManager" Height="720" Width="1024"
+        Title="阿里云大师" Height="720" Width="1024"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
-        <x:Array x:Key="TaskMenus" Type="sys:String">
-            <sys:String>正在进行</sys:String>
-            <sys:String>已完成</sys:String>
-        </x:Array>
+        <c:ArrayList x:Key="TaskMenus">
+            <local:MenuInfo Name="正在进行" Id="RunningTask"/>
+            <local:MenuInfo Name="已完成" Id="FinishedTask"/>
+        </c:ArrayList>
+        <c:ArrayList x:Key="ECSMenus">
+            <local:MenuInfo Name="实例管理" Id="ECSInstances"/>
+        </c:ArrayList>
+        <c:ArrayList x:Key="RDSMenus">
+            <local:MenuInfo Name="实例管理" Id="RDSInstances"/>
+        </c:ArrayList>
+        <c:ArrayList x:Key="OSSMenus">
+            <local:MenuInfo Name="储存空间" Id="OSSInstances"/>
+        </c:ArrayList>
+        <c:ArrayList x:Key="SLBMenus">
+            <local:MenuInfo Name="实例管理" Id="SLBInstances"/>
+            <local:MenuInfo Name="证书管理" Id="Certificates"/>
+        </c:ArrayList>
     </Window.Resources>
     
-    <Grid>
+    <Grid Margin="0,0,5,0">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="6*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="0">
-            <TextBlock Text="云资源" FontSize="18"/>
-            <Expander x:Name="ECSExpander">
-                <Expander.Header>
-                    <TextBlock Text="云服务器 ECS"/>
-                </Expander.Header>
-                <Expander.Content>
-                    <ListBox x:Name="ECSList" BorderThickness="0" BorderBrush="Transparent"
-                             SelectionChanged="ECSList_SelectionChanged">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding InstanceName}"></TextBlock>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Expander.Content>
-            </Expander>
-            <Expander>
-                <Expander.Header>
-                    <TextBlock Text="云数据库 RDS 版"/>
-                </Expander.Header>
-                <Expander.Content>
-                    <ListBox x:Name="RDSList" BorderThickness="0" BorderBrush="Transparent"
-                             SelectionChanged="RDSList_SelectionChanged">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding DBInstanceDescription}"/>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Expander.Content>
-            </Expander>
-            <Expander>
-                <Expander.Header>
-                    <TextBlock Text="对象储存 OSS"/>
-                </Expander.Header>
-                <Expander.Content>
-                    <ListBox x:Name="BucketList" BorderThickness="0" BorderBrush="Transparent"
-                             SelectionChanged="BucketList_SelectionChanged"
-                             LostFocus="BucketList_LostFocus">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Name}"/>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Expander.Content>
-            </Expander>
-            <Expander>
-                <Expander.Header>
-                    <TextBlock Text="负载均衡 SLB"/>
-                </Expander.Header>
-                <Expander.Content>
-                    <StackPanel>
-                        <ListBox x:Name="SLBList" BorderThickness="0" BorderBrush="Transparent"
-                             SelectionChanged="SLBList_SelectionChanged">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding LoadBalanceTitle}"/>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                        <ListBox x:Name="Certificates" BorderThickness="0" BorderBrush="Transparent"
-                                 SelectionChanged="Certificates_SelectionChanged">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding LoadBalanceTitle}"/>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </StackPanel>
-                </Expander.Content>
-            </Expander>
+        <Grid Grid.Column="0" Background="LightGray"/>
+        <StackPanel Grid.Column="0" Margin="5,0,5,0">
+            <Label Content="云控制台" FontSize="18"/>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="images/ecs.png"/>
+                <Label Content="云服务器 ECS" FontSize="14"/>
+            </StackPanel>
+            <ListBox x:Name="ECSMenuList" Style="{StaticResource MenuListBox}"
+                             ItemsSource="{StaticResource ECSMenus}" SelectionChanged="Menus_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding Name}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="images/rds.png"/>
+                <Label Content="云数据库 RDS 版" FontSize="14"/>
+            </StackPanel>
+            <ListBox x:Name="RDSMenuList" Style="{StaticResource MenuListBox}"
+                             ItemsSource="{StaticResource RDSMenus}" SelectionChanged="Menus_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding Name}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="images/oss.png"/>
+                <Label Content="对象储存 OSS" FontSize="14"/>
+            </StackPanel>
+            <ListBox x:Name="OSSMenuList" Style="{StaticResource MenuListBox}"
+                             ItemsSource="{StaticResource OSSMenus}" SelectionChanged="Menus_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding Name}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="images/slb.png"/>
+                <Label Content="负载均衡 SLB" FontSize="14"/>
+            </StackPanel>
+            <ListBox x:Name="SLBMenuList" Style="{StaticResource MenuListBox}"
+                             ItemsSource="{StaticResource SLBMenus}" SelectionChanged="Menus_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding Name}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
             <!--<Expander>
                 <Expander.Header>
                     <TextBlock Text="域名"/>
@@ -110,14 +101,18 @@
                     </ListBox>
                 </Expander.Content>
             </Expander>-->
-            <TextBlock Text="任务" FontSize="18"/>
-            <ListBox x:Name="TaskMenuList"  BorderThickness="0" BorderBrush="Transparent"
-                     ItemsSource="{StaticResource TaskMenus}"
-                     SelectionChanged="TaskMenus_SelectionChanged">
-
+            <Label Content="任务" FontSize="18"/>
+            <ListBox x:Name="TaskMenuList" Style="{StaticResource MenuListBox}"
+                     ItemsSource="{StaticResource TaskMenus}" SelectionChanged="Menus_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding Name}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
             </ListBox>
         </StackPanel>
-        <Frame x:Name="Information" Grid.Column="1" NavigationUIVisibility="Hidden"/>
-        <Frame x:Name="Process" Grid.Column="2" NavigationUIVisibility="Hidden"/>
+        <Button x:Name="Logoff" Content="注销" Height="32" VerticalAlignment="Bottom" Margin="15,0,15,150"
+                Style="{StaticResource LoginButton}" Click="Logoff_Click"/>
+        <Frame x:Name="Process" Grid.Column="1" NavigationUIVisibility="Hidden"/>
     </Grid>
 </Window>

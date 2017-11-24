@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:CloudManager"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="300"
+      d:DesignHeight="600" d:DesignWidth="600"
       Title="SLBServersPage">
 
     <Page.Resources>
@@ -92,196 +92,256 @@
         </DataTemplate>
     </Page.Resources>
 
-    <TabControl>
-        <TabItem x:Name="SLBInfo" Header="详情">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="ID :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=LoadBalancerId}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="名称 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=LoadBalancerName}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="状态 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <Image Margin="0,0,5,0" Source="{Binding Path=LoadBalancerStatus, Converter={StaticResource StatusImageConverter}}"/>
-                    <TextBlock Text="{Binding Path=LoadBalancerStatus, Converter={StaticResource StatusTextConverter}}" Foreground="{Binding Path=LoadBalancerStatus, Converter={StaticResource StatusColorConverter}}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="地域 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=RegionName}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="主可用区 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=MasterZoneName}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="备可用区 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=SlaveZoneName}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="服务地址 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=Address}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="地址类型 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=AddressTypeName}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="网络类型 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=NetworkTypeName}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="付费方式 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=PayTypeName}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="创建时间 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=CreateTime}"/>
-                </StackPanel>
-            </StackPanel>
-        </TabItem>
-        <TabItem x:Name="Listener" Header="监听">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,5">
-                        <Button Content="添加监听" Click="AddListener_Click" Height="32"/>
-                        <Button Content="刷新" Click="UpdateListeners_Click" Height="32" Margin="10,0,0,0"/>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="4*"/>
+        </Grid.ColumnDefinitions>
+        <Label Grid.Column="0" Content="实例列表" FontSize="18"/>
+        <ListBox x:Name="SLBList" Grid.Column="0" BorderThickness="0" BorderBrush="Transparent"
+                 Margin="0,40,0,0" SelectionChanged="SLBList_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Label Content="{Binding LoadBalanceTitle}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <TabControl Grid.Column="1">
+            <TabItem x:Name="SLBInfo">
+                <TabItem.Header>
+                    <Label Content="详情" FontSize="16"/>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,5">
+                            <TextBlock Text="ID :" Style="{StaticResource ResourceKey=TitleText}"/>
+                            <TextBlock Text="{Binding Path=LoadBalancerId}"/>
                     </StackPanel>
-                    <ListView x:Name="Listeners" SelectionChanged="Listeners_SelectionChanged"
+                    <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="名称 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=LoadBalancerName}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="状态 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <Image Margin="0,0,5,0" Source="{Binding Path=LoadBalancerStatus, Converter={StaticResource StatusImageConverter}}"/>
+                        <TextBlock Text="{Binding Path=LoadBalancerStatus, Converter={StaticResource StatusTextConverter}}" Foreground="{Binding Path=LoadBalancerStatus, Converter={StaticResource StatusColorConverter}}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="地域 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=RegionName}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="主可用区 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=MasterZoneName}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="备可用区 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=SlaveZoneName}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="服务地址 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=Address}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="地址类型 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=AddressTypeName}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="网络类型 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=NetworkTypeName}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="付费方式 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=PayTypeName}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="创建时间 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=CreateTime}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+                        <Button x:Name="Start" Height="32" Width="60" Margin="0,0,10,0"
+                                IsEnabled="{Binding LoadBalancerStatus, Converter={StaticResource IsEnableConverter}}"
+                                Content="{Binding LoadBalancerStatus, Converter={StaticResource ControlConverter}}"
+                                Click="StartStop_Click" Style="{StaticResource ResourceKey=ProcessButton}"/>
+                        <Button x:Name="EditName" Content="编辑名称" Height="32" Width="60" Margin="0,0,10,0"
+                                Click="EditName_Click" Style="{StaticResource ResourceKey=ProcessButton}"/>
+                    </StackPanel>
+                </Grid>
+                
+            </TabItem>
+            <TabItem x:Name="Listener">
+                <TabItem.Header>
+                    <Label Content="监听" FontSize="16"/>
+                </TabItem.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0">
+                        <Grid>
+                            <Label Content="监听列表" FontSize="16"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,5">
+                                <Button Content="添加监听" Click="AddListener_Click" Height="32" Width="60" Style="{StaticResource ProcessButton}"/>
+                                <Button Content="刷新" Click="UpdateListeners_Click" Height="32" Width="60" Margin="10,0,0,0" Style="{StaticResource ProcessButton}"/>
+                            </StackPanel>
+                        </Grid>
+                        <ListView x:Name="Listeners" SelectionChanged="Listeners_SelectionChanged" MaxHeight="240"
                               Visibility="{Binding Path=Count, Converter={StaticResource VisibilityConverter}}">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn CellTemplate="{StaticResource ListenersSelector}">
-                                    <GridViewColumn.Header>
-                                        <CheckBox x:Name="ListenersSelectAll" Click="ListenersSelectAll_Click" IsThreeState="False"/>
-                                    </GridViewColumn.Header>
-                                </GridViewColumn>
-                                <GridViewColumn Header="协议" DisplayMemberBinding="{Binding Protocol}"/>
-                                <GridViewColumn Header="前段端口" DisplayMemberBinding="{Binding ListenerPort}"/>
-                                <GridViewColumn Header="后端端口" CellTemplate="{StaticResource BackendServerPort}"/>
-                                <GridViewColumn Header="状态" CellTemplate="{StaticResource ListenerStatus}"/>
-                                <GridViewColumn Header="转发规则" CellTemplate="{StaticResource Scheduler}"/>
-                                <GridViewColumn Header="服务器组" DisplayMemberBinding="{Binding ServerGroupNameShow}"/>
-                                <GridViewColumn Header="操作" CellTemplate="{StaticResource ProcessListener}"/>
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
-                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                        <Button Content="启动" Click="StartListeners_Click" Height="32" Margin="30,0,0,0"/>
-                        <Button Content="停止" Click="StopListeners_Click" Height="32" Margin="10,0,0,0"/>
-                        <Button Content="删除" Click="DeleteListeners_Click" Height="32" Margin="10,0,0,0"/>
-                    </StackPanel>
-                </StackPanel>
-                <StackPanel Grid.Row="1">
-                    <Grid x:Name="ListenerInfo" Margin="0,10,0,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                            <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
-                            <TextBlock Text="负载均衡ID:" Foreground="DarkGray"/>
-                            <TextBlock Text="{Binding LoadBalancerId}" Margin="10,0,0,0"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
-                            <TextBlock Text="端口:" Foreground="DarkGray"/>
-                            <TextBlock Text="{Binding ListenerPort}" Margin="10,0,0,0"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2">
-                            <TextBlock Text="前端协议:" Foreground="DarkGray"/>
-                            <TextBlock Text="{Binding Protocol}" Margin="10,0,0,0"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="0,10,0,0">
-                            <TextBlock Text="调度算法:" Foreground="DarkGray"/>
-                            <TextBlock Text="{Binding Scheduler, Converter={StaticResource StatusTextConverter}}"
-                                       Margin="10,0,0,0"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0,10,0,0">
-                            <TextBlock Text="会话保持:" Foreground="DarkGray"/>
-                            <TextBlock Text="{Binding PersistenceTimeout, Converter={StaticResource StatusTextConverter}, ConverterParameter=ONOFF}"
-                                       Visibility="{Binding Path=Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=TCPUDP}"
-                                        Margin="10,0,0,0"/>
-                            <TextBlock Text="{Binding StickySession, Converter={StaticResource StatusTextConverter}}"
-                                       Visibility="{Binding Path=Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=HTTPHTTPS}"
-                                        Margin="10,0,0,0"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="2" Margin="0,10,0,0">
-                            <TextBlock Text="带宽峰值:" Foreground="DarkGray"/>
-                            <TextBlock Text="{Binding Bandwidth, Converter={StaticResource StatusTextConverter}}"
-                                        Margin="10,0,0,0"/>
-                        </StackPanel>
-                    </Grid>
-                    <StackPanel x:Name="ForwardRule" Margin="0,10,0,0">
-                        <Button x:Name="AddRule" Content="添加转发规则" Click="AddRule_Click" Margin="0,0,10,5" HorizontalAlignment="Right"/>
-                        <ListView x:Name="ForwardRules" Visibility="{Binding Path=Count, Converter={StaticResource VisibilityConverter}}">
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="规则名称" DisplayMemberBinding="{Binding RuleName}"/>
-                                    <GridViewColumn Header="域名" DisplayMemberBinding="{Binding Domain}"/>
-                                    <GridViewColumn Header="URL" DisplayMemberBinding="{Binding Url}"/>
-                                    <GridViewColumn Header="虚拟服务器组" DisplayMemberBinding="{Binding VServerGroupName}"/>
-                                    <GridViewColumn Header="操作" CellTemplate="{StaticResource ProcessRule}"/>
+                                    <GridViewColumn CellTemplate="{StaticResource ListenersSelector}">
+                                        <GridViewColumn.Header>
+                                            <CheckBox x:Name="ListenersSelectAll" Click="ListenersSelectAll_Click" IsThreeState="False"/>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="协议" DisplayMemberBinding="{Binding Protocol}"/>
+                                    <GridViewColumn Header="前段端口" DisplayMemberBinding="{Binding ListenerPort}"/>
+                                    <GridViewColumn Header="后端端口" CellTemplate="{StaticResource BackendServerPort}"/>
+                                    <GridViewColumn Header="状态" CellTemplate="{StaticResource ListenerStatus}"/>
+                                    <GridViewColumn Header="转发规则" CellTemplate="{StaticResource Scheduler}"/>
+                                    <GridViewColumn Header="服务器组" DisplayMemberBinding="{Binding ServerGroupNameShow}"/>
+                                    <GridViewColumn Header="操作" CellTemplate="{StaticResource ProcessListener}"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
+                        <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                            <Button Content="启动" Click="StartListeners_Click" Height="32" Width="60" Margin="10,0,0,0" Style="{StaticResource ProcessButton}"/>
+                            <Button Content="停止" Click="StopListeners_Click" Height="32" Width="60" Margin="10,0,0,0" Style="{StaticResource ProcessButton}"/>
+                            <Button Content="删除" Click="DeleteListeners_Click" Height="32" Width="60" Margin="10,0,0,0" Style="{StaticResource ProcessButton}"/>
+                        </StackPanel>
                     </StackPanel>
+                    <StackPanel Grid.Row="1">
+                        <Label Content="基本信息" FontSize="16"/>
+                        <Grid x:Name="ListenerInfo" Margin="0,10,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="1*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
+                                <TextBlock Text="负载均衡ID:" Foreground="DarkGray"/>
+                                <TextBlock Text="{Binding LoadBalancerId}" Margin="10,0,0,0"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                                <TextBlock Text="端口:" Foreground="DarkGray"/>
+                                <TextBlock Text="{Binding ListenerPort}" Margin="10,0,0,0"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2">
+                                <TextBlock Text="前端协议:" Foreground="DarkGray"/>
+                                <TextBlock Text="{Binding Protocol}" Margin="10,0,0,0"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="0,10,0,0">
+                                <TextBlock Text="调度算法:" Foreground="DarkGray"/>
+                                <TextBlock Text="{Binding Scheduler, Converter={StaticResource StatusTextConverter}}"
+                                       Margin="10,0,0,0"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Margin="0,10,0,0">
+                                <TextBlock Text="会话保持:" Foreground="DarkGray"/>
+                                <TextBlock Text="{Binding PersistenceTimeout, Converter={StaticResource StatusTextConverter}, ConverterParameter=ONOFF}"
+                                       Visibility="{Binding Path=Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=TCPUDP}"
+                                        Margin="10,0,0,0"/>
+                                <TextBlock Text="{Binding StickySession, Converter={StaticResource StatusTextConverter}}"
+                                       Visibility="{Binding Path=Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=HTTPHTTPS}"
+                                        Margin="10,0,0,0"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="2" Margin="0,10,0,0">
+                                <TextBlock Text="带宽峰值:" Foreground="DarkGray"/>
+                                <TextBlock Text="{Binding Bandwidth, Converter={StaticResource StatusTextConverter}}"
+                                        Margin="10,0,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                        <StackPanel x:Name="ForwardRule" Margin="0,15,0,0" Visibility="{Binding Protocol, Converter={StaticResource VisibilityConverter}, ConverterParameter=HTTPHTTPS}">
+                            <Grid Margin="0,0,0,5">
+                                <Label Content="转发规则" FontSize="16"/>
+                                <Button x:Name="AddRule" Content="添加转发规则" Height="32" Margin="0,0,10,0" HorizontalAlignment="Right"
+                                        Click="AddRule_Click" Style="{StaticResource ProcessButton}"/>
+                            </Grid>
+                            <ListView x:Name="ForwardRules" MaxHeight="180"
+                                  Visibility="{Binding Path=Count, Converter={StaticResource VisibilityConverter}}">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="规则名称" DisplayMemberBinding="{Binding RuleName}"/>
+                                        <GridViewColumn Header="域名" DisplayMemberBinding="{Binding Domain}"/>
+                                        <GridViewColumn Header="URL" DisplayMemberBinding="{Binding Url}"/>
+                                        <GridViewColumn Header="虚拟服务器组" DisplayMemberBinding="{Binding VServerGroupName}"/>
+                                        <GridViewColumn Header="操作" CellTemplate="{StaticResource ProcessRule}"/>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="Added">
+                <TabItem.Header>
+                    <Label Content="已添加服务器" FontSize="16"/>
+                </TabItem.Header>
+                <StackPanel Visibility="{Binding Path=Count, Converter={StaticResource VisibilityConverter}}">
+                    <ListView x:Name="BackendServers">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn CellTemplate="{StaticResource AddedSelector}">
+                                    <GridViewColumn.Header>
+                                        <CheckBox x:Name="AddedSelectAll" Click="AddedSelectAll_Click" IsThreeState="False"/>
+                                    </GridViewColumn.Header>
+                                </GridViewColumn>
+                                <GridViewColumn Header="ID/名称" CellTemplate="{StaticResource ServerName}"/>
+                                <GridViewColumn Header="可用区" DisplayMemberBinding="{Binding ZoneLang}"/>
+                                <GridViewColumn Header="公网/内网IP" CellTemplate="{StaticResource IP}"/>
+                                <GridViewColumn Header="状态" CellTemplate="{StaticResource Status}"/>
+                                <GridViewColumn Header="权重" DisplayMemberBinding="{Binding Weight}"/>
+                                <GridViewColumn Header="操作" CellTemplate="{StaticResource Remove}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <Button x:Name="RemoveSelected" Content="批量删除" Height="32" Margin="0,5,0,0"
+                        Click="RemoveSelected_Click" Style="{StaticResource LoginButton}"/>
                 </StackPanel>
-            </Grid>
-        </TabItem>
-        <TabItem x:Name="Added" Header="已添加服务器">
-            <StackPanel>
-                <ListView x:Name="BackendServers" Visibility="{Binding Path=Count, Converter={StaticResource VisibilityConverter}}">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn CellTemplate="{StaticResource AddedSelector}">
-                                <GridViewColumn.Header>
-                                    <CheckBox x:Name="AddedSelectAll" Click="AddedSelectAll_Click" IsThreeState="False"/>
-                                </GridViewColumn.Header>
-                            </GridViewColumn>
-                            <GridViewColumn Header="ID/名称" CellTemplate="{StaticResource ServerName}"/>
-                            <GridViewColumn Header="可用区" DisplayMemberBinding="{Binding ZoneLang}"/>
-                            <GridViewColumn Header="公网/内网IP" CellTemplate="{StaticResource IP}"/>
-                            <GridViewColumn Header="状态" CellTemplate="{StaticResource Status}"/>
-                            <GridViewColumn Header="权重" DisplayMemberBinding="{Binding Weight}"/>
-                            <GridViewColumn Header="操作" CellTemplate="{StaticResource Remove}"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-                <Button x:Name="RemoveSelected" Content="批量删除" Click="RemoveSelected_Click"/>
-            </StackPanel>
-        </TabItem>
-        <TabItem x:Name="NotAdded" Header="未添加服务器">
-            <StackPanel>
-                <ListView x:Name="NotAddedServers" Visibility="{Binding Path=Count, Converter={StaticResource VisibilityConverter}}">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn CellTemplate="{StaticResource NotAddedSelector}">
-                                <GridViewColumn.Header>
-                                    <CheckBox x:Name="NotAddedSelectAll" Click="NotAddedSelectAll_Click" IsThreeState="False"/>
-                                </GridViewColumn.Header>
-                            </GridViewColumn>
-                            <GridViewColumn Header="ID/名称" CellTemplate="{StaticResource ServerName}"/>
-                            <GridViewColumn Header="可用区" DisplayMemberBinding="{Binding ZoneLang}"/>
-                            <GridViewColumn Header="公网/内网IP" CellTemplate="{StaticResource IP}"/>
-                            <GridViewColumn Header="状态" CellTemplate="{StaticResource Status}"/>
-                            <GridViewColumn Header="权重" DisplayMemberBinding="{Binding Weight}"/>
-                            <GridViewColumn Header="操作" CellTemplate="{StaticResource Add}"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-                <Button x:Name="AddSelected" Content="批量添加" Click="AddSelected_Click"/>
-            </StackPanel>
-        </TabItem>
-    </TabControl>
+            </TabItem>
+            <TabItem x:Name="NotAdded">
+                <TabItem.Header>
+                    <Label Content="未添加服务器" FontSize="16"/>
+                </TabItem.Header>
+                <StackPanel Visibility="{Binding Path=Count, Converter={StaticResource VisibilityConverter}}">
+                    <ListView x:Name="NotAddedServers">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn CellTemplate="{StaticResource NotAddedSelector}">
+                                    <GridViewColumn.Header>
+                                        <CheckBox x:Name="NotAddedSelectAll" Click="NotAddedSelectAll_Click" IsThreeState="False"/>
+                                    </GridViewColumn.Header>
+                                </GridViewColumn>
+                                <GridViewColumn Header="ID/名称" CellTemplate="{StaticResource ServerName}"/>
+                                <GridViewColumn Header="可用区" DisplayMemberBinding="{Binding ZoneLang}"/>
+                                <GridViewColumn Header="公网/内网IP" CellTemplate="{StaticResource IP}"/>
+                                <GridViewColumn Header="状态" CellTemplate="{StaticResource Status}"/>
+                                <GridViewColumn Header="权重" DisplayMemberBinding="{Binding Weight}"/>
+                                <GridViewColumn Header="操作" CellTemplate="{StaticResource Add}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <Button x:Name="AddSelected" Content="批量添加" Height="32" Margin="0,5,0,0"
+                        Click="AddSelected_Click" Style="{StaticResource LoginButton}"/>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+    </Grid>
 </Page>

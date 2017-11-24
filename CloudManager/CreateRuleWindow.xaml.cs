@@ -37,23 +37,23 @@ namespace CloudManager
             InitializeComponent();
         }
 
-        public CreateRuleWindow(string aki, string aks, SLBListener l)
+        public CreateRuleWindow(SLBListener l)
         {
             InitializeComponent();
             mListener = l;
-            IClientProfile profile = DefaultProfile.GetProfile(mListener.RegionId, aki, aks);
+            IClientProfile profile = DefaultProfile.GetProfile(mListener.RegionId, App.AKI, App.AKS);
             mClient = new DefaultAcsClient(profile);
             mRules = new ObservableCollection<DescribeRule>();
             Rules.ItemsSource = mRules;
             AddNew = true;
         }
 
-        public CreateRuleWindow(string aki, string aks, SLBListener l, DescribeRule r)
+        public CreateRuleWindow(SLBListener l, DescribeRule r)
         {
             InitializeComponent();
             mListener = l;
             mConfigureRule = r;
-            IClientProfile profile = DefaultProfile.GetProfile(mListener.RegionId, aki, aks);
+            IClientProfile profile = DefaultProfile.GetProfile(mListener.RegionId, App.AKI, App.AKS);
             mClient = new DefaultAcsClient(profile);
             mRules = new ObservableCollection<DescribeRule>();
             Rules.ItemsSource = mRules;

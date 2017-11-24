@@ -34,6 +34,14 @@ namespace CloudManager
                 {
                     return "停止中";
                 }
+                else if (status.Equals("Uploading", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return "正在上传";
+                }
+                else if (status.Equals("Downloading", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return "正在下载";
+                }
                 else if (status.Equals("locked", StringComparison.CurrentCultureIgnoreCase))
                 {
                     return "已锁定";

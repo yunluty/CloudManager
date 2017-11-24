@@ -18,7 +18,7 @@ using Aliyun.Acs.Core;
 using Aliyun.Acs.Core.Profile;
 using Aliyun.Acs.Core.Exceptions;
 using Aliyun.Acs.Ecs.Model.V20140526;
-
+using static Aliyun.Acs.Ecs.Model.V20140526.DescribeRegionsResponse;
 
 namespace CloudManager
 {
@@ -48,11 +48,20 @@ namespace CloudManager
             string[] s = obj as string[];
             IClientProfile profile = DefaultProfile.GetProfile(mRegion, s[0], s[1]);
             DefaultAcsClient client = new DefaultAcsClient(profile);
-            DescribeInstancesRequest request = new DescribeInstancesRequest();
-
+            
             try
             {
+                DescribeInstancesRequest request = new DescribeInstancesRequest();
                 DescribeInstancesResponse response = client.GetAcsResponse(request);
+
+                Aliyun.Acs.Ecs.Model.V20140526.DescribeRegionsRequest rr = new Aliyun.Acs.Ecs.Model.V20140526.DescribeRegionsRequest();
+                Aliyun.Acs.Ecs.Model.V20140526.DescribeRegionsResponse rs = client.GetAcsResponse(rr);
+                List<DescribeRegions_Region> regions = new List<DescribeRegions_Region>();
+                regions.AddRange(rs.Regions);
+
+                App.AKI = s[0];
+                App.AKS = s[1];
+                App.REGIONS = regions;
                 Dispatcher.Invoke(new DelegateDone(AccessSuccess), obj);
             }
             catch (ServerException ex)
@@ -69,12 +78,9 @@ namespace CloudManager
 
         private void AccessSuccess(object obj)
         {
-            string[] s = (string[])obj;
-            App.AKI = s[0];
-            App.AKS = s[1];
-            Window win = new MainWindow(s[0], s[1]);
+            Window win = new MainWindow();
             win.Show();
-            Close();
+            this.Close();
         }
 
         private void AccessFail(object obj)

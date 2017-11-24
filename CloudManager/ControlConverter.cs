@@ -13,7 +13,7 @@ namespace CloudManager
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             string status = (string)value;
-            if (status.Equals("Running") || status.Equals("Starting"))
+            if (status.Equals("Running") || status.Equals("Starting") || status.Equals("active"))
             {
                 return "停止";
             }

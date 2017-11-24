@@ -8,7 +8,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using static CloudManager.BackupTask;
+using static CloudManager.DownUploadTask;
 using static CloudManager.DescribeOSSObject;
 
 namespace CloudManager
@@ -18,6 +18,9 @@ namespace CloudManager
     /// </summary>
     public partial class BucketPage : Page
     {
+        private string mAki, mAks;
+        private ObservableCollection<DescribeBucket> mSelBuckets = new ObservableCollection<DescribeBucket>();
+        private DescribeBucket mSelBucket;
         private delegate void DelegateGot(object obj);
         private DescribeOSSObject mRootDirectory;
         private DescribeOSSObject mCurrDirectory;
@@ -27,45 +30,91 @@ namespace CloudManager
 
         //public delegate void BackupTaskHandler(object sender, BackupTask task);
         //public event BackupTaskHandler BackupTaskEvent;
-        public EventHandler<BackupTask> BackupTaskEvent;
+        public EventHandler<DownUploadTask> BackupTaskEvent;
         public MainWindow mMainWindow { get; set; }
 
 
         public BucketPage()
         {
             InitializeComponent();
+
+            mAki = App.AKI;
+            mAks = App.AKS;
+            Thread t = new Thread(GetBuckets);
+            t.Start();
         }
 
-        private DescribeBucket _mBucket;
-        public DescribeBucket mBucket
+        private void GotBuckets(object obj)
         {
-            get { return _mBucket; }
-            set
-            {
-                _mBucket = value;
-                Thread t1 = new Thread(new ParameterizedThreadStart(GetSettings));
-                t1.Start(value);
+            mSelBuckets = obj as ObservableCollection<DescribeBucket>;
+            BucketList.ItemsSource = mSelBuckets;
+            SelectDefaultIndex();
+        }
 
-                ClearFileList();
-                mRootDirectory = new DescribeOSSObject(value);
-                mCurrDirectory = null;
-                mDeepestKey = mRootDirectory.Key;
-                StartGetObjects(mRootDirectory);
+        private void GetBuckets()
+        {
+            ObservableCollection<DescribeBucket> buckets = new ObservableCollection<DescribeBucket>();
+            string endpoint = "http://oss-cn-hangzhou.aliyuncs.com";
+            OssClient client = new OssClient(endpoint, mAki, mAks);
+            foreach (Bucket b in client.ListBuckets())
+            {
+                DescribeBucket bucket = new DescribeBucket(b);
+                buckets.Add(bucket);
             }
+            Dispatcher.Invoke(new DelegateGot(GotBuckets), buckets);
+        }
+
+        private void SelectDefaultIndex()
+        {
+            if (BucketList.SelectedIndex == -1)
+            {
+                BucketList.SelectedIndex = 0;
+            }
+        }
+
+        private void BucketList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (BucketList.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            SetBucket(BucketList.SelectedItem as DescribeBucket);
+        }
+
+        private void SetBucket(DescribeBucket bucket)
+        {
+            mSelBucket = bucket;
+            Thread t = new Thread(new ParameterizedThreadStart(GetSettings));
+            t.Start(mSelBucket);
+
+            ClearFileList();
+            mRootDirectory = new DescribeOSSObject(mSelBucket);
+            mCurrDirectory = null;
+            mDeepestKey = mRootDirectory.Key;
+            StartGetObjects(mRootDirectory);
         }
 
         private void GotSettings(object obj)
         {
-            OverView.DataContext = mBucket;
+            OverView.DataContext = mSelBucket;
         }
 
         private void GetSettings(object obj)
         {
             DescribeBucket bucket = obj as DescribeBucket;
             string endpoint = "http://" + bucket.InternetEndPoint;
-            OssClient client = new OssClient(endpoint, App.AKI, App.AKS);
-            AccessControlList acl = client.GetBucketAcl(bucket.Name); //读写权限
-            bucket.ACL = acl.ACL.ToString();
+            OssClient client = new OssClient(endpoint, mAki, mAks);
+
+            try
+            {
+                AccessControlList acl = client.GetBucketAcl(bucket.Name); //读写权限
+                bucket.ACL = acl.ACL.ToString();
+            }
+            catch
+            {
+                bucket.ACL = "Private";
+            }
 
             try
             {
@@ -156,7 +205,7 @@ namespace CloudManager
             {
                 mCurrDirectory.ChildObjects.Clear();
             }
-            mCurrDirectory = obj as DescribeOSSObject;
+            mCurrDirectory = directory;
             FileList.ItemsSource = mCurrDirectory.ChildObjects;
             FileManager.DataContext = mCurrDirectory;
             if (!mDeepestKey.Contains(mCurrDirectory.Key))
@@ -170,7 +219,7 @@ namespace CloudManager
             DescribeOSSObject directory = obj as DescribeOSSObject;
             DescribeBucket bucket = directory.Bucket;
             string endpoint = "http://" + bucket.InternetEndPoint;
-            OssClient client = new OssClient(endpoint, App.AKI, App.AKS);
+            OssClient client = new OssClient(endpoint, mAki, mAks);
             bool isTruncated = false;
             ObservableCollection<DescribeOSSObject> childs = new ObservableCollection<DescribeOSSObject>();
 
@@ -367,9 +416,9 @@ namespace CloudManager
             return false;
         }
 
-        private BackupTask CreateOssTask(DescribeBucket bucket, string path, string key)
+        private DownUploadTask CreateOssTask(DescribeBucket bucket, string path, string key)
         {
-            BackupTask task = new BackupTask();
+            DownUploadTask task = new DownUploadTask();
             task.InstanceType = "OSS";
             task.InstanceName = bucket.Name;
             task.Instance = bucket;
@@ -393,7 +442,7 @@ namespace CloudManager
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
                 string key = mCurrDirectory.Key + dialog.FileName.Substring(dialog.FileName.LastIndexOf('\\') + 1);
-                BackupTask task = CreateOssTask(mBucket, dialog.FileName, key);
+                DownUploadTask task = CreateOssTask(mSelBucket, dialog.FileName, key);
                 task.FileName = key;
                 task.FileType = FileTypeMode.File;
                 task.TaskType = TaskTypeMode.Upload;
@@ -405,9 +454,9 @@ namespace CloudManager
         {
             if (IsDirectory(path))
             {
-                BackupTask task = null;
+                DownUploadTask task = null;
                 string key = mCurrDirectory.Key + path.Substring(mUploadFolder.LastIndexOf('\\') + 1).Replace('\\', '/') + '/';
-                task = CreateOssTask(mBucket, path, key);
+                task = CreateOssTask(mSelBucket, path, key);
                 task.FileName = key;
                 task.FileType = FileTypeMode.Directory;
                 task.TaskType = TaskTypeMode.Upload;
@@ -421,7 +470,7 @@ namespace CloudManager
                 foreach (string file in Directory.GetFiles(path))
                 {
                     key = mCurrDirectory.Key + file.Substring(mUploadFolder.LastIndexOf('\\') + 1).Replace('\\', '/');
-                    task = CreateOssTask(mBucket, file, key);
+                    task = CreateOssTask(mSelBucket, file, key);
                     task.FileName = key;
                     task.FileType = FileTypeMode.File;
                     task.TaskType = TaskTypeMode.Upload;
@@ -443,14 +492,9 @@ namespace CloudManager
             }
         }
 
-        private void CreateDirectory_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
         private void DispatchDownloadTask(object obj)
         {
-            BackupTask task = obj as BackupTask;
+            DownUploadTask task = obj as DownUploadTask;
             BackupTaskEvent?.Invoke(this, task);
         }
 
@@ -461,7 +505,7 @@ namespace CloudManager
             string path = para[1] as string;
             DescribeBucket bucket = directory.Bucket;
             string endpoint = "http://" + bucket.InternetEndPoint;
-            OssClient client = new OssClient(endpoint, App.AKI, App.AKS);
+            OssClient client = new OssClient(endpoint, mAki, mAks);
             try
             {
                 ObjectListing listing = client.ListObjects(bucket.Name, directory.Key);
@@ -469,7 +513,7 @@ namespace CloudManager
                 {
                     DescribeOSSObject o = new DescribeOSSObject(s);
                     string realPath = path + '\\' + (directory.Name + o.Path.Substring(directory.Path.Length)).Replace('/', '\\');
-                    BackupTask task = CreateOssTask(bucket, realPath, o.Key);
+                    DownUploadTask task = CreateOssTask(bucket, realPath, o.Key);
                     task.FileName = o.Key;
                     if (o.ObjectType == OSSObjectType.Directory)
                     {
@@ -503,7 +547,7 @@ namespace CloudManager
                 if (obj.ObjectType == OSSObjectType.File)
                 {
                     string path = dialog.FileName + '\\' + obj.Name;
-                    BackupTask task = CreateOssTask(mBucket, path, obj.Key);
+                    DownUploadTask task = CreateOssTask(mSelBucket, path, obj.Key);
                     task.FileName = obj.Key;
                     task.FileType = FileTypeMode.File;
                     task.TaskType = TaskTypeMode.Download;
@@ -534,14 +578,14 @@ namespace CloudManager
         private void DeleteObject(object para)
         {
             DescribeOSSObject obj = para as DescribeOSSObject;
-            DescribeBucket bucket = mBucket;
+            DescribeBucket bucket = mSelBucket;
             if (obj.BucketName != bucket.Name)
             {
                 return;
             }
 
             string endpoint = "http://" + bucket.InternetEndPoint;
-            OssClient client = new OssClient(endpoint, App.AKI, App.AKS);
+            OssClient client = new OssClient(endpoint, mAki, mAks);
             try
             {
                 if (obj.ObjectType == OSSObjectType.Directory)
@@ -595,9 +639,9 @@ namespace CloudManager
                 return;
             }
 
-            string endpoint = "http://" + mBucket.InternetEndPoint;
-            OssClient client = new OssClient(endpoint, App.AKI, App.AKS);
-            GetUrlWindow win = new GetUrlWindow(client, mBucket, obj);
+            string endpoint = "http://" + mSelBucket.InternetEndPoint;
+            OssClient client = new OssClient(endpoint, mAki, mAks);
+            GetUrlWindow win = new GetUrlWindow(client, mSelBucket, obj);
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             win.Owner = mMainWindow;
             win.ShowDialog();
@@ -611,9 +655,9 @@ namespace CloudManager
                 return;
             }
 
-            string endpoint = "http://" + mBucket.InternetEndPoint;
-            OssClient client = new OssClient(endpoint, App.AKI, App.AKS);
-            HttpHeaderWindow win = new HttpHeaderWindow(client, mBucket, obj);
+            string endpoint = "http://" + mSelBucket.InternetEndPoint;
+            OssClient client = new OssClient(endpoint, mAki, mAks);
+            HttpHeaderWindow win = new HttpHeaderWindow(client, mSelBucket, obj);
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             win.Owner = mMainWindow;
             win.ShowDialog();
@@ -621,9 +665,9 @@ namespace CloudManager
 
         private void CreateFolder_Click(object sender, RoutedEventArgs e)
         {
-            string endpoint = "http://" + mBucket.InternetEndPoint;
-            OssClient client = new OssClient(endpoint, App.AKI, App.AKS);
-            FolderNameWindow win = new FolderNameWindow(client, mBucket, mCurrDirectory.Key);
+            string endpoint = "http://" + mSelBucket.InternetEndPoint;
+            OssClient client = new OssClient(endpoint, mAki, mAks);
+            EditNameWindow win = new EditNameWindow(client, mSelBucket, mCurrDirectory.Key);
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             win.Owner = mMainWindow;
             win.UpdateEventHandler += UpdateDirectory;

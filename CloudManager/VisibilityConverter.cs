@@ -16,7 +16,7 @@ namespace CloudManager
             if (typeof(string).IsInstanceOfType(value))
             {
                 string status = value as string;
-                if (status.Equals("Running"))
+                if (status.Equals("Running") || status.Equals("FTP") || status.Equals("NAS"))
                 {
                     return Visibility.Visible;
                 }
@@ -121,10 +121,36 @@ namespace CloudManager
                     return Visibility.Collapsed;
                 }
             }
-            else
+            else if (typeof(DownUpLoadTaskPage.TaskStatus).IsInstanceOfType(value))
             {
-                return Visibility.Collapsed;
+                DownUpLoadTaskPage.TaskStatus status = (DownUpLoadTaskPage.TaskStatus)value;
+                if (status == DownUpLoadTaskPage.TaskStatus.Running)
+                {
+                    string type = parameter as string;
+                    if (type != null && type.Contains("Running"))
+                    {
+                        return Visibility.Visible;
+                    }
+                    else
+                    {
+                        return Visibility.Collapsed;
+                    }
+                }
+                else if (status == DownUpLoadTaskPage.TaskStatus.Finished)
+                {
+                    string type = parameter as string;
+                    if (type != null && type.Contains("Finished"))
+                    {
+                        return Visibility.Visible;
+                    }
+                    else
+                    {
+                        return Visibility.Collapsed;
+                    }
+                }
             }
+
+            return Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

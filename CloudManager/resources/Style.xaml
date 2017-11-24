@@ -43,7 +43,7 @@
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Grid>
                         <Border Name="Border" Background="#09A3DC">
-                            <ContentPresenter Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" />
+                            <ContentPresenter Margin="5,0,5,0" HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" />
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
@@ -172,5 +172,11 @@
     <Style x:Key="TitleText" TargetType="{x:Type TextBlock}">
         <Setter Property="Foreground" Value="DarkGray"/>
         <Setter Property="Margin" Value="0,0,10,0"/>
+    </Style>
+
+    <Style x:Key="MenuListBox" TargetType="{x:Type ListBox}">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Background" Value="Transparent"/>
     </Style>
 </ResourceDictionary>

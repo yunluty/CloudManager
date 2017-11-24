@@ -3,6 +3,7 @@ using Aliyun.OSS.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -18,80 +19,101 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static CloudManager.BackupTask;
+using static CloudManager.DownUploadTask;
 
 namespace CloudManager
 {
     /// <summary>
     /// BackupTaskPage.xaml 的交互逻辑
     /// </summary>
-    public partial class TaskPage : Page
+    public partial class DownUpLoadTaskPage : Page, INotifyPropertyChanged
     {
         private static int DOWNLOAD_SIZE = 4096;
 
-        private ObservableCollection<BackupTask> mRunningTasks = new ObservableCollection<BackupTask>();
-        private ObservableCollection<BackupTask> mCompeleteTasks = new ObservableCollection<BackupTask>();
+        private string mAki, mAks;
+        private ObservableCollection<DownUploadTask> mRunningTasks = new ObservableCollection<DownUploadTask>();
+        private ObservableCollection<DownUploadTask> mFinishedTasks = new ObservableCollection<DownUploadTask>();
 
         public delegate void DelegateResult(object obj);
-        public string TaskType { get; set; }
 
-        public TaskPage()
+        private TaskStatus taskType;
+        public TaskStatus TaskType
+        {
+            get { return taskType; }
+            set
+            {
+                taskType = value;
+                NotifyPropertyChanged("TaskType");
+            }
+        }
+
+        public DownUpLoadTaskPage()
         {
             InitializeComponent();
+
+            mAki = App.AKI;
+            mAks = App.AKS;
             RunningList.ItemsSource = mRunningTasks;
-            CompleteList.ItemsSource = mCompeleteTasks;
+            FinishedList.ItemsSource = mFinishedTasks;
+            RunningList.DataContext = this;
+            FinishedList.DataContext = this;
         }
 
-        public void AddNewTask(BackupTask task)
+        public void AddNewTask(DownUploadTask task)
         {
             mRunningTasks.Add(task);
-            Thread t = new Thread(StartDownload);
-            t.Start(task);
+            StartTask(task);
+            
         }
 
-        private void StartDownload(object obj)
+        private void StartTask(DownUploadTask task)
         {
-            BackupTask task = obj as BackupTask;
+            Thread t = null;
             switch (task.InstanceType)
             {
                 case "RDS":
-                    HttpDownload(task);
+                    task.Status = "Downloading";
+                    t = new Thread(new ParameterizedThreadStart(HttpDownload));
                     break;
 
                 case "OSS":
-                    if (task.TaskType == BackupTask.TaskTypeMode.Upload)
+                    if (task.TaskType == DownUploadTask.TaskTypeMode.Upload)
                     {
-                        OssUpload(task);
+                        task.Status = "Uploading";
+                        t = new Thread(new ParameterizedThreadStart(OssUpload));
                     }
-                    else if (task.TaskType == BackupTask.TaskTypeMode.Download)
+                    else if (task.TaskType == DownUploadTask.TaskTypeMode.Download)
                     {
-                        OssDownload(task);
+                        task.Status = "Downloading";
+                        t = new Thread(new ParameterizedThreadStart(OssDownload));
                     }
                     break;
             }
+            t.Start(task);
         }
 
         private void TaskSuccess(object obj)
         {
-            BackupTask task = obj as BackupTask;
+            DownUploadTask task = obj as DownUploadTask;
             task.Status = "Success";
             task.CompleteTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
             mRunningTasks.Remove(task);
-            mCompeleteTasks.Add(task);
+            mFinishedTasks.Add(task);
         }
 
         private void TaskFail(object obj)
         {
-            BackupTask task = obj as BackupTask;
+            DownUploadTask task = obj as DownUploadTask;
             task.Status = "Failed";
             task.CompleteTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
         }
 
-        private void OssUpload(BackupTask task)
+        private void OssUpload(object obj)
         {
+            DownUploadTask task = obj as DownUploadTask;
             DescribeBucket bucket = task.Instance as DescribeBucket;
             string endpoint = "http://" + bucket.InternetEndPoint;
-            OssClient client = new OssClient(endpoint, App.AKI, App.AKS);
+            OssClient client = new OssClient(endpoint, mAki, mAks);
             string key = task.URL;
             Stream stream = null;
             try
@@ -124,11 +146,12 @@ namespace CloudManager
             }
         }
 
-        private void OssDownload(BackupTask task)
+        private void OssDownload(object obj)
         {
+            DownUploadTask task = obj as DownUploadTask;
             DescribeBucket bucket = task.Instance as DescribeBucket;
             string endpoint = "http://" + bucket.InternetEndPoint;
-            OssClient client = new OssClient(endpoint, App.AKI, App.AKS);
+            OssClient client = new OssClient(endpoint, mAki, mAks);
             string path = task.FilePath;
             string key = task.URL;
             Stream stream = null;
@@ -152,8 +175,8 @@ namespace CloudManager
                     fs = File.Open(path, FileMode.Create);
                     var request = new GetObjectRequest(bucket.Name, key);
                     request.StreamTransferProgress += task.StreamTransferProgress;
-                    var obj = client.GetObject(request);
-                    stream = obj.Content;
+                    var o = client.GetObject(request);
+                    stream = o.Content;
                     byte[] bytes = new byte[DOWNLOAD_SIZE];
                     int size = 0;
                     while ((size = stream.Read(bytes, 0, DOWNLOAD_SIZE)) > 0)
@@ -181,8 +204,9 @@ namespace CloudManager
             }
         }
 
-        private void HttpDownload(BackupTask task)
+        private void HttpDownload(object obj)
         {
+            DownUploadTask task = obj as DownUploadTask;
             string path = task.FilePath;
             FileStream fs = null;
             HttpWebRequest request = null;
@@ -244,6 +268,18 @@ namespace CloudManager
                     response.Close();
                 }
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void NotifyPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public enum TaskStatus
+        {
+            Running,
+            Finished
         }
     }
 }

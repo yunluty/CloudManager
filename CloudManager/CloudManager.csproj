@@ -105,8 +105,13 @@
       <DependentUpon>AddListenerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="BackupTask.cs" />
-    <Compile Include="FolderNameWindow.xaml.cs">
-      <DependentUpon>FolderNameWindow.xaml</DependentUpon>
+    <Compile Include="DownUploadTask.cs" />
+    <Compile Include="BackupTaskWindow.xaml.cs">
+      <DependentUpon>BackupTaskWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DescribeFtpFile.cs" />
+    <Compile Include="EditNameWindow.xaml.cs">
+      <DependentUpon>EditNameWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="GetUrlWindow.xaml.cs">
       <DependentUpon>GetUrlWindow.xaml</DependentUpon>
@@ -188,7 +193,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="FolderNameWindow.xaml">
+    <Page Include="BackupTaskWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="EditNameWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -393,6 +402,13 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="images\oss.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\slb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\download.png" />
+    <Resource Include="images\upload.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.105.2\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.105.2\build\net46\System.Data.SQLite.Core.targets')" />

@@ -98,6 +98,14 @@ namespace CloudManager
                 {
                     return "images/illegal.png";
                 }
+                else if (status.Contains("Windows"))
+                {
+                    return "images/windows.png";
+                }
+                else if (status.Contains("Ubuntu"))
+                {
+                    return "images/ubuntu.png";
+                }
             }
             else if (typeof(bool).IsInstanceOfType(value))
             {

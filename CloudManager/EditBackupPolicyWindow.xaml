@@ -86,8 +86,9 @@
             </StackPanel>
         </Grid>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,20">
-            <Button x:Name="OK" Width="80" Height="32" Content="确定" Click="OK_Click"/>
-            <Button x:Name="Cancel" Width="80" Height="32" Content="取消" Click="Cancel_Click" Margin="10,0,10,0"/>
+            <Button x:Name="OK" Width="80" Height="32" Content="确定" Click="OK_Click" Style="{StaticResource ProcessButton}"/>
+            <Button x:Name="Cancel" Width="80" Height="32" Content="取消" Margin="10,0,10,0"
+                    Click="Cancel_Click" Style="{StaticResource ProcessButton}"/>
         </StackPanel>
     </StackPanel>
 </Window>

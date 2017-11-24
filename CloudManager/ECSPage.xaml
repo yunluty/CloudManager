@@ -8,94 +8,134 @@
       d:DesignHeight="600" d:DesignWidth="600"
       Title="ECSPage">
 
-    <TabControl>
-        <TabItem Header="实例详情">
-            <StackPanel x:Name="Information" Grid.Column="1">
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="ID :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=InstanceId}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="名称 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=InstanceName}" TextWrapping="WrapWithOverflow" Width="230"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="描述 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=Description}" TextWrapping="WrapWithOverflow" Width="230"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="状态 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <Image Margin="0,0,5,0" Source="{Binding Path=Status, Converter={StaticResource StatusImageConverter}}"/>
-                    <TextBlock Text="{Binding Path=Status, Converter={StaticResource StatusTextConverter}}" Foreground="{Binding Path=Status, Converter={StaticResource StatusColorConverter}}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="实例规格 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=InstanceType}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="所在可用区 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=ZoneLang}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="CPU :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=CpuLang}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="内存 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=MemoryLang}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="操作系统 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=OSName}" TextWrapping="WrapWithOverflow" Width="220"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="公网IP :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=PublicIpAddress[0]}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="带宽计费方式 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=InternetChargeTypeLang}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="带宽 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=InternetMaxBandwidthOutLang}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="付费方式 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=InstanceChargeTypeLang}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="到期时间 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=ExpiredTime}"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <TextBlock Text="创建时间 :" Style="{StaticResource ResourceKey=TitleText}"/>
-                    <TextBlock Text="{Binding Path=CreationTime}"/>
-                </StackPanel>
-                <Button x:Name="Stop" Click="Stop_Click"
-                Height="32" Width="220" Margin="0,20,0,5"
-                Content="{Binding Path=Status, Converter={StaticResource ControlConverter}}"
-                IsEnabled="{Binding Path=Status, Converter={StaticResource IsEnableConverter}}"
-                Style="{StaticResource ResourceKey=LoginButton}"/>
-                <Button x:Name="Reboot" Content="重启"
-                Height="32" Width="220" Margin="5"
-                Click="Reboot_Click"
-                Visibility="{Binding Path=Status, Converter={StaticResource VisibilityConverter}}"
-                Style="{StaticResource ResourceKey=LoginButton}"/>
-                <Button x:Name="ResetPassword" Content="重置密码" 
-                Height="32" Width="220" Margin="5"
-                Click="ResetPassword_Click"
-                Visibility="{Binding Path=Status, Converter={StaticResource VisibilityConverter}}"
-                Style="{StaticResource ResourceKey=LoginButton}"/>
-            </StackPanel>
-        </TabItem>
-        <TabItem Header="文件">
+    <Page.Resources>
+        <DataTemplate x:Key="Selector">
+            <CheckBox IsChecked="{Binding Path=Checked, Mode=TwoWay}"/>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="4*"/>
+        </Grid.ColumnDefinitions>
+        <Label Grid.Column="0" Content="实例列表" FontSize="18"/>
+        <ListBox x:Name="ECSList" BorderThickness="0" BorderBrush="Transparent"
+                 Margin="0,35,0,0" SelectionChanged="ECSList_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="{Binding OSName, Converter={StaticResource StatusImageConverter}}"/>
+                        <Label Content="{Binding InstanceName}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <TabControl Grid.Column="1">
+            <TabItem>
+                <TabItem.Header>
+                    <Label Content="实例详情" FontSize="16"/>
+                </TabItem.Header>
+                <Grid x:Name="Information">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="ID :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=InstanceId}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="名称 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=InstanceName}" TextWrapping="WrapWithOverflow" Width="260"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="描述 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=Description}" TextWrapping="Wrap" Width="620"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="状态 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <Image Margin="0,0,5,0" Source="{Binding Path=Status, Converter={StaticResource StatusImageConverter}}"/>
+                        <TextBlock Text="{Binding Path=Status, Converter={StaticResource StatusTextConverter}}"
+                               Foreground="{Binding Path=Status, Converter={StaticResource StatusColorConverter}}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="实例规格 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=InstanceType}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="所在可用区 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=ZoneLang}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="CPU :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=CpuLang}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="4" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="内存 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=MemoryLang}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="操作系统 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=OSName}" TextWrapping="WrapWithOverflow" Width="260"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="公网IP :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=PublicIpAddress[0]}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="带宽计费方式 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=InternetChargeTypeLang}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="6" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="带宽 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=InternetMaxBandwidthOutLang}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="付费方式 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=InstanceChargeTypeLang}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="7" Grid.Column="0" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="到期时间 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=ExpiredTime}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal" Margin="0,5,0,5">
+                        <TextBlock Text="创建时间 :" Style="{StaticResource ResourceKey=TitleText}"/>
+                        <TextBlock Text="{Binding Path=CreationTime}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+                        <Button x:Name="Stop" Height="32" Width="60" Margin="0,0,10,0"
+                                Content="{Binding Path=Status, Converter={StaticResource ControlConverter}}"
+                                IsEnabled="{Binding Path=Status, Converter={StaticResource IsEnableConverter}}"
+                                Click="Stop_Click" Style="{StaticResource ResourceKey=ProcessButton}"/>
+                        <Button x:Name="Reboot" Content="重启" Height="32" Width="60" Margin="0,0,10,0"
+                                Visibility="{Binding Path=Status, Converter={StaticResource VisibilityConverter}}"
+                                Click="Reboot_Click" Style="{StaticResource ResourceKey=ProcessButton}"/>
+                        <Button x:Name="ResetPassword" Content="重置密码" Height="32" Width="60" Margin="0,0,20,0"
+                                Visibility="{Binding Path=Status, Converter={StaticResource VisibilityConverter}}"
+                                Click="ResetPassword_Click" Style="{StaticResource ResourceKey=ProcessButton}"/>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+            <!--TabItem x:Name="BackupFiles" Header="文件备份">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <Grid x:Name="FTPInfo" Grid.Row="0" Margin="100,20,100,0">
+                <Grid x:Name="FTPInfo" Grid.Row="0" Margin="100,20,100,0" Visibility="Collapsed">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="42"/>
                         <RowDefinition Height="42"/>
@@ -125,7 +165,54 @@
                             Content="确定" Height="32" Margin="100,20,100,0"
                             Style="{StaticResource LoginButton}" Click="AddFtpInfo_Click"/>
                 </Grid>
+                <StackPanel x:Name="FtpFiles" Grid.Row="1" Visibility="Collapsed">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="75"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="85"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                            <Button x:Name="Previous" Click="Previous_Click" Style="{StaticResource PreviousButton}"/>
+                            <Button x:Name="Next" Click="Next_Click"  Style="{StaticResource NextButton}" Margin="5,0,0,0"/>
+                        </StackPanel>
+                        <TextBox x:Name="Path" Grid.Column="1" Height="30" Text="{Binding Path, Mode=OneWay}"
+                                 VerticalContentAlignment="Center"/>
+                        <Button x:Name="CreateBackup" Grid.Column="2" Content="创建备份"
+                                HorizontalAlignment="Right" Margin="0,0,10,0"
+                                Style="{StaticResource ProcessButton}" Click="CreateBackup_Click"/>
+                    </Grid>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.3*"/>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="0.1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid Grid.Column="0" x:Name="Column1"/>
+                        <Grid Grid.Column="1" x:Name="Column2"/>
+                        <Grid Grid.Column="2" x:Name="Column3"/>
+                        <Grid Grid.Column="3" x:Name="Column4"/>
+                    </Grid>
+                    <ListView x:Name="FtpFilesList" Grid.Row="2" Margin="0,5,0,0"
+                              MouseDoubleClick="FtpFilesList_MouseDoubleClick">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn CellTemplate="{StaticResource Selector}"
+                                                Width="{Binding ElementName=Column1, Path=ActualWidth}"/>
+                                <GridViewColumn Header="文件名" DisplayMemberBinding="{Binding Name}"
+                                        Width="{Binding ElementName=Column2, Path=ActualWidth}"/>
+                                <GridViewColumn Header="大小" DisplayMemberBinding="{Binding Size, Converter={StaticResource FileSizeConverter}}"
+                                        Width="{Binding ElementName=Column3, Path=ActualWidth}"/>
+                                <GridViewColumn Header="修改时间" DisplayMemberBinding="{Binding ModifiedTime}"
+                                        Width="{Binding ElementName=Column4, Path=ActualWidth}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </StackPanel>
             </Grid>
-        </TabItem>
-    </TabControl>
+        </TabItem-->
+        </TabControl>
+    </Grid>
 </Page>

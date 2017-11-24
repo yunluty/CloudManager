@@ -11,11 +11,13 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using static Aliyun.Acs.Ecs.Model.V20140526.DescribeRegionsResponse;
 using static Aliyun.Acs.Rds.Model.V20140815.DescribeBackupsResponse;
 using static Aliyun.Acs.Rds.Model.V20140815.DescribeDBInstanceAttributeResponse;
+using static Aliyun.Acs.Rds.Model.V20140815.DescribeDBInstancesResponse;
 using static Aliyun.Acs.Rds.Model.V20140815.DescribeParametersResponse;
 using static Aliyun.Acs.Rds.Model.V20140815.DescribeParameterTemplatesResponse;
-using static CloudManager.BackupTask;
+using static CloudManager.DownUploadTask;
 
 namespace CloudManager
 {
@@ -25,6 +27,8 @@ namespace CloudManager
     public partial class RDSPage : Page
     {
         private string mAki, mAks;
+        private ObservableCollection<DescribeDBInstance> mDBInstances = new ObservableCollection<DescribeDBInstance>();
+        private DescribeDBInstance mSelDBInstance;
         private ObservableCollection<DBParameter> mParameters;
         private ObservableCollection<DBBackup> mBackups;
         private DBBackupPolicy mPolicy;
@@ -33,51 +37,96 @@ namespace CloudManager
         public delegate void DelegateGot(object obj);
         //public delegate void BackupTaskHandler(object sender, BackupTask task);
         //public event BackupTaskHandler BackupTaskEvent;
-        public EventHandler<BackupTask> BackupTaskEvent;
+        public EventHandler<DownUploadTask> BackupTaskEvent;
 
 
         public RDSPage()
         {
             InitializeComponent();
+
+            mAki = App.AKI;
+            mAks = App.AKS;
+            RDSList.ItemsSource = mDBInstances;
+            Thread t = new Thread(GetDBInstances);
+            t.Start();
         }
 
-        public RDSPage(string aki, string aks)
+        private void GotDBInstances(object obj)
         {
-            InitializeComponent();
-            mAki = aki;
-            mAks = aks;
-        }
-
-        private DescribeDBInstance _mDBInstance;
-        public DescribeDBInstance mDBInstance
-        {
-            get { return _mDBInstance; }
-            set
+            DescribeDBInstance instance = obj as DescribeDBInstance;
+            if (instance != null)
             {
-                _mDBInstance = value;
-                Thread t1 = new Thread(new ParameterizedThreadStart(GetAttribute));
-                t1.Start(value);
-                Thread t2 = new Thread(new ParameterizedThreadStart(GetParameters));
-                t2.Start(value);
-                Thread t3 = new Thread(new ParameterizedThreadStart(GetBackups));
-                t3.Start(value);
+                mDBInstances.Add(instance);
+                SelectDefaultIndex();
             }
+        }
+
+        private void GetDBInstances()
+        {
+            foreach (DescribeRegions_Region region in App.REGIONS)
+            {
+                IClientProfile profile = DefaultProfile.GetProfile(region.RegionId, mAki, mAks);
+                DefaultAcsClient client = new DefaultAcsClient(profile);
+                DescribeDBInstancesRequest request = new DescribeDBInstancesRequest();
+                try
+                {
+                    DescribeDBInstancesResponse response = client.GetAcsResponse(request);
+                    foreach (DescribeDBInstances_DBInstance d in response.Items)
+                    {
+                        DescribeDBInstance instance = new DescribeDBInstance(d);
+                        Dispatcher.Invoke(new DelegateGot(GotDBInstances), instance);
+                    }
+                }
+                catch
+                {
+
+                }
+            }
+        }
+
+        private void SelectDefaultIndex()
+        {
+            if (RDSList.SelectedIndex == -1)
+            {
+                RDSList.SelectedIndex = 0;
+            }
+        }
+
+        private void RDSList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (RDSList.SelectedIndex == -1)
+            {
+                return;
+            }
+
+            SetDBInstance(RDSList.SelectedItem as DescribeDBInstance);
+        }
+
+        private void SetDBInstance(DescribeDBInstance instance)
+        {
+            mSelDBInstance = instance;
+            Thread t1 = new Thread(new ParameterizedThreadStart(GetAttribute));
+            t1.Start(mSelDBInstance);
+            Thread t2 = new Thread(new ParameterizedThreadStart(GetParameters));
+            t2.Start(mSelDBInstance);
+            Thread t3 = new Thread(new ParameterizedThreadStart(GetBackups));
+            t3.Start(mSelDBInstance);
         }
 
         private void GotAttribute(object obj)
         {
             DescribeDBInstanceAttribute_DBInstanceAttribute attribute = obj as DescribeDBInstanceAttribute_DBInstanceAttribute;
-            mDBInstance.ConnectionString = attribute.ConnectionString;
-            mDBInstance.Port = attribute.Port;
-            mDBInstance.DBInstanceClassType = attribute.DBInstanceClassType;
-            mDBInstance.DBInstanceCPU = attribute.DBInstanceCPU;
-            mDBInstance.DBInstanceMemory = attribute.DBInstanceMemory;
-            mDBInstance.MaxIOPS = attribute.MaxIOPS;
-            mDBInstance.MaxConnections = attribute.MaxConnections;
-            mDBInstance.DBInstanceClass = attribute.DBInstanceClass;
-            mDBInstance.MaintainTime = attribute.MaintainTime;
-            mDBInstance.DBInstanceStorage = attribute.DBInstanceStorage;
-            RDSInfo.DataContext = mDBInstance;
+            mSelDBInstance.ConnectionString = attribute.ConnectionString;
+            mSelDBInstance.Port = attribute.Port;
+            mSelDBInstance.DBInstanceClassType = attribute.DBInstanceClassType;
+            mSelDBInstance.DBInstanceCPU = attribute.DBInstanceCPU;
+            mSelDBInstance.DBInstanceMemory = attribute.DBInstanceMemory;
+            mSelDBInstance.MaxIOPS = attribute.MaxIOPS;
+            mSelDBInstance.MaxConnections = attribute.MaxConnections;
+            mSelDBInstance.DBInstanceClass = attribute.DBInstanceClass;
+            mSelDBInstance.MaintainTime = attribute.MaintainTime;
+            mSelDBInstance.DBInstanceStorage = attribute.DBInstanceStorage;
+            RDSInfo.DataContext = mSelDBInstance;
         }
 
         private void GetAttribute(object obj)
@@ -126,10 +175,10 @@ namespace CloudManager
             }
             parameters += "}";
 
-            IClientProfile profile = DefaultProfile.GetProfile(mDBInstance.RegionId, mAki, mAks);
+            IClientProfile profile = DefaultProfile.GetProfile(mSelDBInstance.RegionId, mAki, mAks);
             DefaultAcsClient client = new DefaultAcsClient(profile);
             ModifyParameterRequest request = new ModifyParameterRequest();
-            request.DBInstanceId = mDBInstance.DBInstanceId;
+            request.DBInstanceId = mSelDBInstance.DBInstanceId;
             request.Parameters = parameters;
             request.Forcerestart = forcerestart;
             try
@@ -273,10 +322,10 @@ namespace CloudManager
             dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                BackupTask task = new BackupTask();
+                DownUploadTask task = new DownUploadTask();
                 task.InstanceType = "RDS";
-                task.InstanceID = mDBInstance.DBInstanceId;
-                task.InstanceName = mDBInstance.DBInstanceDescription;
+                task.InstanceID = mSelDBInstance.DBInstanceId;
+                task.InstanceName = mSelDBInstance.DBInstanceDescription;
                 task.URL = backup.BackupDownloadURL;
                 task.FileName = GetFileNameByUrl(task.URL);
                 task.FilePath = task.FilePath + '\\' + task.FileName;
@@ -355,7 +404,7 @@ namespace CloudManager
 
         private void EditPolicy_Click(object sender, RoutedEventArgs e)
         {
-            IClientProfile profile = DefaultProfile.GetProfile(mDBInstance.RegionId, mAki, mAks);
+            IClientProfile profile = DefaultProfile.GetProfile(mSelDBInstance.RegionId, mAki, mAks);
             DefaultAcsClient client = new DefaultAcsClient(profile);
             EditBackupPolicyWindow win = new EditBackupPolicyWindow(mPolicy, client);
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;

@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using static Aliyun.Acs.Ecs.Model.V20140526.DescribeRegionsResponse;
 
 namespace CloudManager
 {
@@ -15,5 +16,6 @@ namespace CloudManager
     {
         public static string AKI;
         public static string AKS;
+        public static List<DescribeRegions_Region> REGIONS;
     }
 }

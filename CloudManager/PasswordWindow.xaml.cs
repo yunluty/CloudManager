@@ -33,16 +33,11 @@ namespace CloudManager
         public delegate void PassValuesHandler(object sender, DescribeInstance i);
         public event PassValuesHandler PassValuesEvent;
 
-        public PasswordWindow()
+        public PasswordWindow(DescribeInstance instance)
         {
             InitializeComponent();
-        }
-
-        public PasswordWindow(string aki, string aks, DescribeInstance instance)
-        {
-            InitializeComponent();
-            mAki = aki;
-            mAks = aks;
+            mAki = App.AKI;
+            mAks = App.AKS;
             mCurrInstance = instance;
         }
 
