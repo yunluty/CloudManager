@@ -14,13 +14,13 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid>
+    <Grid Background="#F9F9F9">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
         <Label Grid.Column="0" Content="实例列表" FontSize="18"/>
-        <ListBox x:Name="ECSList" BorderThickness="0" BorderBrush="Transparent"
+        <ListBox x:Name="ECSList" Style="{StaticResource ItemListBox}"
                  Margin="0,35,0,0" SelectionChanged="ECSList_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -31,7 +31,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <TabControl Grid.Column="1">
+        <TabControl Grid.Column="1" Background="Transparent">
             <TabItem>
                 <TabItem.Header>
                     <Label Content="实例详情" FontSize="16"/>
@@ -114,7 +114,7 @@
                         <TextBlock Text="创建时间 :" Style="{StaticResource ResourceKey=TitleText}"/>
                         <TextBlock Text="{Binding Path=CreationTime}"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+                    <StackPanel Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,15,0,0">
                         <Button x:Name="Stop" Height="32" Width="60" Margin="0,0,10,0"
                                 Content="{Binding Path=Status, Converter={StaticResource ControlConverter}}"
                                 IsEnabled="{Binding Path=Status, Converter={StaticResource IsEnableConverter}}"

@@ -29,6 +29,7 @@ namespace CloudManager
         private RDSPage mRDSPage;
         private DownUpLoadTaskPage mBackupPage;
         private BucketPage mBucketPage;
+        private CertificatePage mCertificatePage;
 
         private delegate void DelegateGot(object obj);
 
@@ -50,7 +51,11 @@ namespace CloudManager
             mBucketPage = new BucketPage();
             mBucketPage.BackupTaskEvent += DoBackupTask;
             mBucketPage.mMainWindow = this;
-            mBackupPage = new DownUpLoadTaskPage();
+
+            mCertificatePage = new CertificatePage();
+            mCertificatePage.mMainWindow = this;
+
+            mBackupPage = new DownUpLoadTaskPage();      
         }
 
         private void Menus_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -82,7 +87,7 @@ namespace CloudManager
             }
             else if (id.Equals("Certificates"))
             {
-                Process.Content = mSLBPage;
+                Process.Content = mCertificatePage;
             }
             else if (id.Equals("RunningTask"))
             {

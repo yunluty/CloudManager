@@ -30,61 +30,42 @@
         </c:ArrayList>
     </Window.Resources>
     
-    <Grid Margin="0,0,5,0">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="6*"/>
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0" Background="LightGray"/>
+        <Grid Grid.Column="0" Background="#EAEDF1"/>
+        <!--#333744-->
         <StackPanel Grid.Column="0" Margin="5,0,5,0">
-            <Label Content="云控制台" FontSize="18"/>
+            <Label Content="云控制台" Style="{StaticResource TitleLabel}"/>
             <StackPanel Orientation="Horizontal">
                 <Image Source="images/ecs.png"/>
-                <Label Content="云服务器 ECS" FontSize="14"/>
+                <Label Content="云服务器 ECS" Style="{StaticResource TitleLabel2}"/>
             </StackPanel>
             <ListBox x:Name="ECSMenuList" Style="{StaticResource MenuListBox}"
-                             ItemsSource="{StaticResource ECSMenus}" SelectionChanged="Menus_SelectionChanged">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Label Content="{Binding Name}"/>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
+                     ItemsSource="{StaticResource ECSMenus}" SelectionChanged="Menus_SelectionChanged">
             </ListBox>
             <StackPanel Orientation="Horizontal">
                 <Image Source="images/rds.png"/>
-                <Label Content="云数据库 RDS 版" FontSize="14"/>
+                <Label Content="云数据库 RDS 版" Style="{StaticResource TitleLabel2}"/>
             </StackPanel>
             <ListBox x:Name="RDSMenuList" Style="{StaticResource MenuListBox}"
-                             ItemsSource="{StaticResource RDSMenus}" SelectionChanged="Menus_SelectionChanged">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Label Content="{Binding Name}"/>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
+                     ItemsSource="{StaticResource RDSMenus}" SelectionChanged="Menus_SelectionChanged">
             </ListBox>
             <StackPanel Orientation="Horizontal">
                 <Image Source="images/oss.png"/>
-                <Label Content="对象储存 OSS" FontSize="14"/>
+                <Label Content="对象储存 OSS" Style="{StaticResource TitleLabel2}"/>
             </StackPanel>
             <ListBox x:Name="OSSMenuList" Style="{StaticResource MenuListBox}"
-                             ItemsSource="{StaticResource OSSMenus}" SelectionChanged="Menus_SelectionChanged">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Label Content="{Binding Name}"/>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
+                     ItemsSource="{StaticResource OSSMenus}" SelectionChanged="Menus_SelectionChanged">
             </ListBox>
             <StackPanel Orientation="Horizontal">
                 <Image Source="images/slb.png"/>
-                <Label Content="负载均衡 SLB" FontSize="14"/>
+                <Label Content="负载均衡 SLB" Style="{StaticResource TitleLabel2}"/>
             </StackPanel>
             <ListBox x:Name="SLBMenuList" Style="{StaticResource MenuListBox}"
-                             ItemsSource="{StaticResource SLBMenus}" SelectionChanged="Menus_SelectionChanged">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Label Content="{Binding Name}"/>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
+                     ItemsSource="{StaticResource SLBMenus}" SelectionChanged="Menus_SelectionChanged">
             </ListBox>
             <!--<Expander>
                 <Expander.Header>
@@ -101,14 +82,9 @@
                     </ListBox>
                 </Expander.Content>
             </Expander>-->
-            <Label Content="任务" FontSize="18"/>
+            <Label Content="网络任务" Style="{StaticResource TitleLabel}"/>
             <ListBox x:Name="TaskMenuList" Style="{StaticResource MenuListBox}"
                      ItemsSource="{StaticResource TaskMenus}" SelectionChanged="Menus_SelectionChanged">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Label Content="{Binding Name}"/>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
             </ListBox>
         </StackPanel>
         <Button x:Name="Logoff" Content="注销" Height="32" VerticalAlignment="Bottom" Margin="15,0,15,150"

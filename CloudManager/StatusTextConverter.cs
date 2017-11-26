@@ -187,6 +187,14 @@ namespace CloudManager
                 {
                     return "公共读写";
                 }
+                else if (status.Equals("ServerCertificate", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return "服务器证书";
+                }
+                else if (status.Equals("CACertificate", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return "CA证书";
+                }
                 else
                 {
                     return null;

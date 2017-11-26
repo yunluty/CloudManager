@@ -402,6 +402,24 @@ namespace CloudManager
             }
         }
 
+        private void EditName_Click(object sender, RoutedEventArgs e)
+        {
+            IClientProfile profile = DefaultProfile.GetProfile(mSelDBInstance.RegionId, mAki, mAks);
+            DefaultAcsClient client = new DefaultAcsClient(profile);
+
+            EditNameWindow win = new EditNameWindow(client, mSelDBInstance);
+            win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            win.Owner = mMainWindow;
+            win.UpdateEventHandler += UpdateDBInstanceName;
+            win.ShowDialog();
+        }
+
+        private void UpdateDBInstanceName(object sender, string name)
+        {
+            DescribeDBInstance instance = sender as DescribeDBInstance;
+            instance.DBInstanceDescription = name;
+        }
+
         private void EditPolicy_Click(object sender, RoutedEventArgs e)
         {
             IClientProfile profile = DefaultProfile.GetProfile(mSelDBInstance.RegionId, mAki, mAks);

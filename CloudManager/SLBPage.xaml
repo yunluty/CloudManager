@@ -92,13 +92,13 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid>
+    <Grid Background="#F9F9F9">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
         <Label Grid.Column="0" Content="实例列表" FontSize="18"/>
-        <ListBox x:Name="SLBList" Grid.Column="0" BorderThickness="0" BorderBrush="Transparent"
+        <ListBox x:Name="SLBList" Grid.Column="0" Style="{StaticResource ItemListBox}"
                  Margin="0,40,0,0" SelectionChanged="SLBList_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -106,7 +106,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <TabControl Grid.Column="1">
+        <TabControl Grid.Column="1" Background="Transparent">
             <TabItem x:Name="SLBInfo">
                 <TabItem.Header>
                     <Label Content="详情" FontSize="16"/>
@@ -170,7 +170,7 @@
                         <TextBlock Text="创建时间 :" Style="{StaticResource ResourceKey=TitleText}"/>
                         <TextBlock Text="{Binding Path=CreateTime}"/>
                     </StackPanel>
-                    <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+                    <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,15,0,0">
                         <Button x:Name="Start" Height="32" Width="60" Margin="0,0,10,0"
                                 IsEnabled="{Binding LoadBalancerStatus, Converter={StaticResource IsEnableConverter}}"
                                 Content="{Binding LoadBalancerStatus, Converter={StaticResource ControlConverter}}"
@@ -198,8 +198,8 @@
                                 <Button Content="刷新" Click="UpdateListeners_Click" Height="32" Width="60" Margin="10,0,0,0" Style="{StaticResource ProcessButton}"/>
                             </StackPanel>
                         </Grid>
-                        <ListView x:Name="Listeners" SelectionChanged="Listeners_SelectionChanged" MaxHeight="240"
-                              Visibility="{Binding Path=Count, Converter={StaticResource VisibilityConverter}}">
+                        <ListView x:Name="ListenersList" SelectionChanged="ListenersList_SelectionChanged" MaxHeight="230"
+                                  Visibility="{Binding Path=Count, Converter={StaticResource VisibilityConverter}}">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn CellTemplate="{StaticResource ListenersSelector}">

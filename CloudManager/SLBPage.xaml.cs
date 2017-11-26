@@ -65,7 +65,7 @@ namespace CloudManager
             mNotAddedServers = new ObservableCollection<DescribeInstance>();
             NotAdded.DataContext = mNotAddedServers;
             mListeners = new ObservableCollection<SLBListener>();
-            Listeners.DataContext = mListeners;
+            ListenersList.DataContext = mListeners;
         }
 
         private void GetLoadBalancers()
@@ -308,8 +308,9 @@ namespace CloudManager
             if (listeners != null)
             {
                 mListeners = listeners;
-                Listeners.ItemsSource = mListeners;
-                Listeners.DataContext = mListeners;
+                ListenersList.ItemsSource = mListeners;
+                ListenersList.DataContext = mListeners;
+                ListenersList.SelectedIndex = 0;
             }
         }
 
@@ -890,14 +891,14 @@ namespace CloudManager
             }
         }
 
-        private void Listeners_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ListenersList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Listeners.SelectedIndex < 0)
+            if (ListenersList.SelectedIndex < 0)
             {
                 return;
             }
 
-            mSelListener = Listeners.SelectedItem as SLBListener;
+            mSelListener = ListenersList.SelectedItem as SLBListener;
             ListenerInfo.DataContext = mSelListener;
             ForwardRule.DataContext = mSelListener;
             Thread t = new Thread(new ParameterizedThreadStart(GetRules));

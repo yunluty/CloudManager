@@ -1,4 +1,5 @@
 ﻿using Aliyun.Acs.Core;
+using Aliyun.Acs.Rds.Model.V20140815;
 using Aliyun.Acs.Slb.Model.V20140515;
 using Aliyun.OSS;
 using System;
@@ -29,6 +30,8 @@ namespace CloudManager
         private string mCurrKey;
         private DefaultAcsClient mAcsClient;
         private DescribeLoadBalancer mBalancer;
+        private EditingType mEditingType;
+        private DescribeDBInstance mDBInstance;
 
         public bool EnableButton;
         public bool EnableText;
@@ -46,6 +49,8 @@ namespace CloudManager
             mBucket = b;
             mCurrKey = k;
             TextTile = "文件名:";
+            EditNameBox.MaxLength = 254;
+            mEditingType = EditingType.BucketFolderName;
             this.Title = "新建文件夹";
             this.DataContext = this;
         }
@@ -57,8 +62,52 @@ namespace CloudManager
             mAcsClient = c;
             mBalancer = b;
             TextTile = "名称:";
+            EditNameBox.MaxLength = 80;
+            mEditingType = EditingType.BlancerName;
             this.Title = "编辑负载均衡名称";
             this.DataContext = this;
+        }
+
+        public EditNameWindow(DefaultAcsClient c, DescribeDBInstance i)
+        {
+            InitializeComponent();
+
+            mAcsClient = c;
+            mDBInstance = i;
+            TextTile = "名称:";
+            EditNameBox.MaxLength = 64;
+            mEditingType = EditingType.DBInstanceName;
+            this.Title = "编辑数据库实例名称";
+            this.DataContext = this;
+        }
+
+        private void SetDBInstanceNameSuccess(object obj)
+        {
+            string name = obj as string;
+            UpdateEventHandler?.Invoke(mDBInstance, name);
+            this.Close();
+        }
+
+        private void SetDBInstanceNameFail()
+        {
+            EnableButton = true;
+        }
+
+        private void SetDBInstanceName(object obj)
+        {
+            string name = obj as string;
+            ModifyDBInstanceDescriptionRequest request = new ModifyDBInstanceDescriptionRequest();
+            request.DBInstanceId = mDBInstance.DBInstanceId;
+            request.DBInstanceDescription = name;
+            try
+            {
+                ModifyDBInstanceDescriptionResponse response = mAcsClient.GetAcsResponse(request);
+                Dispatcher.Invoke(new DelegateGot(SetDBInstanceNameSuccess), obj);
+            }
+            catch
+            {
+                Dispatcher.Invoke(new Action(SetDBInstanceNameFail));
+            }
         }
 
         private void SetNameSuccess(object obj)
@@ -124,10 +173,32 @@ namespace CloudManager
 
         private void OK_Click(object sender, RoutedEventArgs e)
         {
-            EnableButton = false;
-            string key = mCurrKey + EditName + '/';
-            Thread t = new Thread(new ParameterizedThreadStart(CreateFolder));
-            t.Start(key);
+            if (mEditingType == EditingType.BucketFolderName)
+            {
+                EnableButton = false;
+                string key = mCurrKey + EditName + '/';
+                Thread t = new Thread(new ParameterizedThreadStart(CreateFolder));
+                t.Start(key);
+            }
+            else if (mEditingType == EditingType.BlancerName)
+            {
+                string name = String.Copy(EditName);
+                Thread t = new Thread(new ParameterizedThreadStart(SetBalancerName));
+                t.Start(name);
+            }
+            else if (mEditingType == EditingType.DBInstanceName)
+            {
+                string name = String.Copy(EditName);
+                Thread t = new Thread(new ParameterizedThreadStart(SetDBInstanceName));
+                t.Start(name);
+            }
+        }
+
+        enum EditingType
+        {
+            BucketFolderName,
+            BlancerName,
+            DBInstanceName
         }
     }
 }

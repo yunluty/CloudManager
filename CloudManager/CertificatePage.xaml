@@ -1,0 +1,43 @@
+﻿<Page x:Class="CloudManager.CertificatePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:CloudManager"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="600"
+      Title="CertificatePage">
+
+    <Page.Resources>
+        <DataTemplate x:Key="ProcessCertificate">
+            <StackPanel Orientation="Horizontal">
+                <Button x:Name="ModifyCertificateName" Content="修改名称" Style="{StaticResource ClickText}" Click="ModifyCertificateName_Click"/>
+                <Button x:Name="DeleteCertificate" Content="删除" Style="{StaticResource ClickText}" Click="DeleteCertificate_Click" Margin="5,0,0,0"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="CertificateName">
+            <TextBlock Text="{Binding CertificateName}" Width="100" TextWrapping="Wrap"/>
+        </DataTemplate>
+        <DataTemplate x:Key="CertificateId">
+            <TextBlock Text="{Binding CertificateId}" Width="240" TextWrapping="Wrap"/>
+        </DataTemplate>
+        <DataTemplate x:Key="Fingerprint">
+            <TextBlock Text="{Binding Fingerprint}" Width="240" TextWrapping="Wrap"/>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid>
+        <ListView x:Name="CertificatesList">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="证书名称" CellTemplate="{StaticResource CertificateName}"/>
+                    <GridViewColumn Header="证书ID" CellTemplate="{StaticResource CertificateId}"/>
+                    <GridViewColumn Header="证书指纹" CellTemplate="{StaticResource Fingerprint}"/>
+                    <GridViewColumn Header="证书类型" DisplayMemberBinding="{Binding CertificateType, Converter={StaticResource StatusTextConverter}}"/>
+                    <GridViewColumn Header="地域" DisplayMemberBinding="{Binding RegionLocalName}"/>
+                    <GridViewColumn Header="操作" CellTemplate="{StaticResource ProcessCertificate}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Page>

@@ -105,6 +105,10 @@
       <DependentUpon>AddListenerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="BackupTask.cs" />
+    <Compile Include="CertificatePage.xaml.cs">
+      <DependentUpon>CertificatePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DescribeCertificate.cs" />
     <Compile Include="DownUploadTask.cs" />
     <Compile Include="BackupTaskWindow.xaml.cs">
       <DependentUpon>BackupTaskWindow.xaml</DependentUpon>
@@ -194,6 +198,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="BackupTaskWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CertificatePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
