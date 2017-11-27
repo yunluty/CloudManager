@@ -55,16 +55,6 @@ namespace CloudManager
             CertificatesList.ItemsSource = mCertificates;
         }
 
-        private void ModifyCertificateName_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void DeleteCertificate_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void GetCertificates()
         {
             ObservableCollection<DescribeCertificate> certs = new ObservableCollection<DescribeCertificate>();
@@ -76,7 +66,7 @@ namespace CloudManager
                 DescribeCACertificatesRequest r2 = new DescribeCACertificatesRequest();
                 try
                 {
-                    
+
                     DescribeServerCertificatesResponse resp1 = client.GetAcsResponse(r1);
                     foreach (DescribeServerCertificates_ServerCertificate c in resp1.ServerCertificates)
                     {
@@ -97,6 +87,64 @@ namespace CloudManager
                 }
             }
             Dispatcher.Invoke(new DelegateGot(GotCertificates), certs);
+        }
+
+        private void ModifyCertificateName_Click(object sender, RoutedEventArgs e)
+        {
+            DescribeCertificate cert = (sender as Button).DataContext as DescribeCertificate;
+            IClientProfile profile = DefaultProfile.GetProfile(cert.RegionId, mAki, mAks);
+            DefaultAcsClient client = new DefaultAcsClient(profile);
+
+            EditCertNameWindow win = new EditCertNameWindow(client, cert);
+            win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            win.Owner = mMainWindow;
+            win.UpdateEventHandler += UpdateCertificateName;
+            win.ShowDialog();
+        }
+
+        private void UpdateCertificateName(object sender, string name)
+        {
+            DescribeCertificate cert = sender as DescribeCertificate;
+            cert.CertificateName = name;
+        }
+
+        private void DeleteCertificate_Click(object sender, RoutedEventArgs e)
+        {
+            DescribeCertificate cert = (sender as Button).DataContext as DescribeCertificate;
+            Thread t = new Thread(new ParameterizedThreadStart(DeleteCertificate));
+            t.Start(cert);
+        }
+
+        private void DeletedCertificate(object obj)
+        {
+            DescribeCertificate cert = obj as DescribeCertificate;
+            mCertificates.Remove(cert);
+        }
+
+        private void DeleteCertificate(object obj)
+        {
+            DescribeCertificate cert = obj as DescribeCertificate;
+            IClientProfile profile = DefaultProfile.GetProfile(cert.RegionId, mAki, mAks);
+            DefaultAcsClient client = new DefaultAcsClient(profile);
+            try
+            {
+                if (cert.CertificateType.Equals("ServerCertificate"))
+                {
+                    DeleteServerCertificateRequest request = new DeleteServerCertificateRequest();
+                    request.ServerCertificateId = cert.CertificateId;
+                    DeleteServerCertificateResponse response = client.GetAcsResponse(request);
+                }
+                else if (cert.CertificateType.Equals("CACertificate"))
+                {
+                    DeleteCACertificateRequest request = new DeleteCACertificateRequest();
+                    request.CACertificateId = cert.CertificateId;
+                    DeleteCACertificateResponse response = client.GetAcsResponse(request);
+                }
+                Dispatcher.Invoke(new DelegateGot(DeletedCertificate), cert);
+            }
+            catch
+            {
+            }
         }
     }
 }

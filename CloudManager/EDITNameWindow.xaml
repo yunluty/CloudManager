@@ -5,16 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CloudManager"
         mc:Ignorable="d"
-        Title="新建文件夹" Height="309" Width="437">
+        Title="新建文件夹" Height="309" Width="600">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Text="{Binding TextTile}" VerticalAlignment="Center" Margin="40,0,0,0"/>
         <TextBox x:Name="EditNameBox" Grid.Row="0" Height="32" Text="{Binding EditName, Mode=TwoWay}"
-                 MaxLength="254" VerticalContentAlignment="Center"  Margin="110,0,60,0"/>
-        <Button x:Name="OK" Grid.Row="1" Content="确定" Height="32" Margin="120,0,120,40" 
+                 MaxLength="254" VerticalContentAlignment="Center"  Margin="110,0,60,0"
+                 TextChanged="EditNameBox_TextChanged"/>
+        <TextBlock x:Name="Tips" Grid.Row="1" Text="{Binding TextTips}" Foreground="DarkGray" HorizontalAlignment="Center"/>
+        <Button x:Name="OK" Grid.Row="2" Content="确定" Height="32" Margin="120,0,120,40" 
                 VerticalAlignment="Center" IsEnabled="{Binding EnableButton}" Click="OK_Click" Style="{StaticResource LoginButton}"/>
     </Grid>
 </Window>

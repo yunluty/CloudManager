@@ -114,6 +114,9 @@
       <DependentUpon>BackupTaskWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="DescribeFtpFile.cs" />
+    <Compile Include="EditCertNameWindow.xaml.cs">
+      <DependentUpon>EditCertNameWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="EditNameWindow.xaml.cs">
       <DependentUpon>EditNameWindow.xaml</DependentUpon>
     </Compile>
@@ -202,6 +205,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CertificatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="EditCertNameWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

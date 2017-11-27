@@ -420,6 +420,57 @@ namespace CloudManager
             instance.DBInstanceDescription = name;
         }
 
+        private void RestartedDBInstance(object obj)
+        {
+            DescribeDBInstance instance = obj as DescribeDBInstance;
+            instance.DBInstanceStatus = "Rebooting";
+        }
+
+        private void RestartDBInstance(object obj)
+        {
+            DescribeDBInstance instance = obj as DescribeDBInstance;
+            IClientProfile profile = DefaultProfile.GetProfile(instance.RegionId, mAki, mAks);
+            DefaultAcsClient client = new DefaultAcsClient(profile);
+            try
+            {
+                RestartDBInstanceRequest request = new RestartDBInstanceRequest();
+                request.DBInstanceId = instance.DBInstanceId;
+                RestartDBInstanceResponse response = client.GetAcsResponse(request);
+                Dispatcher.Invoke(new DelegateGot(RestartedDBInstance), instance);
+
+                int count = 0;
+                bool goOn = true;
+                do
+                {
+                    Thread.Sleep(TimeSpan.FromSeconds(10));
+                    try
+                    {
+                        DescribeDBInstanceAttributeRequest r1 = new DescribeDBInstanceAttributeRequest();
+                        r1.DBInstanceId = instance.DBInstanceId;
+                        DescribeDBInstanceAttributeResponse resp = client.GetAcsResponse(r1);
+                        if (!resp.Items[0].DBInstanceStatus.Equals("Rebooting"))
+                        {
+                            instance.DBInstanceStatus = resp.Items[0].DBInstanceStatus;
+                            goOn = false;
+                        }
+                    }
+                    catch
+                    {
+                    }
+                    count++;
+                } while (goOn && count <= 30);
+            }
+            catch
+            {
+            }          
+        }
+
+        private void Restart_Click(object sender, RoutedEventArgs e)
+        {
+            Thread t = new Thread(new ParameterizedThreadStart(RestartDBInstance));
+            t.Start(mSelDBInstance);
+        }
+
         private void EditPolicy_Click(object sender, RoutedEventArgs e)
         {
             IClientProfile profile = DefaultProfile.GetProfile(mSelDBInstance.RegionId, mAki, mAks);

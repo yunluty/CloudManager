@@ -97,7 +97,11 @@ namespace CloudManager
 
         private void GotSettings(object obj)
         {
-            OverView.DataContext = mSelBucket;
+            DescribeBucket bucket = obj as DescribeBucket;
+            if (bucket == mSelBucket)
+            {
+                OverView.DataContext = mSelBucket;
+            }
         }
 
         private void GetSettings(object obj)
@@ -201,16 +205,19 @@ namespace CloudManager
         private void GotObjects(object obj)
         {
             DescribeOSSObject directory = obj as DescribeOSSObject;
-            if (mCurrDirectory != null && mCurrDirectory != directory)
+            if (directory.BucketName == mSelBucket.Name)
             {
-                mCurrDirectory.ChildObjects.Clear();
-            }
-            mCurrDirectory = directory;
-            FileList.ItemsSource = mCurrDirectory.ChildObjects;
-            FileManager.DataContext = mCurrDirectory;
-            if (!mDeepestKey.Contains(mCurrDirectory.Key))
-            {
-                mDeepestKey = mCurrDirectory.Key;
+                if (mCurrDirectory != null && mCurrDirectory != directory)
+                {
+                    mCurrDirectory.ChildObjects.Clear();
+                }
+                mCurrDirectory = directory;
+                FileList.ItemsSource = mCurrDirectory.ChildObjects;
+                FileManager.DataContext = mCurrDirectory;
+                if (!mDeepestKey.Contains(mCurrDirectory.Key))
+                {
+                    mDeepestKey = mCurrDirectory.Key;
+                }
             }
         }
 

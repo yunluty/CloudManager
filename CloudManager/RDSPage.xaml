@@ -183,7 +183,9 @@
                         </StackPanel>
                     </Grid>
                     <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,15,0,0">
-                        <Button x:Name="EditName" Content="编辑名称" Height="32" Width="60" Margin="0,0,10,0"
+                        <Button x:Name="Restart" Content="重启" Height="32" Width="60"
+                                Click="Restart_Click" Style="{StaticResource ProcessButton}"/>
+                        <Button x:Name="EditName" Content="编辑名称" Height="32" Width="60" Margin="10,0,10,0"
                                 Click="EditName_Click" Style="{StaticResource ResourceKey=ProcessButton}"/>
                     </StackPanel>
                 </StackPanel>
@@ -197,7 +199,7 @@
                         <Button x:Name="Submit" Content="提交参数" Width="60" Height="32" Click="Submit_Click" Style="{StaticResource ProcessButton}"/>
                         <Button x:Name="Undo" Content="撤销" Width="60" Height="32" Margin="10,0,20,0" Click="Undo_Click" Style="{StaticResource ProcessButton}"/>
                     </StackPanel>
-                    <ListView x:Name="Parameters"  Height="590" Margin="0,5,0,0">
+                    <ListView x:Name="Parameters" MaxHeight="590" Margin="0,5,0,0">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="参数名" DisplayMemberBinding="{Binding Name}"/>

@@ -74,7 +74,16 @@ namespace CloudManager
             }
         }
         public string ExpireTime { get; set; }
-        public string DBInstanceStatus { get; set; }
+        private string dbInstanceStatus;
+        public string DBInstanceStatus
+        {
+            get { return dbInstanceStatus; }
+            set
+            {
+                dbInstanceStatus = value;
+                NotifyPropertyChanged("DBInstanceStatus");
+            }
+        }
         public string Engine { get; set; }
         public string RegionId { get; set; }
         public string AvailabilityValue { get; set; }
@@ -160,7 +169,7 @@ namespace CloudManager
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public void NotifyPropertyChanged(string propertyName)
+        private void NotifyPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

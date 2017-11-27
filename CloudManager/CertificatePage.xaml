@@ -16,25 +16,25 @@
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="CertificateName">
-            <TextBlock Text="{Binding CertificateName}" Width="100" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding CertificateName}" Width="80" TextWrapping="Wrap"/>
         </DataTemplate>
         <DataTemplate x:Key="CertificateId">
-            <TextBlock Text="{Binding CertificateId}" Width="240" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding CertificateId}" Width="210" TextWrapping="Wrap"/>
         </DataTemplate>
         <DataTemplate x:Key="Fingerprint">
-            <TextBlock Text="{Binding Fingerprint}" Width="240" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding Fingerprint}" Width="210" TextWrapping="Wrap"/>
         </DataTemplate>
     </Page.Resources>
 
     <Grid>
-        <ListView x:Name="CertificatesList">
+        <ListView x:Name="CertificatesList" MaxHeight="680">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="证书名称" CellTemplate="{StaticResource CertificateName}"/>
                     <GridViewColumn Header="证书ID" CellTemplate="{StaticResource CertificateId}"/>
                     <GridViewColumn Header="证书指纹" CellTemplate="{StaticResource Fingerprint}"/>
                     <GridViewColumn Header="证书类型" DisplayMemberBinding="{Binding CertificateType, Converter={StaticResource StatusTextConverter}}"/>
-                    <GridViewColumn Header="地域" DisplayMemberBinding="{Binding RegionLocalName}"/>
+                    <GridViewColumn Header="地域" DisplayMemberBinding="{Binding RegionLocalName}" Width="130"/>
                     <GridViewColumn Header="操作" CellTemplate="{StaticResource ProcessCertificate}"/>
                 </GridView>
             </ListView.View>

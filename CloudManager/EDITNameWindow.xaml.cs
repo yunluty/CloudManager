@@ -32,11 +32,10 @@ namespace CloudManager
         private DescribeLoadBalancer mBalancer;
         private EditingType mEditingType;
         private DescribeDBInstance mDBInstance;
-
-        public bool EnableButton;
-        public bool EnableText;
+        
         public string EditName { get; set; }
         public string TextTile { get; set; }
+        public string TextTips { get; set; }
         public EventHandler<string> UpdateEventHandler;
         public delegate void DelegateGot(object obj);
 
@@ -49,6 +48,7 @@ namespace CloudManager
             mBucket = b;
             mCurrKey = k;
             TextTile = "文件名:";
+            TextTips = "长度限制为1-254个字符，不要以「/」打头，不要出现连续的「/」，不允许出现名为「..」的子目录";
             EditNameBox.MaxLength = 254;
             mEditingType = EditingType.BucketFolderName;
             this.Title = "新建文件夹";
@@ -62,6 +62,7 @@ namespace CloudManager
             mAcsClient = c;
             mBalancer = b;
             TextTile = "名称:";
+            TextTips = "长度限制为1-80个字符，允许包含中文、字母、数字、'-'、'/'、'.'、'_'这些字符";
             EditNameBox.MaxLength = 80;
             mEditingType = EditingType.BlancerName;
             this.Title = "编辑负载均衡名称";
@@ -75,6 +76,7 @@ namespace CloudManager
             mAcsClient = c;
             mDBInstance = i;
             TextTile = "名称:";
+            TextTips = "长度限制为2-64个字符";
             EditNameBox.MaxLength = 64;
             mEditingType = EditingType.DBInstanceName;
             this.Title = "编辑数据库实例名称";
@@ -90,7 +92,6 @@ namespace CloudManager
 
         private void SetDBInstanceNameFail()
         {
-            EnableButton = true;
         }
 
         private void SetDBInstanceName(object obj)
@@ -119,7 +120,6 @@ namespace CloudManager
 
         private void SetNameFail()
         {
-            EnableButton = true;
         }
 
         private void SetBalancerName(object obj)
@@ -147,7 +147,6 @@ namespace CloudManager
 
         private void CreatedFail()
         {
-            EnableButton = true;
         }
 
         private void CreateFolder(object obj)
@@ -175,7 +174,6 @@ namespace CloudManager
         {
             if (mEditingType == EditingType.BucketFolderName)
             {
-                EnableButton = false;
                 string key = mCurrKey + EditName + '/';
                 Thread t = new Thread(new ParameterizedThreadStart(CreateFolder));
                 t.Start(key);
@@ -198,7 +196,22 @@ namespace CloudManager
         {
             BucketFolderName,
             BlancerName,
-            DBInstanceName
+            DBInstanceName,
+            CertificateName
+        }
+
+        private void EditNameBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (mEditingType == EditingType.DBInstanceName)
+            {
+                if (textBox.Text.Length > 1)
+                {
+                }
+            }
+            else if (textBox.Text.Length > 0)
+            {
+            }
         }
     }
 }
