@@ -27,7 +27,7 @@ namespace CloudManager
             GetObjectType();
             GetPath();
             Size = summary.Size;
-            CreatTime = summary.LastModified.ToString("yyyy-MM-dd hh:mm:ss");
+            CreatTime = (summary.LastModified.ToLocalTime()).ToString("yyyy-MM-dd HH:mm:ss");
         }
 
         public DescribeOSSObject(string bucketName, string key)

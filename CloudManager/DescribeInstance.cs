@@ -141,7 +141,7 @@ namespace CloudManager
             {
                 DateTime dt;
                 DateTime.TryParse(value, out dt);
-                _ExpiredTime = dt.ToString("yyyy-MM-dd hh:mm:ss");
+                _ExpiredTime = dt.ToString("yyyy-MM-dd HH:mm:ss");
                 notifyPropertyChanged("ExpiredTime");
             }
         }
@@ -154,7 +154,7 @@ namespace CloudManager
             {
                 DateTime dt;
                 DateTime.TryParse(value, out dt);
-                _CreationTime = dt.ToString("yyyy-MM-dd hh:mm:ss");
+                _CreationTime = dt.ToString("yyyy-MM-dd HH:mm:ss");
                 notifyPropertyChanged("CreationTime");
             }
         }

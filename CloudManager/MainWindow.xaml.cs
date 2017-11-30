@@ -30,6 +30,7 @@ namespace CloudManager
         private DownUpLoadTaskPage mBackupPage;
         private BucketPage mBucketPage;
         private CertificatePage mCertificatePage;
+        private AboutPage mAboutPage;
 
         private delegate void DelegateGot(object obj);
 
@@ -55,7 +56,9 @@ namespace CloudManager
             mCertificatePage = new CertificatePage();
             mCertificatePage.mMainWindow = this;
 
-            mBackupPage = new DownUpLoadTaskPage();      
+            mBackupPage = new DownUpLoadTaskPage();
+
+            mAboutPage = new AboutPage();
         }
 
         private void Menus_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -99,6 +102,10 @@ namespace CloudManager
                 Process.Content = mBackupPage;
                 mBackupPage.TaskType = DownUpLoadTaskPage.TaskStatus.Finished;
             }
+            else if (id.Equals("About"))
+            {
+                Process.Content = mAboutPage;
+            }
 
             ClearSelectIndex(menuList);
         }
@@ -128,6 +135,11 @@ namespace CloudManager
             if (TaskMenuList != list)
             {
                 TaskMenuList.SelectedIndex = -1;
+            }
+
+            if (SettingMenuList != list)
+            {
+                SettingMenuList.SelectedIndex = -1;
             }
         }
 

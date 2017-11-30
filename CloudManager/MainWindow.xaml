@@ -28,6 +28,9 @@
             <local:MenuInfo Name="实例管理" Id="SLBInstances"/>
             <local:MenuInfo Name="证书管理" Id="Certificates"/>
         </c:ArrayList>
+        <c:ArrayList x:Key="SettingMenus">
+            <local:MenuInfo Name="关于我们" Id="About"/>
+        </c:ArrayList>
     </Window.Resources>
     
     <Grid>
@@ -36,7 +39,6 @@
             <ColumnDefinition Width="6*"/>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0" Background="#EAEDF1"/>
-        <!--#333744-->
         <StackPanel Grid.Column="0" Margin="5,0,5,0">
             <Label Content="云控制台" Style="{StaticResource TitleLabel}"/>
             <StackPanel Orientation="Horizontal">
@@ -85,6 +87,10 @@
             <Label Content="网络任务" Style="{StaticResource TitleLabel}"/>
             <ListBox x:Name="TaskMenuList" Style="{StaticResource MenuListBox}"
                      ItemsSource="{StaticResource TaskMenus}" SelectionChanged="Menus_SelectionChanged">
+            </ListBox>
+            <Label Content="设置" Style="{StaticResource TitleLabel}"/>
+            <ListBox x:Name="SettingMenuList" Style="{StaticResource MenuListBox}"
+                     ItemsSource="{StaticResource SettingMenus}" SelectionChanged="Menus_SelectionChanged">
             </ListBox>
         </StackPanel>
         <Button x:Name="Logoff" Content="注销" Height="32" VerticalAlignment="Bottom" Margin="15,0,15,150"

@@ -41,7 +41,7 @@ namespace CloudManager
             {
                 DateTime dt;
                 DateTime.TryParse(value, out dt);
-                _CreateTime = dt.ToString("yyyy-MM-dd hh:mm:ss");
+                _CreateTime = dt.ToString("yyyy-MM-dd HH:mm:ss");
                 notifyPropertyChanged("CreationTime");
             }
         }

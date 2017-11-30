@@ -31,7 +31,7 @@ namespace CloudManager
         {
             Location = b.Location;
             Name = b.Name;
-            CreationTime = b.CreationDate.ToString("yyyy-MM-dd hh:mm");
+            CreationTime = b.CreationDate.ToString("yyyy-MM-dd HH:mm");
             InternetEndPoint = Location + ".aliyuncs.com";
             InternalEndPoint = Location + "-internal.aliyuncs.com";
             if (VPCEndPoints.ContainsKey(Location))

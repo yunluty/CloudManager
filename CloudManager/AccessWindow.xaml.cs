@@ -74,6 +74,9 @@ namespace CloudManager
                 //MessageBox.Show(ex.ToString());
                 Dispatcher.Invoke(new DelegateDone(AccessFail), ex);
             }
+            catch
+            {
+            }
         }
 
         private void AccessSuccess(object obj)

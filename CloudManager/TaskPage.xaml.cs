@@ -96,7 +96,7 @@ namespace CloudManager
         {
             DownUploadTask task = obj as DownUploadTask;
             task.Status = "Success";
-            task.CompleteTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+            task.CompleteTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             mRunningTasks.Remove(task);
             mFinishedTasks.Add(task);
         }
@@ -105,7 +105,7 @@ namespace CloudManager
         {
             DownUploadTask task = obj as DownUploadTask;
             task.Status = "Failed";
-            task.CompleteTime = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+            task.CompleteTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
         private void OssUpload(object obj)

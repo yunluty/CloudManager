@@ -355,9 +355,9 @@ namespace CloudManager
             r1.AcceptFormat = Aliyun.Acs.Core.Http.FormatType.JSON;
             r1.DBInstanceId = db.DBInstanceId;
             DateTime end = DateTime.UtcNow;
-            r1.EndTime = end.ToString("yyy-MM-ddThh:mmZ");
+            r1.EndTime = end.ToString("yyy-MM-ddTHH:mmZ");
             DateTime start = end.AddDays(-7);
-            r1.StartTime = start.ToString("yyy-MM-ddThh:mmZ");
+            r1.StartTime = start.ToString("yyy-MM-ddTHH:mmZ");
             try
             {
                 DescribeBackupsResponse resp1 = client.GetAcsResponse(r1);
@@ -598,7 +598,7 @@ namespace CloudManager
             set
             {
                 DateTime.TryParse(value, out DateTime dt);
-                backupStartTime = dt.ToString("yyyy-MM-dd hh:mm:ss");
+                backupStartTime = dt.ToString("yyyy-MM-dd HH:mm:ss");
             }
         }
 
@@ -609,7 +609,7 @@ namespace CloudManager
             set
             {
                 DateTime.TryParse(value, out DateTime dt);
-                backupEndTime = dt.ToString("yyyy-MM-dd hh:mm:ss");
+                backupEndTime = dt.ToString("yyyy-MM-dd HH:mm:ss");
             }
         }
 
@@ -723,7 +723,7 @@ namespace CloudManager
                 if (value.IndexOf('Z') >= 0 && value.IndexOf('T') >= 0) //UTC time, convert to local time
                 {
                     DateTime.TryParse(value, out DateTime dt);
-                    preferredNextBackupTime = dt.ToString("yyyy-MM-dd hh:mm:ss");
+                    preferredNextBackupTime = dt.ToString("yyyy-MM-dd HH:mm:ss");
                 }
                 else
                 {

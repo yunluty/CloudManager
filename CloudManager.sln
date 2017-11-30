@@ -1,19 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CloudManager", "CloudManager\CloudManager.csproj", "{A8D9B967-DFA0-4027-94A5-30DA8813CECD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-net-sdk-core", "aliyun-net-sdk-core\aliyun-net-sdk-core.csproj", "{BB84CECB-295D-4772-A669-3726E511CCFA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-net-sdk-core", "..\aliyun-openapi-net-sdk\aliyun-net-sdk-core\aliyun-net-sdk-core.csproj", "{BB84CECB-295D-4772-A669-3726E511CCFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-net-sdk-domain", "aliyun-net-sdk-domain\aliyun-net-sdk-domain.csproj", "{F1832AC0-C2C8-4893-9CD2-D885729E2F72}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-net-sdk-domain", "..\aliyun-openapi-net-sdk\aliyun-net-sdk-domain\aliyun-net-sdk-domain.csproj", "{F1832AC0-C2C8-4893-9CD2-D885729E2F72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-net-sdk-ecs", "aliyun-net-sdk-ecs\aliyun-net-sdk-ecs.csproj", "{C085BD5D-DE6A-44AF-9F60-4B00F541E8D5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-net-sdk-ecs", "..\aliyun-openapi-net-sdk\aliyun-net-sdk-ecs\aliyun-net-sdk-ecs.csproj", "{C085BD5D-DE6A-44AF-9F60-4B00F541E8D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-net-sdk-rds", "aliyun-net-sdk-rds\aliyun-net-sdk-rds.csproj", "{3997D824-56ED-40A3-8F0A-6AB01DA07E86}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-net-sdk-rds", "..\aliyun-openapi-net-sdk\aliyun-net-sdk-rds\aliyun-net-sdk-rds.csproj", "{3997D824-56ED-40A3-8F0A-6AB01DA07E86}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-net-sdk-slb", "aliyun-net-sdk-slb\aliyun-net-sdk-slb.csproj", "{72948D04-FDF8-4237-B8CE-62AA235C06AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aliyun-net-sdk-slb", "..\aliyun-openapi-net-sdk\aliyun-net-sdk-slb\aliyun-net-sdk-slb.csproj", "{72948D04-FDF8-4237-B8CE-62AA235C06AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

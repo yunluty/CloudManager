@@ -21,7 +21,7 @@ namespace CloudManager
             Name = item.Name;
             Path = item.Name;
             Size = item.Size;
-            ModifiedTime = item.Modified.ToString("yyyy-MM-dd hh:mm:ss");
+            ModifiedTime = item.Modified.ToString("yyyy-MM-dd HH:mm:ss");
             if (item.Type == FtpFileSystemObjectType.File)
             {
                 ObjectType = FtpObjectType.File;
