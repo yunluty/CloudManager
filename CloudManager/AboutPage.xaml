@@ -8,16 +8,35 @@
       d:DesignHeight="600" d:DesignWidth="600"
       Title="AboutPage">
 
-    <StackPanel>
-        <Label Content="阿里云大师" FontSize="22" HorizontalAlignment="Center"/>
-        <TextBlock Text="青莲网络 版权所有" Foreground="DarkGray" HorizontalAlignment="Center" FontFamily="微软雅黑"/>
-        <TextBlock Text="Copyright © 2017 Anquan.info. All Rights Reserved." Foreground="DarkGray" HorizontalAlignment="Center" FontFamily="Calibri"/>
-        <Grid>
-            <StackPanel Orientation="Horizontal">
-                <Label Content="版本"/>
-                <Label x:Name="Version"/>
+    <Grid Background="#F9F9F9">
+        <!--" Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions-->
+        <StackPanel VerticalAlignment="Center">
+            <Image Source="images/cm.png" HorizontalAlignment="Center" Stretch="None" Height="128"/>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Label Content="阿里云大师" FontSize="20"/>
+                <Label x:Name="Version" FontSize="20"/>
             </StackPanel>
-            
-        </Grid>
-    </StackPanel>
+            <StackPanel Grid.Row="2" Margin="0,40,0,0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Label Content="剩余天数:" FontSize="20"/>
+                    <Label x:Name="Days" Content="365" FontSize="20" Foreground="#09A3DC"/>
+                    <Label Content="天" FontSize="20"/>
+                    <Label Content="到期时间:" FontSize="20" Margin="40,0,0,0"/>
+                    <Label x:Name="ExpireTime" Content="2018-12-5" FontSize="20" Foreground="#09A3DC"/>
+                </StackPanel>
+                <Button x:Name="Activate" Content="激活" Height="32" Width="120" Margin="0,10,0,0"
+                        Style="{StaticResource LoginButton}" Click="Activate_Click"/>
+            </StackPanel>
+            <StackPanel Grid.Row="3" VerticalAlignment="Bottom" Margin="0,40,0,40">
+                <TextBlock x:Name="CopyRight" Text="CopyRight" Foreground="DarkGray" HorizontalAlignment="Center" FontSize="12" FontFamily="微软雅黑 Light"/>
+                <TextBlock Text="青莲网络 版权所有" Foreground="DarkGray" HorizontalAlignment="Center" FontFamily="微软雅黑 Light"/>
+            </StackPanel>
+        </StackPanel>
+        
+    </Grid>
 </Page>

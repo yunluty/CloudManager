@@ -59,6 +59,7 @@ namespace CloudManager
             mBackupPage = new DownUpLoadTaskPage();
 
             mAboutPage = new AboutPage();
+            mAboutPage.mMainWindow = this;
         }
 
         private void Menus_SelectionChanged(object sender, SelectionChangedEventArgs e)
