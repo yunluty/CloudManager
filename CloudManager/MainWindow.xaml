@@ -35,12 +35,19 @@
     
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="6*"/>
+            <ColumnDefinition Width="160"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0" Background="#ECEAE8"/>
         <StackPanel Grid.Column="0" Margin="5,0,5,0">
-            <Label Content="云控制台" Style="{StaticResource TitleLabel}"/>
+            <StackPanel HorizontalAlignment="Center" Margin="0,10,0,0">
+                <Label x:Name="AKS" Style="{StaticResource TitleLabel2}" FontWeight="Bold"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Label Content="有效期至:"/>
+                    <Label x:Name="ExpireDate"/>
+                </StackPanel>
+            </StackPanel>
+            <Rectangle Height="1" Stroke="#B2B2B2" Margin="0,5,0,5"/>
             <StackPanel Orientation="Horizontal">
                 <Image Source="images/ecs.png"/>
                 <Label Content="云服务器 ECS" Style="{StaticResource TitleLabel2}"/>
@@ -84,17 +91,29 @@
                     </ListBox>
                 </Expander.Content>
             </Expander>-->
-            <Label Content="网络任务" Style="{StaticResource TitleLabel}"/>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="images/task.png" Margin="1,0,1,0"/>
+                <Label Content="网络任务" Style="{StaticResource TitleLabel2}"/>
+            </StackPanel>
             <ListBox x:Name="TaskMenuList" Style="{StaticResource MenuListBox}"
                      ItemsSource="{StaticResource TaskMenus}" SelectionChanged="Menus_SelectionChanged">
             </ListBox>
-            <Label Content="设置" Style="{StaticResource TitleLabel}"/>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="images/settings.png" Margin="1,0,1,0"/>
+                <Label Content="设置" Style="{StaticResource TitleLabel2}"/>
+            </StackPanel>
             <ListBox x:Name="SettingMenuList" Style="{StaticResource MenuListBox}"
                      ItemsSource="{StaticResource SettingMenus}" SelectionChanged="Menus_SelectionChanged">
             </ListBox>
+            <StackPanel Margin="0,20,0,0">
+                <Button x:Name="Logoff" Content="注销" Height="32" Margin="15,0,15,0"
+                        Style="{StaticResource LoginButton}" Click="Logoff_Click"/>
+                <Button x:Name="Exit" Content="退出" Height="32" Margin="15,5,15,0"
+                        Style="{StaticResource LoginButton}" Click="Exit_Click"/>
+                <Button x:Name="Website" Content="官方网站" Margin="15,10,15,0"
+                        Style="{StaticResource ClickText}" Click="Website_Click"/>
+            </StackPanel>
         </StackPanel>
-        <Button x:Name="Logoff" Content="注销" Height="32" VerticalAlignment="Bottom" Margin="15,0,15,150"
-                Style="{StaticResource LoginButton}" Click="Logoff_Click"/>
-        <Frame x:Name="Process" Grid.Column="1" NavigationUIVisibility="Hidden"/>
+        <Frame x:Name="Process" Grid.Column="1" NavigationUIVisibility="Hidden" Background="#F9F9F9"/>
     </Grid>
 </Window>

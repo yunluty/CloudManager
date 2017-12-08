@@ -1,19 +1,8 @@
 ﻿using CloudManager.Activation;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace CloudManager
 {
@@ -22,7 +11,6 @@ namespace CloudManager
     /// </summary>
     public partial class AboutPage : Page
     {
-        public const long TICKSBYSECOND = 10000000L;
         public MainWindow mMainWindow { get; set; }
 
         public AboutPage()
@@ -34,6 +22,7 @@ namespace CloudManager
             Version.Content = version;
             AssemblyCopyrightAttribute copyrightAttribute = (AssemblyCopyrightAttribute)AssemblyCopyrightAttribute.GetCustomAttribute(assembly, typeof(AssemblyCopyrightAttribute));
             CopyRight.Text = copyrightAttribute.Copyright;
+            UpdateKeyLife();
         }
 
         private void Activate_Click(object sender, RoutedEventArgs e)
@@ -41,14 +30,15 @@ namespace CloudManager
             ActivationWindow win = new ActivationWindow();
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             win.Owner = mMainWindow;
-            win.ActivationEvent += UpdateExpireDate;
             win.ShowDialog();
+            UpdateKeyLife();
         }
 
-        private void UpdateExpireDate(object sender, int time)
+        private void UpdateKeyLife()
         {
-            var period = new TimeSpan(time * TICKSBYSECOND);
-            Days.Content = period.TotalDays.ToString();
+            var life = new TimeSpan(ActivationApi.KeyLife * ActivationApi.TICKSBYSECOND);
+            Days.Content = life.TotalDays.ToString();
+            ExpireTime.Content = DateTime.Now.Add(life).ToString("yyyy-MM-dd");
         }
     }
 }

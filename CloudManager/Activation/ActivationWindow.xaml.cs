@@ -27,7 +27,6 @@ namespace CloudManager.Activation
 
         private RestClient mRestClient = new RestClient("http://39.108.229.176/");
 
-        public EventHandler<int> ActivationEvent;
 
         public ActivationWindow()
         {
@@ -43,25 +42,19 @@ namespace CloudManager.Activation
             ErrorInfo.Text = "";
             Task.Run(() =>
             {
-                var request = new RestRequest($"cloudbak/activate?akiUID={aki}&cpy={aki}&cdkey={key}");
-                var response = mRestClient.Execute<ResponseLife>(request);
-                Exception ex = null;
-                if (response.ErrorException != null) ex = response.ErrorException;
-                else if (response.StatusCode != System.Net.HttpStatusCode.Created) ex = new Exception("激活服务器异常");
-                else if (response.Data == null) ex = new Exception("激活服务器数据异常");
-                if (ex != null)
+                try
+                {
+                    int time = ActivationApi.ActivateKey(aki, key);
+                    Dispatcher.Invoke(() =>
+                    {
+                        this.Close();
+                    });
+                }
+                catch (Exception ex)
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        ErrorInfo.Text = ex.ToString();
-                    });
-                }
-                else
-                {
-                    Dispatcher.Invoke(() => 
-                    {
-                        ActivationEvent?.Invoke(this, response.Data.Time);
-                        this.Close();
+                        ErrorInfo.Text = ex.Message;
                     });
                 }
             });

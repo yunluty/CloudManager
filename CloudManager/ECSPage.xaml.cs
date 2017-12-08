@@ -4,12 +4,14 @@ using Aliyun.Acs.Core.Profile;
 using Aliyun.Acs.Ecs.Model.V20140526;
 using FluentFTP;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using static Aliyun.Acs.Ecs.Model.V20140526.DescribeInstancesResponse;
@@ -24,6 +26,7 @@ namespace CloudManager
     public partial class ECSPage : Page
     {
         private string mAki, mAks;
+        private List<DescribeRegions_Region> mRegions;
         private ObservableCollection<DescribeInstance> mECSInstances = new ObservableCollection<DescribeInstance>();
         private DescribeInstance mSelInstance;
         //private SQLiteConnection mSQLiteConnection;
@@ -41,6 +44,7 @@ namespace CloudManager
             //ConnectDataBase();
             mAki = App.AKI;
             mAks = App.AKS;
+            mRegions = App.REGIONS;
             ECSList.ItemsSource = mECSInstances; //Display the ECSs list
             Thread t1 = new Thread(GetInstances);
             t1.Start();
@@ -48,7 +52,7 @@ namespace CloudManager
 
         private void GetInstances()
         {
-            foreach (DescribeRegions_Region region in App.REGIONS)
+            Parallel.ForEach(mRegions, (region) =>
             {
                 IClientProfile profile = DefaultProfile.GetProfile(region.RegionId, mAki, mAks);
                 DefaultAcsClient client = new DefaultAcsClient(profile);
@@ -67,13 +71,11 @@ namespace CloudManager
                 }
                 catch (ClientException)
                 {
-                    continue;
                 }
                 catch (WebException)
                 {
-                    continue;
                 }
-            }
+            });
         }
 
         private void GotInstances(object obj)

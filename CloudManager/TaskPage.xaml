@@ -9,14 +9,14 @@
       Title="BackupTaskPage">
 
     <StackPanel Margin="20,0,15,0">
-        <ListBox x:Name="RunningList" BorderThickness="0" BorderBrush="Transparent"
+        <ListBox x:Name="RunningList" BorderThickness="0" BorderBrush="Transparent" Background="Transparent"
                  Visibility="{Binding Path=TaskType , Converter={StaticResource VisibilityConverter}, ConverterParameter=Running}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{Binding InstanceType, Converter={StaticResource StatusImageConverter}}" Margin="5,0,0,0"/>
                         <Label Content="{Binding InstanceName}" Margin="5,0,0,0" Width="120"/>
-                        <Label Content="{Binding FileName}" Margin="5,0,0,0" Width="300"/>
+                        <Label Content="{Binding FileName}" Margin="5,0,0,0" Width="280"/>
                         <Label Content="{Binding TotalSize, Converter={StaticResource FileSizeConverter}}"
                                Width="80" VerticalAlignment="Center" Margin="5,0,0,0"/>
                         <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
@@ -28,7 +28,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <ListBox x:Name="FinishedList" BorderThickness="0" BorderBrush="Transparent"
+        <ListBox x:Name="FinishedList" BorderThickness="0" BorderBrush="Transparent" Background="Transparent"
                  Visibility="{Binding Path=TaskType, Converter={StaticResource VisibilityConverter}, ConverterParameter=Finished}">
             <ListBox.ItemTemplate>
                 <DataTemplate>

@@ -19,6 +19,7 @@ using Aliyun.Acs.Core.Profile;
 using Aliyun.Acs.Core.Exceptions;
 using Aliyun.Acs.Ecs.Model.V20140526;
 using static Aliyun.Acs.Ecs.Model.V20140526.DescribeRegionsResponse;
+using CloudManager.Activation;
 
 namespace CloudManager
 {
@@ -30,6 +31,7 @@ namespace CloudManager
         private string mRegion = "cn-shanghai";
         private delegate void DelegateDone(object obj);
 
+
         public AccessWindow()
         {
             InitializeComponent();
@@ -38,6 +40,7 @@ namespace CloudManager
         private void AccessButton_Click(object sender, RoutedEventArgs e)
         {
             Message.Text = "";
+            AccessButton.IsEnabled = false;
             Thread t = new Thread(new ParameterizedThreadStart(AccessCloud));
             string[] s = new string[2] { AKI.Text, AKS.Text };
             t.Start(s);
@@ -81,9 +84,56 @@ namespace CloudManager
 
         private void AccessSuccess(object obj)
         {
+            string aki = String.Copy(App.AKI);
+            Task.Run(() =>
+            {
+                try
+                {
+                    int time = ActivationApi.GetKeyLife(aki);
+                    Dispatcher.Invoke(() =>
+                    {
+                        if (time > ActivationApi.RunCondition)
+                        {
+                            StartMainWindow();
+                        }
+                        else
+                        {
+                            StartActivationWindow();
+                        }
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        Message.Text = ex.Message;
+                        AccessButton.IsEnabled = true;
+                    });
+                }
+            });
+        }
+
+        private void StartMainWindow()
+        {
             Window win = new MainWindow();
             win.Show();
             this.Close();
+        }
+
+        private void StartActivationWindow()
+        {
+            ActivationWindow win = new ActivationWindow();
+            win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            win.Owner = this;
+            win.ShowDialog();
+            if (ActivationApi.KeyLife > ActivationApi.RunCondition)
+            {
+                StartMainWindow();
+            }
+            else
+            {
+                AccessButton.IsEnabled = true;
+            }
         }
 
         private void AccessFail(object obj)
@@ -104,6 +154,7 @@ namespace CloudManager
                 message = "未知错误";
             }
             Message.Text = message;
+            AccessButton.IsEnabled = true;
         }
     }
 }

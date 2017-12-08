@@ -201,7 +201,7 @@
                         <Grid Grid.Column="1" x:Name="Column2"/>
                         <Grid Grid.Column="2" x:Name="Column3"/>
                     </Grid>
-                    <ListView x:Name="FileList" BorderThickness="0"
+                    <ListView x:Name="FileList" BorderThickness="0" Background="Transparent"
                               MouseDoubleClick="FileList_MouseDoubleClick">
                         <ListView.View>
                             <GridView>

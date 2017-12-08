@@ -22,12 +22,18 @@
             <TextBlock Text="{Binding CertificateId}" Width="210" TextWrapping="Wrap"/>
         </DataTemplate>
         <DataTemplate x:Key="Fingerprint">
-            <TextBlock Text="{Binding Fingerprint}" Width="210" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding Fingerprint}" Width="200" TextWrapping="Wrap"/>
         </DataTemplate>
     </Page.Resources>
 
-    <Grid>
-        <ListView x:Name="CertificatesList" MaxHeight="680">
+    <StackPanel>
+        <Grid Margin="0,5,0,0">
+            <Label Content="证书列表" FontSize="18" VerticalAlignment="Center"/>
+            <Button Content="创建证书" Height="32" Width="60" Margin="0,0,10,0" HorizontalAlignment="Right"
+                    Style="{StaticResource ProcessButton}" Click="AddCertificate_Click"/>
+        </Grid>
+        <ListView x:Name="CertificatesList" MaxHeight="640" Margin="0,5,0,0"
+                  Background="Transparent" BorderBrush="Transparent" BorderThickness="0">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="证书名称" CellTemplate="{StaticResource CertificateName}"/>
@@ -39,5 +45,5 @@
                 </GridView>
             </ListView.View>
         </ListView>
-    </Grid>
+    </StackPanel>
 </Page>

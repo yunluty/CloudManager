@@ -3,11 +3,13 @@ using Aliyun.Acs.Core.Profile;
 using Aliyun.Acs.Rds.Model.V20140815;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -27,6 +29,7 @@ namespace CloudManager
     public partial class RDSPage : Page
     {
         private string mAki, mAks;
+        private List<DescribeRegions_Region> mRegions;
         private ObservableCollection<DescribeDBInstance> mDBInstances = new ObservableCollection<DescribeDBInstance>();
         private DescribeDBInstance mSelDBInstance;
         private ObservableCollection<DBParameter> mParameters;
@@ -46,6 +49,7 @@ namespace CloudManager
 
             mAki = App.AKI;
             mAks = App.AKS;
+            mRegions = App.REGIONS;
             RDSList.ItemsSource = mDBInstances;
             Thread t = new Thread(GetDBInstances);
             t.Start();
@@ -63,7 +67,7 @@ namespace CloudManager
 
         private void GetDBInstances()
         {
-            foreach (DescribeRegions_Region region in App.REGIONS)
+            Parallel.ForEach(mRegions, (region) =>
             {
                 IClientProfile profile = DefaultProfile.GetProfile(region.RegionId, mAki, mAks);
                 DefaultAcsClient client = new DefaultAcsClient(profile);
@@ -79,9 +83,8 @@ namespace CloudManager
                 }
                 catch
                 {
-
                 }
-            }
+            });
         }
 
         private void SelectDefaultIndex()
@@ -190,9 +193,8 @@ namespace CloudManager
                     p.Changed = false;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
             }
         }
 

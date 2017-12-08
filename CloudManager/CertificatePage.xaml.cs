@@ -29,7 +29,7 @@ namespace CloudManager
     public partial class CertificatePage : Page
     {
         private string mAki, mAks;
-        private static List<DescribeRegions_Region> mRegions;
+        private List<DescribeRegions_Region> mRegions;
         private ObservableCollection<DescribeCertificate> mCertificates = new ObservableCollection<DescribeCertificate>();
         private delegate void DelegateGot(object obj);
 
@@ -44,21 +44,26 @@ namespace CloudManager
             mAks = App.AKS;
             mRegions = App.REGIONS;
             CertificatesList.ItemsSource = mCertificates;
+            StartGetCertificates();
+        }
 
+        private void StartGetCertificates()
+        {
+            mCertificates.Clear();
             Thread t = new Thread(GetCertificates);
             t.Start();
         }
 
         private void GotCertificates(object obj)
         {
-            mCertificates = obj as ObservableCollection<DescribeCertificate>;
-            CertificatesList.ItemsSource = mCertificates;
+            DescribeCertificate cert = obj as DescribeCertificate;
+            mCertificates.Add(cert);
         }
 
         private void GetCertificates()
         {
-            ObservableCollection<DescribeCertificate> certs = new ObservableCollection<DescribeCertificate>();
-            foreach (DescribeRegions_Region region in mRegions)
+            //ObservableCollection<DescribeCertificate> certs = new ObservableCollection<DescribeCertificate>();
+            Parallel.ForEach(mRegions, (region) =>
             {
                 IClientProfile profile = DefaultProfile.GetProfile(region.RegionId, mAki, mAks);
                 DefaultAcsClient client = new DefaultAcsClient(profile);
@@ -66,27 +71,27 @@ namespace CloudManager
                 DescribeCACertificatesRequest r2 = new DescribeCACertificatesRequest();
                 try
                 {
-
                     DescribeServerCertificatesResponse resp1 = client.GetAcsResponse(r1);
                     foreach (DescribeServerCertificates_ServerCertificate c in resp1.ServerCertificates)
                     {
                         DescribeCertificate cert = new DescribeCertificate(c);
                         cert.RegionLocalName = region.LocalName;
-                        certs.Add(cert);
+                        Dispatcher.Invoke(new DelegateGot(GotCertificates), cert);
+                        //certs.Add(cert);
                     }
                     DescribeCACertificatesResponse resp2 = client.GetAcsResponse(r2);
                     foreach (DescribeCACertificates_CACertificate c in resp2.CACertificates)
                     {
                         DescribeCertificate cert = new DescribeCertificate(c);
                         cert.RegionLocalName = region.LocalName;
-                        certs.Add(cert);
+                        Dispatcher.Invoke(new DelegateGot(GotCertificates), cert);
+                        //certs.Add(cert);
                     }
                 }
                 catch
                 {
                 }
-            }
-            Dispatcher.Invoke(new DelegateGot(GotCertificates), certs);
+            });
         }
 
         private void ModifyCertificateName_Click(object sender, RoutedEventArgs e)
@@ -119,6 +124,20 @@ namespace CloudManager
         {
             DescribeCertificate cert = obj as DescribeCertificate;
             mCertificates.Remove(cert);
+        }
+
+        private void AddCertificate_Click(object sender, RoutedEventArgs e)
+        {
+            CreateCertificateWindow win = new CreateCertificateWindow();
+            win.RefreshEvent += RefreshCertificates;
+            win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            win.Owner = mMainWindow;
+            win.ShowDialog();
+        }
+
+        private void RefreshCertificates(object sender, List<string> regions)
+        {
+            StartGetCertificates();
         }
 
         private void DeleteCertificate(object obj)

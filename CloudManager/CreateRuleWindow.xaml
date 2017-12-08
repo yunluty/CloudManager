@@ -44,7 +44,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button x:Name="AddRule" Content="添加转发策略+" Click="AddRule_Click"
+        <Button x:Name="AddRule" Content="添加转发策略+" Height="32" Click="AddRule_Click" Style="{StaticResource LoginButton}"
                 Visibility="{Binding Path=AddNew, Converter={StaticResource VisibilityConverter}}"/>
         <TextBlock Foreground="DarkGray" Visibility="{Binding Path=AddNew, Converter={StaticResource VisibilityConverter}}">
             <Run>* 域名规范：</Run>

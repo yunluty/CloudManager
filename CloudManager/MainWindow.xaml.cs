@@ -1,21 +1,7 @@
-﻿using Aliyun.Acs.Core;
-using Aliyun.Acs.Core.Exceptions;
-using Aliyun.Acs.Core.Profile;
-using Aliyun.Acs.Ecs.Model.V20140526;
-using Aliyun.Acs.Rds.Model.V20140815;
-using Aliyun.Acs.Slb.Model.V20140515;
-using Aliyun.OSS;
+﻿using CloudManager.Activation;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Net;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using static Aliyun.Acs.Ecs.Model.V20140526.DescribeInstancesResponse;
-using static Aliyun.Acs.Ecs.Model.V20140526.DescribeRegionsResponse;
-using static Aliyun.Acs.Rds.Model.V20140815.DescribeDBInstancesResponse;
-using static Aliyun.Acs.Slb.Model.V20140515.DescribeLoadBalancersResponse;
 
 namespace CloudManager
 {
@@ -38,6 +24,9 @@ namespace CloudManager
         public MainWindow()
         {
             InitializeComponent();
+
+            AKS.Content = App.AKI;
+            ExpireDate.Content = DateTime.Now.Add(new TimeSpan(ActivationApi.KeyLife * ActivationApi.TICKSBYSECOND)).ToString("yyyy-MM-dd");
 
             mECSPage = new ECSPage();
             mECSPage.mMainWindow = this;
@@ -157,6 +146,16 @@ namespace CloudManager
             AccessWindow win = new AccessWindow();
             win.Show();
             this.Close();
+        }
+
+        private void Website_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("http://www.anquan.info");
+        }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
 

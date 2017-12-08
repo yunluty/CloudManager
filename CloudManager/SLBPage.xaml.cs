@@ -37,6 +37,7 @@ namespace CloudManager
     public partial class SLBPage : Page
     {
         private string mAki, mAks;
+        private List<DescribeRegions_Region> mRegions;
         private ObservableCollection<DescribeLoadBalancer> mLoadBalancers = new ObservableCollection<DescribeLoadBalancer>();
         private DescribeLoadBalancer mSelBalancer;
         private ObservableCollection<DescribeInstance> mBackendServers;
@@ -56,6 +57,7 @@ namespace CloudManager
 
             mAki = App.AKI;
             mAks = App.AKS;
+            mRegions = App.REGIONS;
             SLBList.ItemsSource = mLoadBalancers;
             Thread t = new Thread(GetLoadBalancers);
             t.Start();
@@ -70,7 +72,7 @@ namespace CloudManager
 
         private void GetLoadBalancers()
         {
-            foreach (DescribeRegions_Region region in App.REGIONS)
+            Parallel.ForEach(mRegions, (region) =>
             {
                 IClientProfile profile = DefaultProfile.GetProfile(region.RegionId, mAki, mAks);
                 DefaultAcsClient client = new DefaultAcsClient(profile);
@@ -102,13 +104,11 @@ namespace CloudManager
                 }
                 catch (ClientException)
                 {
-                    continue;
                 }
                 catch (WebException)
                 {
-                    continue;
                 }
-            }
+            });
         }
 
         private void GotLoadBalancers(object obj)
@@ -260,7 +260,7 @@ namespace CloudManager
         private void RequestServers(DefaultAcsClient client, DescribeLoadBalancerAttributeResponse response)
         {
             ObservableCollection<DescribeInstance> addedServers = new ObservableCollection<DescribeInstance>();
-            foreach (DescribeLoadBalancerAttribute_BackendServer s in response.BackendServers)
+            Parallel.ForEach(response.BackendServers, (s) =>
             {
                 DescribeInstanceAttributeRequest request1 = new DescribeInstanceAttributeRequest();
                 request1.InstanceId = s.ServerId;
@@ -275,7 +275,7 @@ namespace CloudManager
                 instance.InnerIpAddress = reponse1.InnerIpAddress;
                 instance.Status = reponse1.Status;
                 addedServers.Add(instance);
-            }
+            });
             Dispatcher.Invoke(new DelegateGot(GotBackendServers), addedServers);
 
             DescribeInstancesRequest request2 = new DescribeInstancesRequest();
@@ -327,8 +327,7 @@ namespace CloudManager
         private void RequestListeners(DefaultAcsClient client, DescribeLoadBalancerAttributeResponse response)
         {
             ObservableCollection<SLBListener> listeners = new ObservableCollection<SLBListener>();
-
-            foreach (DescribeLoadBalancerAttribute_ListenerPortAndProtocol p in response.ListenerPortsAndProtocol)
+            Parallel.ForEach(response.ListenerPortsAndProtocol, (p) =>
             {
                 SLBListener l = null;
 
@@ -372,7 +371,7 @@ namespace CloudManager
                 {
                     listeners.Add(l);
                 }
-            }
+            });
 
             DescribeVServerGroupsRequest vrequest = new DescribeVServerGroupsRequest();
             vrequest.LoadBalancerId = response.LoadBalancerId;
@@ -723,7 +722,7 @@ namespace CloudManager
             IClientProfile profile = DefaultProfile.GetProfile(mSelBalancer.RegionId, mAki, mAks);
             DefaultAcsClient client = new DefaultAcsClient(profile);
             StartLoadBalancerListenerRequest request = new StartLoadBalancerListenerRequest();
-            foreach (int? port in ports)
+            Parallel.ForEach(ports, (port) =>
             {
                 try
                 {
@@ -735,7 +734,7 @@ namespace CloudManager
                 catch
                 {
                 }
-            }
+            });
         }
 
         private void StartListeners_Click(object sender, RoutedEventArgs e)
@@ -758,7 +757,7 @@ namespace CloudManager
             IClientProfile profile = DefaultProfile.GetProfile(mSelBalancer.RegionId, mAki, mAks);
             DefaultAcsClient client = new DefaultAcsClient(profile);
             StopLoadBalancerListenerRequest request = new StopLoadBalancerListenerRequest();
-            foreach (int? port in ports)
+            Parallel.ForEach(ports, (port) =>
             {
                 try
                 {
@@ -770,7 +769,7 @@ namespace CloudManager
                 catch
                 {
                 }
-            }
+            });
         }
 
         private void StopListeners_Click(object sender, RoutedEventArgs e)
@@ -793,7 +792,7 @@ namespace CloudManager
             IClientProfile profile = DefaultProfile.GetProfile(mSelBalancer.RegionId, mAki, mAks);
             DefaultAcsClient client = new DefaultAcsClient(profile);
             DeleteLoadBalancerListenerRequest request = new DeleteLoadBalancerListenerRequest();
-            foreach (int? port in ports)
+            Parallel.ForEach(ports, (port) =>
             {
                 try
                 {
@@ -804,7 +803,7 @@ namespace CloudManager
                 catch
                 {
                 }
-            }
+            });
             GetListeners();
         }
 

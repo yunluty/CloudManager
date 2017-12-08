@@ -108,6 +108,7 @@
     <Compile Include="AccessWindow.xaml.cs">
       <DependentUpon>AccessWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Activation\ActivationApi.cs" />
     <Compile Include="Activation\ActivationWindow.xaml.cs">
       <DependentUpon>ActivationWindow.xaml</DependentUpon>
     </Compile>
@@ -118,6 +119,9 @@
     <Compile Include="BackupTask.cs" />
     <Compile Include="CertificatePage.xaml.cs">
       <DependentUpon>CertificatePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CreateCertificateWindow.xaml.cs">
+      <DependentUpon>CreateCertificateWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="DescribeCertificate.cs" />
     <Compile Include="DownUploadTask.cs" />
@@ -224,6 +228,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CertificatePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CreateCertificateWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -443,6 +451,15 @@
   <ItemGroup>
     <Resource Include="images\download.png" />
     <Resource Include="images\upload.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\task.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\linux.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.106.0\build\net45\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.106.0\build\net45\System.Data.SQLite.Core.targets')" />

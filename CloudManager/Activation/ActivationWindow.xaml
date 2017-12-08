@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CloudManager"
         mc:Ignorable="d"
-        Title="激活" Height="300" Width="600">
+        Title="输入激活码" Height="340" Width="445">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>

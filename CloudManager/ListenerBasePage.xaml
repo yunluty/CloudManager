@@ -365,8 +365,10 @@
             </StackPanel>
         </Expander>
         <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,20">
-            <Button x:Name="Next" Width="80" Height="32" Content="下一步" Click="Next_Click"/>
-            <Button x:Name="Cancel" Width="80" Height="32" Content="取消" Click="Cancel_Click" Margin="10,0,10,0"/>
+            <Button x:Name="Next" Width="80" Height="32" Content="下一步"
+                    Click="Next_Click" Style="{StaticResource ProcessButton}"/>
+            <Button x:Name="Cancel" Width="80" Height="32" Content="取消" Margin="10,0,10,0"
+                    Click="Cancel_Click" Style="{StaticResource ProcessButton}"/>
         </StackPanel>
     </StackPanel>
 </Page>
