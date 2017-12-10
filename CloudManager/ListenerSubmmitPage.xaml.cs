@@ -442,7 +442,7 @@ namespace CloudManager
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Dispatcher.Invoke(new Action(CreatedListenerError));
             }
@@ -839,7 +839,7 @@ namespace CloudManager
                 }
                 Dispatcher.Invoke(new Action(ConfiguredListener));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Dispatcher.Invoke(new Action(ConfiguredListenerError));
             }

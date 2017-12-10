@@ -248,9 +248,12 @@
             </Grid>
         </Expander>
         <StackPanel Grid.Row="11" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,20">
-            <Button x:Name="Next" Width="80" Height="32" Content="上一步" Click="Previous_Click"/>
-            <Button x:Name="Submmit" Width="80" Height="32" Content="确定" Click="Submmit_Click" Margin="10,0,0,0"/>
-            <Button x:Name="Cancel" Width="80" Height="32" Content="取消" Click="Cancel_Click" Margin="10,0,10,0"/>
+            <Button x:Name="Next" Width="80" Height="32" Content="上一步"
+                    Style="{StaticResource ProcessButton}" Click="Previous_Click"/>
+            <Button x:Name="Submmit" Width="80" Height="32" Content="确定" Margin="10,0,0,0"
+                    Style="{StaticResource ProcessButton}" Click="Submmit_Click"/>
+            <Button x:Name="Cancel" Width="80" Height="32" Content="取消" Margin="10,0,10,0"
+                    Style="{StaticResource ProcessButton}" Click="Cancel_Click"/>
         </StackPanel>
     </StackPanel>
 </Page>

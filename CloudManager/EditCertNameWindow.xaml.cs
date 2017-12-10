@@ -21,13 +21,12 @@ namespace CloudManager
     /// <summary>
     /// EditCertNameWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class EditCertNameWindow : Window, INotifyPropertyChanged
+    public partial class EditCertNameWindow : Window
     {
         private DefaultAcsClient mClient;
         private DescribeCertificate mCertificate;
 
         public EventHandler<string> UpdateEventHandler;
-        public event PropertyChangedEventHandler PropertyChanged;
         public delegate void DelegateGot(object obj);
 
         public EditCertNameWindow(DefaultAcsClient c, DescribeCertificate cert)

@@ -61,21 +61,21 @@
         </DataTemplate>
         <DataTemplate x:Key="BackendServerPort">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{Binding BackendServerPort}" Width="35"/>
+                <TextBlock Text="{Binding BackendServerPort}" Width="40"/>
                 <TextBlock Text="{Binding HealthStatus, Converter={StaticResource StatusTextConverter}}"
                            Foreground="{Binding Path=HealthStatus, Converter={StaticResource StatusColorConverter}}"/>
-                <Image Source="{Binding HealthStatus, Converter={StaticResource StatusImageConverter}}"/>
+                <Image Source="{Binding HealthStatus, Converter={StaticResource StatusImageConverter}}" Margin="5,0,5,0"/>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="ListenerStatus">
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" Margin="0,0,5,0">
                 <Image Source="{Binding Status, Converter={StaticResource StatusImageConverter}}" Margin="0,0,5,0"/>
                 <TextBlock Text="{Binding Status, Converter={StaticResource StatusTextConverter}}"
                            Foreground="{Binding Path=Status, Converter={StaticResource StatusColorConverter}}"/>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="Scheduler">
-            <TextBlock Text="{Binding Scheduler, Converter={StaticResource StatusTextConverter}}"/>
+            <TextBlock Text="{Binding Scheduler, Converter={StaticResource StatusTextConverter}}" Width="90"/>
         </DataTemplate>
         <DataTemplate x:Key="ProcessListener">
             <StackPanel Orientation="Horizontal">
@@ -207,12 +207,12 @@
                                             <CheckBox x:Name="ListenersSelectAll" Click="ListenersSelectAll_Click" IsThreeState="False"/>
                                         </GridViewColumn.Header>
                                     </GridViewColumn>
-                                    <GridViewColumn Header="协议" DisplayMemberBinding="{Binding Protocol}"/>
+                                    <GridViewColumn Header="协议" DisplayMemberBinding="{Binding Protocol}" Width="60"/>
                                     <GridViewColumn Header="前段端口" DisplayMemberBinding="{Binding ListenerPort}"/>
                                     <GridViewColumn Header="后端端口" CellTemplate="{StaticResource BackendServerPort}"/>
                                     <GridViewColumn Header="状态" CellTemplate="{StaticResource ListenerStatus}"/>
                                     <GridViewColumn Header="转发规则" CellTemplate="{StaticResource Scheduler}"/>
-                                    <GridViewColumn Header="服务器组" DisplayMemberBinding="{Binding ServerGroupNameShow}"/>
+                                    <GridViewColumn Header="服务器组" DisplayMemberBinding="{Binding ServerGroupNameShow}" Width="130"/>
                                     <GridViewColumn Header="操作" CellTemplate="{StaticResource ProcessListener}"/>
                                 </GridView>
                             </ListView.View>
@@ -278,10 +278,10 @@
                                   Visibility="{Binding Path=Count, Converter={StaticResource VisibilityConverter}}">
                                 <ListView.View>
                                     <GridView>
-                                        <GridViewColumn Header="规则名称" DisplayMemberBinding="{Binding RuleName}"/>
-                                        <GridViewColumn Header="域名" DisplayMemberBinding="{Binding Domain}"/>
-                                        <GridViewColumn Header="URL" DisplayMemberBinding="{Binding Url}"/>
-                                        <GridViewColumn Header="虚拟服务器组" DisplayMemberBinding="{Binding VServerGroupName}"/>
+                                        <GridViewColumn Header="规则名称" DisplayMemberBinding="{Binding RuleName}" Width="100"/>
+                                        <GridViewColumn Header="域名" DisplayMemberBinding="{Binding Domain}" Width="200"/>
+                                        <GridViewColumn Header="URL" DisplayMemberBinding="{Binding Url}" Width="180"/>
+                                        <GridViewColumn Header="虚拟服务器组" DisplayMemberBinding="{Binding VServerGroupName}" Width="100"/>
                                         <GridViewColumn Header="操作" CellTemplate="{StaticResource ProcessRule}"/>
                                     </GridView>
                                 </ListView.View>

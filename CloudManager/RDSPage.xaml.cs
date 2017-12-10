@@ -144,7 +144,7 @@ namespace CloudManager
                 DescribeDBInstanceAttributeResponse response = client.GetAcsResponse(request);
                 Dispatcher.Invoke(new DelegateGot(GotAttribute), response.Items[0]);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -297,7 +297,7 @@ namespace CloudManager
                 }
                 Dispatcher.Invoke(new DelegateGot(GotParameters), parameters);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }
@@ -373,7 +373,7 @@ namespace CloudManager
 
                 GetBackupPolicy(db);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -399,7 +399,7 @@ namespace CloudManager
                 policy.DBInstanceId = db.DBInstanceId;
                 Dispatcher.Invoke(new DelegateGot(GotBackupPolicy), policy);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }

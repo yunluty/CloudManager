@@ -51,7 +51,7 @@ namespace CloudManager
                 ModifyBackupPolicyResponse response = mClient.GetAcsResponse(request);
                 Dispatcher.Invoke(new Action(ModifiedPolicy));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }

@@ -133,7 +133,7 @@ namespace CloudManager
                 }
                 Dispatcher.Invoke(new DelegateResult(TaskSuccess), task);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Dispatcher.Invoke(new DelegateResult(TaskFail), task);
             }
@@ -186,7 +186,7 @@ namespace CloudManager
                 }     
                 Dispatcher.Invoke(new DelegateResult(TaskSuccess), task);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Dispatcher.Invoke(new DelegateResult(TaskFail), task);
             }
@@ -242,7 +242,7 @@ namespace CloudManager
 
                 Dispatcher.Invoke(new DelegateResult(TaskSuccess), task);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Dispatcher.Invoke(new DelegateResult(TaskFail), task);
             }

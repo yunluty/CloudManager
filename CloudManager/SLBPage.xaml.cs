@@ -943,7 +943,7 @@ namespace CloudManager
         private void DeleteRules(object obj)
         {
             DescribeRule rule = obj as DescribeRule;
-            string id = "[" + rule.RuleId + "]";
+            string id = "[\"" + rule.RuleId + "\"]";
             IClientProfile profile = DefaultProfile.GetProfile(mSelBalancer.RegionId, mAki, mAks);
             DefaultAcsClient client = new DefaultAcsClient(profile);
             DeleteRulesRequest request = new DeleteRulesRequest();

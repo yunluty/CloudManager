@@ -10,5 +10,5 @@
         Title="AddListenerWindow" Width="600" SizeToContent="Height"
         ContentRendered="Window_ContentRendered">
 
-    <Frame x:Name="PageContent"  NavigationUIVisibility="Hidden"/>
+    <Frame x:Name="PageContent"  NavigationUIVisibility="Hidden" MinHeight="280"/>
 </Window>

@@ -45,7 +45,7 @@
             </ListView.View>
         </ListView>
         <Button x:Name="AddRule" Content="添加转发策略+" Height="32" Click="AddRule_Click" Style="{StaticResource LoginButton}"
-                Visibility="{Binding Path=AddNew, Converter={StaticResource VisibilityConverter}}"/>
+                Visibility="{Binding Path=AddNew, Converter={StaticResource VisibilityConverter}}" Margin="0,10,0,10"/>
         <TextBlock Foreground="DarkGray" Visibility="{Binding Path=AddNew, Converter={StaticResource VisibilityConverter}}">
             <Run>* 域名规范：</Run>
             <LineBreak/>
@@ -64,8 +64,10 @@
             <Run>* 域名与URL请至少填写一项。</Run>
         </TextBlock>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button x:Name="OK" Content="确认" Click="OK_Click"/>
-            <Button x:Name="Cancel" Content="取消" Margin="10,0,0,0" Click="Cancel_Click"/>
+            <Button x:Name="OK" Content="确认" Height="32" Width="80"
+                    Style="{StaticResource ProcessButton}" Click="OK_Click"/>
+            <Button x:Name="Cancel" Content="取消" Height="32" Width="80"  Margin="10,0,0,0"
+                    Style="{StaticResource ProcessButton}" Click="Cancel_Click"/>
         </StackPanel>
     </StackPanel>
 </Window>

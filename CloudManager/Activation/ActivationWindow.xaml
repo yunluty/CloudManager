@@ -13,7 +13,7 @@
         </Grid.RowDefinitions>
         <TextBox x:Name="ActivationKey" Height="32" VerticalContentAlignment="Center" InputMethod.IsInputMethodEnabled="False" Margin="80,0,80,0"/>
         <TextBlock x:Name="ErrorInfo" Grid.Row="0" Foreground="Red" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
-        <Button x:Name="Activate" Grid.Row="1" Grid.ColumnSpan="2" Content="激活" Height="32" Width="160"
+        <Button x:Name="ActivateKey" Grid.Row="1" Grid.ColumnSpan="2" Content="激活" Height="32" Width="160"
                 VerticalAlignment="Top" Style="{StaticResource LoginButton}" Click="Activate_Click" Margin="0,20,0,0"/>
     </Grid>
 </Window>
