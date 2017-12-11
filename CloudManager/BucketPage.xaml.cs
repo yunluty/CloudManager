@@ -353,6 +353,12 @@ namespace CloudManager
         {
             ListView view = sender as ListView;
             DescribeOSSObject obj = view.SelectedItem as DescribeOSSObject;
+
+            if (obj == null)
+            {
+                return;
+            }
+
             if (obj.ObjectType == DescribeOSSObject.OSSObjectType.Directory)
             {
                 StartGetObjects(obj);
