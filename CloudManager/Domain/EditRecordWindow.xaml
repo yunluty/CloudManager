@@ -1,0 +1,141 @@
+﻿<Window x:Class="CloudManager.Domain.EditRecordWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:c="clr-namespace:System.Collections;assembly=mscorlib"
+        xmlns:local="clr-namespace:CloudManager.Domain"
+        mc:Ignorable="d"
+        Title="EditRecordWindow" Width="600" SizeToContent="Height">
+    <Window.Resources>
+        <c:ArrayList x:Key="RecordTypes">
+            <local:SimpleComboBoxItem Name="A - 将域名指向一个IPV4地址" Value="A"/>
+            <local:SimpleComboBoxItem Name="CNAME - 将域名指向另外一个域名" Value="CNAME"/>
+            <local:SimpleComboBoxItem Name="AAAA - 将域名指向一个IPV6地址" Value="AAAA"/>
+            <local:SimpleComboBoxItem Name="NS - 将子域名指定其他DNS服务器解析" Value="NS"/>
+            <local:SimpleComboBoxItem Name="MX - 将域名指向邮件服务器地址" Value="MX"/>
+            <local:SimpleComboBoxItem Name="SRV - 记录提供特定的服务的服务器" Value="SRV"/>
+            <local:SimpleComboBoxItem Name="TXT - 文本长度限制512，通常做SPF记录（反垃圾邮件）" Value="TXT"/>
+            <local:SimpleComboBoxItem Name="CAA - CA证书颁发机构授权校验" Value="CAA"/>
+            <local:SimpleComboBoxItem Name="显性URL - 将域名302重定向到另外一个地址" Value="REDIRECT_URL"/>
+            <local:SimpleComboBoxItem Name="隐性URL - 与显性URL类似，但是会隐藏真实目标地址" Value="FORWARD_URL"/>
+        </c:ArrayList>
+        <c:ArrayList x:Key="RecordLines">
+            <local:SimpleComboBoxItem Name="默认 - 必填！未匹配到智能解析线路时，返回【默认】线路设置结果" Value="default"/>
+            <local:SimpleComboBoxItem Name="中国联通" Value="unicom"/>
+            <local:SimpleComboBoxItem Name="中国电信" Value="telecom"/>
+            <local:SimpleComboBoxItem Name="中国移动" Value="mobile"/>
+            <local:SimpleComboBoxItem Name="中国教育网" Value="edu"/>
+            <local:SimpleComboBoxItem Name="世界 - 向除中国大陆以外的其他国家和地区，返回设置的记录值" Value="oversea"/>
+            <local:SimpleComboBoxItem Name="百度" Value="baidu"/>
+            <local:SimpleComboBoxItem Name="必应" Value="biying"/>
+            <local:SimpleComboBoxItem Name="谷歌" Value="google"/>
+        </c:ArrayList>
+        <c:ArrayList x:Key="TTLValues">
+            <local:SimpleComboBoxItem Name="10分钟" Value="600"/>
+            <local:SimpleComboBoxItem Name="30分钟" Value="1800"/>
+            <local:SimpleComboBoxItem Name="1小时" Value="3600"/>
+            <local:SimpleComboBoxItem Name="12小时" Value="43200"/>
+            <local:SimpleComboBoxItem Name="1天" Value="86400"/>
+        </c:ArrayList>
+        <c:ArrayList x:Key="PriorityValues">
+            <local:SimpleComboBoxItem Name="1" Value="1"/>
+            <local:SimpleComboBoxItem Name="2" Value="2"/>
+            <local:SimpleComboBoxItem Name="3" Value="3"/>
+            <local:SimpleComboBoxItem Name="4" Value="4"/>
+            <local:SimpleComboBoxItem Name="5" Value="5"/>
+            <local:SimpleComboBoxItem Name="6" Value="6"/>
+            <local:SimpleComboBoxItem Name="7" Value="7"/>
+            <local:SimpleComboBoxItem Name="8" Value="8"/>
+            <local:SimpleComboBoxItem Name="9" Value="9"/>
+            <local:SimpleComboBoxItem Name="10" Value="10"/>
+            <local:SimpleComboBoxItem Name="11" Value="11"/>
+            <local:SimpleComboBoxItem Name="12" Value="12"/>
+            <local:SimpleComboBoxItem Name="13" Value="13"/>
+            <local:SimpleComboBoxItem Name="14" Value="14"/>
+            <local:SimpleComboBoxItem Name="15" Value="15"/>
+            <local:SimpleComboBoxItem Name="16" Value="16"/>
+            <local:SimpleComboBoxItem Name="17" Value="17"/>
+            <local:SimpleComboBoxItem Name="18" Value="18"/>
+            <local:SimpleComboBoxItem Name="19" Value="19"/>
+            <local:SimpleComboBoxItem Name="20" Value="20"/>
+            <local:SimpleComboBoxItem Name="21" Value="21"/>
+            <local:SimpleComboBoxItem Name="22" Value="22"/>
+            <local:SimpleComboBoxItem Name="23" Value="23"/>
+            <local:SimpleComboBoxItem Name="24" Value="24"/>
+            <local:SimpleComboBoxItem Name="25" Value="25"/>
+            <local:SimpleComboBoxItem Name="26" Value="26"/>
+            <local:SimpleComboBoxItem Name="27" Value="27"/>
+            <local:SimpleComboBoxItem Name="28" Value="28"/>
+            <local:SimpleComboBoxItem Name="29" Value="29"/>
+            <local:SimpleComboBoxItem Name="30" Value="30"/>
+            <local:SimpleComboBoxItem Name="31" Value="31"/>
+            <local:SimpleComboBoxItem Name="32" Value="32"/>
+            <local:SimpleComboBoxItem Name="33" Value="33"/>
+            <local:SimpleComboBoxItem Name="34" Value="34"/>
+            <local:SimpleComboBoxItem Name="35" Value="35"/>
+            <local:SimpleComboBoxItem Name="36" Value="36"/>
+            <local:SimpleComboBoxItem Name="37" Value="37"/>
+            <local:SimpleComboBoxItem Name="38" Value="38"/>
+            <local:SimpleComboBoxItem Name="39" Value="39"/>
+            <local:SimpleComboBoxItem Name="40" Value="40"/>
+            <local:SimpleComboBoxItem Name="41" Value="41"/>
+            <local:SimpleComboBoxItem Name="42" Value="42"/>
+            <local:SimpleComboBoxItem Name="43" Value="43"/>
+            <local:SimpleComboBoxItem Name="44" Value="44"/>
+            <local:SimpleComboBoxItem Name="45" Value="45"/>
+            <local:SimpleComboBoxItem Name="46" Value="46"/>
+            <local:SimpleComboBoxItem Name="47" Value="47"/>
+            <local:SimpleComboBoxItem Name="48" Value="48"/>
+            <local:SimpleComboBoxItem Name="49" Value="49"/>
+            <local:SimpleComboBoxItem Name="50" Value="50"/>
+        </c:ArrayList>
+    </Window.Resources>
+    
+    <Grid Margin="20,10,20,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="记录类型："/>
+        <ComboBox Grid.Row="0" Grid.Column="1" Height="32" VerticalContentAlignment="Center" Margin="0,0,0,20"
+                  ItemsSource="{StaticResource RecordTypes}" DisplayMemberPath="Name" SelectedValuePath="Value"
+                  SelectedValue="{Binding Type, Mode=TwoWay}"/>
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="主机记录："/>
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,20">
+            <TextBox Text="{Binding RR, Mode=TwoWay}" VerticalContentAlignment="Center" Height="32" Width="328"/>
+            <Label Content="{Binding DomainSuffix}" VerticalContentAlignment="Center"/>
+        </StackPanel>
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="解析线路："/>
+        <ComboBox Grid.Row="2" Grid.Column="1" Height="32" VerticalContentAlignment="Center" Margin="0,0,0,20"
+                  ItemsSource="{StaticResource RecordLines}" DisplayMemberPath="Name" SelectedValuePath="Value"
+                  SelectedValue="{Binding Line, Mode=TwoWay}"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="记录值："/>
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Value, Mode=TwoWay}"
+                 Height="32" Margin="0,0,0,20" VerticalContentAlignment="Center"/>
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="MX优先级："
+                   Visibility="{Binding Type, Converter={StaticResource VisibilityConverter}, ConverterParameter=MX}"/>
+        <ComboBox x:Name="MXComboBox" Grid.Row="4" Grid.Column="1" Height="32" Margin="0,0,0,20" VerticalContentAlignment="Center"
+                  ItemsSource="{StaticResource PriorityValues}" DisplayMemberPath="Name" SelectedValuePath="Value" SelectedValue="{Binding Priority, Mode=TwoWay}"
+                  Visibility="{Binding Type, Converter={StaticResource VisibilityConverter}, ConverterParameter=MX}"/>
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="TTL值："/>
+        <ComboBox Grid.Row="5" Grid.Column="1" Height="32" VerticalContentAlignment="Center"
+                  ItemsSource="{StaticResource TTLValues}" DisplayMemberPath="Name" SelectedValuePath="Value"
+                  SelectedValue="{Binding TTL, Mode=TwoWay}" Margin="0,0,0,20"/>
+        <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,20">
+            <Button x:Name="OK" Width="80" Height="32" Content="确定"
+                    Click="OK_Click" Style="{StaticResource ProcessButton}"/>
+            <Button x:Name="Cancel" Width="80" Height="32" Content="取消" Margin="10,0,0,0"
+                    Click="Cancel_Click" Style="{StaticResource ProcessButton}"/>
+        </StackPanel>
+    </Grid>
+</Window>

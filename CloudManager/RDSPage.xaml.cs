@@ -61,7 +61,7 @@ namespace CloudManager
             if (instance != null)
             {
                 mDBInstances.Add(instance);
-                SelectDefaultIndex();
+                SelectDefaultIndex(RDSList);
             }
         }
 
@@ -87,11 +87,11 @@ namespace CloudManager
             });
         }
 
-        private void SelectDefaultIndex()
+        private void SelectDefaultIndex(ListBox list)
         {
-            if (RDSList.SelectedIndex == -1)
+            if (list.Items.Count > 0 && list.SelectedIndex == -1)
             {
-                RDSList.SelectedIndex = 0;
+                list.SelectedIndex = 0;
             }
         }
 

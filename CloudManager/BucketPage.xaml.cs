@@ -48,7 +48,10 @@ namespace CloudManager
         {
             mSelBuckets = obj as ObservableCollection<DescribeBucket>;
             BucketList.ItemsSource = mSelBuckets;
-            SelectDefaultIndex();
+            if(mSelBuckets.Count > 0)
+            {
+                SelectDefaultIndex(BucketList);
+            }
         }
 
         private void GetBuckets()
@@ -64,11 +67,11 @@ namespace CloudManager
             Dispatcher.Invoke(new DelegateGot(GotBuckets), buckets);
         }
 
-        private void SelectDefaultIndex()
+        private void SelectDefaultIndex(ListBox list)
         {
-            if (BucketList.SelectedIndex == -1)
+            if (list.Items.Count > 0 && list.SelectedIndex == -1)
             {
-                BucketList.SelectedIndex = 0;
+                list.SelectedIndex = 0;
             }
         }
 
@@ -557,7 +560,15 @@ namespace CloudManager
             dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                if (obj.ObjectType == OSSObjectType.File)
+                if (obj.ObjectType == OSSObjectType.Directory)
+                {
+                    Thread t = new Thread(new ParameterizedThreadStart(GetDownloadObjects));
+                    object[] para = new object[2];
+                    para[0] = obj;
+                    para[1] = dialog.FileName;
+                    t.Start(para);
+                }
+                else
                 {
                     string path = dialog.FileName + '\\' + obj.Name;
                     DownUploadTask task = CreateOssTask(mSelBucket, path, obj.Key);
@@ -565,14 +576,6 @@ namespace CloudManager
                     task.FileType = FileTypeMode.File;
                     task.TaskType = TaskTypeMode.Download;
                     BackupTaskEvent?.Invoke(this, task);
-                }
-                else
-                {
-                    Thread t = new Thread(new ParameterizedThreadStart(GetDownloadObjects));
-                    object[] para = new object[2];
-                    para[0] = obj;
-                    para[1] = dialog.FileName;
-                    t.Start(para);
                 }
             }
         }

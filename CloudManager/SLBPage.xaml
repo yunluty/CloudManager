@@ -80,7 +80,8 @@
         <DataTemplate x:Key="ProcessListener">
             <StackPanel Orientation="Horizontal">
                 <Button x:Name="ConfigrueListener" Content="配置" Style="{StaticResource ClickText}" Click="ConfigrueListener_Click"/>
-                <Button x:Name="StartStopListener" Content="启动" Style="{StaticResource ClickText}" Click="StartStopListener_Click" Margin="5,0,0,0"/>
+                <Button x:Name="StartStopListener" Style="{StaticResource ClickText}" Click="StartStopListener_Click" Margin="5,0,0,0"
+                        Content="{Binding ListenerStatus, Converter={StaticResource StatusTextConverter}, ConverterParameter=Process}"/>
                 <Button x:Name="DeleteListener" Content="删除" Style="{StaticResource ClickText}" Click="DeleteListener_Click" Margin="5,0,0,0"/>
             </StackPanel>
         </DataTemplate>

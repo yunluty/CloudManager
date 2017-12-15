@@ -19,12 +19,28 @@ namespace CloudManager
                 if (status.Equals("Running", StringComparison.CurrentCultureIgnoreCase)
                     || status.Equals("active", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    return "运行中";
+                    string para = parameter as string;
+                    if (para != null && para.Equals("ProcessListener"))
+                    {
+                        return "停止";
+                    }
+                    else
+                    {
+                        return "运行中";
+                    }
                 }
                 else if (status.Equals("Stopped", StringComparison.CurrentCultureIgnoreCase)
                     || status.Equals("inactive", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    return "已停止";
+                    string para = parameter as string;
+                    if (para != null && para.Equals("ProcessListener"))
+                    {
+                        return "启动";
+                    }
+                    else
+                    {
+                        return "已停止";
+                    }
                 }
                 else if (status.Equals("Starting", StringComparison.CurrentCultureIgnoreCase))
                 {
@@ -144,12 +160,28 @@ namespace CloudManager
                 else if (status.Equals("on", StringComparison.CurrentCultureIgnoreCase)
                     || status.Equals("enable", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    return "开启";
+                    string para = parameter as string;
+                    if (para != null && para.Equals("Process"))
+                    {
+                        return "暂停";
+                    }
+                    else
+                    {
+                        return "开启";
+                    }
                 }
                 else if (status.Equals("off", StringComparison.CurrentCultureIgnoreCase)
                     || status.Equals("disable", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    return "关闭";
+                    string para = parameter as string;
+                    if (para != null && para.Equals("Process"))
+                    {
+                        return "启动";
+                    }
+                    else
+                    {
+                        return "关闭";
+                    }
                 }
                 else if (status.Equals("Logical", StringComparison.CurrentCultureIgnoreCase))
                 {

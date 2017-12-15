@@ -15,12 +15,6 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_0D2214A0909E410EA3FBE919894D5CED"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_12D8A563A72DFE7F309CE3CE2028AAAC"
         "OwnerKey" = "8:_297B336579843E5C1CA1B168D34D7A20"
         "MsmSig" = "8:_UNDEFINED"
@@ -47,6 +41,12 @@
         {
         "MsmKey" = "8:_32372AE422693157B00F32B12CFE1442"
         "OwnerKey" = "8:_26169A839B1048BEA64C85EEED759A3E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_40A5CDA6B374486EB9F9A83E0AF49CA6"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -89,6 +89,12 @@
         {
         "MsmKey" = "8:_735CB1A408290EDD6D2BF283B169B88F"
         "OwnerKey" = "8:_26169A839B1048BEA64C85EEED759A3E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_75EE948174D44150BC1535D5B135EC08"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -183,6 +189,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_E130D967E17C44CBB79465C121ACA0CA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_FB7EABA586571D0A4B6FC4E829FE2808"
         "OwnerKey" = "8:_26169A839B1048BEA64C85EEED759A3E"
         "MsmSig" = "8:_UNDEFINED"
@@ -191,6 +203,36 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_26169A839B1048BEA64C85EEED759A3E"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_735CB1A408290EDD6D2BF283B169B88F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_4BC60FE6B6F1C8E09FF5A73F301570EF"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_8CEC403983681B1131B847692EB20951"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_A01381BA1683E8AEBF6F375AD0411D7D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_7803012D39E20917024526070C7415BC"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -251,36 +293,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_FB7EABA586571D0A4B6FC4E829FE2808"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_735CB1A408290EDD6D2BF283B169B88F"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4BC60FE6B6F1C8E09FF5A73F301570EF"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_8CEC403983681B1131B847692EB20951"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A01381BA1683E8AEBF6F375AD0411D7D"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_7803012D39E20917024526070C7415BC"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -360,10 +372,10 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.5.2"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 和 x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
+                    "Name" = "8:Microsoft .NET Framework 4.5.2 (x86 和 x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.5.2"
                     }
                 }
             }
@@ -396,26 +408,6 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0D2214A0909E410EA3FBE919894D5CED"
-            {
-            "SourcePath" = "8:..\\CloudManager\\CloudManager.ico"
-            "TargetName" = "8:CloudManager.ico"
-            "Tag" = "8:"
-            "Folder" = "8:_32B4A3193DAE40D084CB645C256860F0"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_12D8A563A72DFE7F309CE3CE2028AAAC"
             {
             "AssemblyRegister" = "3:1"
@@ -538,6 +530,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_40A5CDA6B374486EB9F9A83E0AF49CA6"
+            {
+            "SourcePath" = "8:..\\CloudManager\\CloudManager.ico"
+            "TargetName" = "8:CloudManager.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_32B4A3193DAE40D084CB645C256860F0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_416F5B9EEE42F4A6767AD2354799BA3F"
@@ -693,6 +705,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_75EE948174D44150BC1535D5B135EC08"
+            {
+            "SourcePath" = "8:..\\CloudManager\\CloudManager48.ico"
+            "TargetName" = "8:CloudManager48.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_32B4A3193DAE40D084CB645C256860F0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_7803012D39E20917024526070C7415BC"
@@ -963,6 +995,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E130D967E17C44CBB79465C121ACA0CA"
+            {
+            "SourcePath" = "8:..\\CloudManager\\CloudManager16.ico"
+            "TargetName" = "8:CloudManager16.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_32B4A3193DAE40D084CB645C256860F0"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_FB7EABA586571D0A4B6FC4E829FE2808"
             {
             "AssemblyRegister" = "3:1"
@@ -1060,22 +1112,22 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:Setup"
+        "ProductName" = "8:CloudManager"
         "ProductCode" = "8:{779578A9-0933-4206-AB0B-AC9DD5C01AD5}"
-        "PackageCode" = "8:{265F417F-56F0-43EF-A5F1-DA170BB2832C}"
+        "PackageCode" = "8:{41C33086-110B-4236-B5C9-6E77E2561C55}"
         "UpgradeCode" = "8:{E85BC9FD-7C26-4D26-B698-661CD792B6E3}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
-        "InstallAllUsers" = "11:FALSE"
+        "InstallAllUsers" = "11:TRUE"
         "ProductVersion" = "8:1.0.0"
-        "Manufacturer" = "8:Default Company Name"
+        "Manufacturer" = "8:Anquan.info"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:Setup"
+        "Title" = "8:云管理大师"
         "Subject" = "8:"
-        "ARPCONTACT" = "8:Default Company Name"
+        "ARPCONTACT" = "8:Anquan.info"
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
         "ARPURLINFOABOUT" = "8:"
@@ -1207,7 +1259,7 @@
             "Target" = "8:_26169A839B1048BEA64C85EEED759A3E"
             "Folder" = "8:_FECDAE28A4D849AF8C99D47BE5834841"
             "WorkingFolder" = "8:_32B4A3193DAE40D084CB645C256860F0"
-            "Icon" = "8:_0D2214A0909E410EA3FBE919894D5CED"
+            "Icon" = "8:_40A5CDA6B374486EB9F9A83E0AF49CA6"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_9F3F07371CC74DF9A5E3A05B70FB82CB"
@@ -1221,7 +1273,7 @@
             "Target" = "8:_26169A839B1048BEA64C85EEED759A3E"
             "Folder" = "8:_B4C0366E56104EB3B7234E84656DC059"
             "WorkingFolder" = "8:_32B4A3193DAE40D084CB645C256860F0"
-            "Icon" = "8:_0D2214A0909E410EA3FBE919894D5CED"
+            "Icon" = "8:_75EE948174D44150BC1535D5B135EC08"
             "Feature" = "8:"
             }
         }

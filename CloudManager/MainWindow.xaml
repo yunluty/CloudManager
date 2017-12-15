@@ -7,7 +7,7 @@
         xmlns:c="clr-namespace:System.Collections;assembly=mscorlib"
         xmlns:local="clr-namespace:CloudManager"
         mc:Ignorable="d"
-        Title="阿里云大师" Height="720" Width="1024"
+        Title="阿里云大师" Height="720" Width="1024" Icon="CloudManager16.ico"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
@@ -27,6 +27,10 @@
         <c:ArrayList x:Key="SLBMenus">
             <local:MenuInfo Name="实例管理" Id="SLBInstances"/>
             <local:MenuInfo Name="证书管理" Id="Certificates"/>
+        </c:ArrayList>
+        <c:ArrayList x:Key="DomainMenus">
+            <local:MenuInfo Name="域名" Id="Domains"/>
+            <!--local:MenuInfo Name="证书管理" Id="Certificates"/-->
         </c:ArrayList>
         <c:ArrayList x:Key="SettingMenus">
             <local:MenuInfo Name="关于我们" Id="About"/>
@@ -75,6 +79,13 @@
             </StackPanel>
             <ListBox x:Name="SLBMenuList" Style="{StaticResource MenuListBox}"
                      ItemsSource="{StaticResource SLBMenus}" SelectionChanged="Menus_SelectionChanged">
+            </ListBox>
+            <StackPanel Orientation="Horizontal">
+                <Image Source="images/domain.png"/>
+                <Label Content="域名" Style="{StaticResource TitleLabel2}"/>
+            </StackPanel>
+            <ListBox x:Name="DomainMenuList" Style="{StaticResource MenuListBox}"
+                     ItemsSource="{StaticResource DomainMenus}" SelectionChanged="Menus_SelectionChanged">
             </ListBox>
             <!--<Expander>
                 <Expander.Header>

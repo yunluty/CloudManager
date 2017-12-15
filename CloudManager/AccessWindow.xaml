@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CloudManager"
         mc:Ignorable="d"
-        Title="接入阿里云" Height="340" Width="445"
+        Title="接入阿里云" Height="340" Width="445" Icon="CloudManager16.ico"
         WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>

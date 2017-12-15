@@ -27,13 +27,17 @@ namespace CloudManager
                 {
                     return ((double)size / (1024)).ToString("0.00") + " KB";
                 }
-                else if (size <= 0)
+                else if (size > 0)
                 {
-                    return "-";
+                    return size + " B";
+                }
+                else if (size == 0)
+                {
+                    return "0";
                 }
                 else
                 {
-                    return size + " B";
+                    return "-";
                 }
             }
             else

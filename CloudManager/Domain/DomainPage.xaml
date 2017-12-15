@@ -1,0 +1,131 @@
+﻿<Page x:Class="CloudManager.Domain.DomainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:CloudManager.Domain"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="600"
+      Title="DomainPage">
+    
+    <Page.Resources>
+        <DataTemplate x:Key="Process">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="修改" Style="{StaticResource ClickText}" Click="ModifyRecord_Click"/>
+                <Button Content="{Binding Status, Converter={StaticResource StatusTextConverter}, ConverterParameter=Process}"
+                        Style="{StaticResource ClickText}" Margin="5,0,0,0" Click="SetRecordStatus_Click"/>
+                <Button Content="删除" Style="{StaticResource ClickText}" Margin="5,0,0,0" Click="DeleteRecord_Click"/>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="Type">
+            <TextBlock Text="{Binding Type}" Foreground="DarkGray"/>
+        </DataTemplate>
+        <DataTemplate x:Key="RR">
+            <TextBlock Text="{Binding RR}" Foreground="DarkGray"/>
+        </DataTemplate>
+        <DataTemplate x:Key="Line">
+            <TextBlock Text="{Binding LineStr}" Foreground="DarkGray" Margin="0,0,5,0"/>
+        </DataTemplate>
+        <DataTemplate x:Key="Value">
+            <TextBlock Text="{Binding Value}" TextWrapping="Wrap" Foreground="DarkGray" Width="200"/>
+        </DataTemplate>
+        <DataTemplate x:Key="Priority">
+            <TextBlock Text="{Binding Priority}" Foreground="DarkGray"/>
+        </DataTemplate>
+        <DataTemplate x:Key="TTL">
+            <TextBlock Text="{Binding TTLStr}" Foreground="DarkGray" Margin="0,0,5,0"/>
+        </DataTemplate>
+        <DataTemplate x:Key="Status">
+            <Image Margin="0,0,5,0" Width="16" Height="16"
+                   Source="{Binding Status, Converter={StaticResource StatusImageConverter}}"/>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="4*"/>
+        </Grid.ColumnDefinitions>
+        <Label Grid.Column="0" Content="域名列表" FontSize="18"/>
+        <ListBox x:Name="DomainList" Style="{StaticResource ItemListBox}"
+                 Margin="0,35,0,0" SelectionChanged="DomainList_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="{Binding DomainName}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <TabControl Grid.Column="1" Background="Transparent">
+            <TabItem>
+                <TabItem.Header>
+                    <Label Content="基本信息" FontSize="16"/>
+                </TabItem.Header>
+                <Grid x:Name="Information" Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.ColumnSpan="2" Content="{Binding DomainName}"
+                           FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <Label Grid.Row="1" Content="域名持有者（中文）：" Foreground="DarkGray" Margin="0,0,20,0"/>
+                    <Label Grid.Row="1" Grid.Column="1" Content="{Binding ChineseHolder}" Margin="0,0,0,10"/>
+                    <Label Grid.Row="2" Content="域名持有者（英文）：" Foreground="DarkGray"/>
+                    <Label Grid.Row="2" Grid.Column="1" Content="{Binding EnglishHolder}" Margin="0,0,0,10"/>
+                    <Label Grid.Row="3" Content="联系人邮箱：" Foreground="DarkGray"/>
+                    <Label Grid.Row="3" Grid.Column="1" Content="{Binding HolderEmail}" Margin="0,0,0,10"/>
+                    <Label Grid.Row="4" Content="持有者实名认证：" Foreground="DarkGray"/>
+                    <Label Grid.Row="4" Grid.Column="1" Content="{Binding DomainAuditStatus}" Margin="0,0,0,10"/>
+                    <Label Grid.Row="5" Content="注册商：" Foreground="DarkGray"/>
+                    <Label Grid.Row="5" Grid.Column="1" Content="{Binding Registrar}" Margin="0,0,0,10"/>
+                    <Label Grid.Row="6" Content="注册日期：" Foreground="DarkGray"/>
+                    <Label Grid.Row="6" Grid.Column="1" Content="{Binding CreationDate}" Margin="0,0,0,10"/>
+                    <Label Grid.Row="7" Content="到期日期：" Foreground="DarkGray"/>
+                    <Label Grid.Row="7" Grid.Column="1" Content="{Binding ExpirationDate}" Margin="0,0,0,10"/>
+                    <Label Grid.Row="8" Content="域名状态：" Foreground="DarkGray"/>
+                    <StackPanel Grid.Row="8" Grid.Column="1"  x:Name="DomainStatus" Margin="0,0,0,10"/>
+                    <Label Grid.Row="9" Content="DNS服务器：" Foreground="DarkGray"/>
+                    <StackPanel Grid.Row="9" Grid.Column="1"  x:Name="DNSList" Margin="0,0,0,10"/>
+                </Grid>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <Label Content="解析设置" FontSize="16"/>
+                </TabItem.Header>
+                <StackPanel>
+                    <Grid>
+                        <Button Content="添加解析" Height="32" Width="60" Margin="0,0,10,0" HorizontalAlignment="Right"
+                                Style="{StaticResource ProcessButton}" Click="AddRecord_Click"/>
+                    </Grid>
+                    <ListView x:Name="RecordList" Margin="0,5,0,0">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="记录类型" CellTemplate="{StaticResource Type}"/>
+                                <GridViewColumn Header="主机记录" CellTemplate="{StaticResource RR}"/>
+                                <GridViewColumn Header="解析线路" CellTemplate="{StaticResource Line}"/>
+                                <GridViewColumn Header="记录值" CellTemplate="{StaticResource Value}"/>
+                                <GridViewColumn Header="MX优先级" CellTemplate="{StaticResource Priority}"/>
+                                <GridViewColumn Header="TTL值" CellTemplate="{StaticResource TTL}"/>
+                                <GridViewColumn Header="状态" CellTemplate="{StaticResource Status}"/>
+                                <GridViewColumn Header="操作" CellTemplate="{StaticResource Process}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Page>

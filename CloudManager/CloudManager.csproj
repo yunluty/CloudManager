@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>CloudManager</RootNamespace>
     <AssemblyName>CloudManager</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -84,6 +84,7 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -120,10 +121,19 @@
     <Compile Include="CertificatePage.xaml.cs">
       <DependentUpon>CertificatePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converter\FileIconConverter.cs" />
     <Compile Include="CreateCertificateWindow.xaml.cs">
       <DependentUpon>CreateCertificateWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="DescribeCertificate.cs" />
+    <Compile Include="Domain\DescribeDomain.cs" />
+    <Compile Include="Domain\DescribeDomainRecord.cs" />
+    <Compile Include="Domain\DomainPage.xaml.cs">
+      <DependentUpon>DomainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Domain\EditRecordWindow.xaml.cs">
+      <DependentUpon>EditRecordWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DownUploadTask.cs" />
     <Compile Include="BackupTaskWindow.xaml.cs">
       <DependentUpon>BackupTaskWindow.xaml</DependentUpon>
@@ -232,6 +242,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CreateCertificateWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Domain\DomainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Domain\EditRecordWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -403,6 +421,10 @@
     <Resource Include="images\error_32.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\aliyun-openapi-net-sdk\aliyun-net-sdk-alidns\aliyun-net-sdk-alidns.csproj">
+      <Project>{A3A305DD-6CB0-421B-8DC5-314B89C752B1}</Project>
+      <Name>aliyun-net-sdk-alidns</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\aliyun-openapi-net-sdk\aliyun-net-sdk-core\aliyun-net-sdk-core.csproj">
       <Project>{bb84cecb-295d-4772-a669-3726e511ccfa}</Project>
       <Name>aliyun-net-sdk-core</Name>
@@ -460,6 +482,47 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="images\linux.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="CloudManager16.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\exe_file.png" />
+    <Resource Include="images\folder.png" />
+    <Resource Include="images\unknown_file.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\excle_file.png" />
+    <Resource Include="images\image_file.png" />
+    <Resource Include="images\music_file.png" />
+    <Resource Include="images\rar_file.png" />
+    <Resource Include="images\text_file.png" />
+    <Resource Include="images\word_file.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\pdf_file.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\ppt_file.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\oss32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\rds32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\oss24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\ecs24.png" />
+    <Resource Include="images\rds24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\domain.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.106.0\build\net45\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.106.0\build\net45\System.Data.SQLite.Core.targets')" />

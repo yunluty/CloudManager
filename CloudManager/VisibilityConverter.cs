@@ -92,6 +92,10 @@ namespace CloudManager
                         return Visibility.Collapsed;
                     }
                 }
+                else if (status.Equals("MX"))
+                {
+                    return Visibility.Visible;
+                }
                 else
                 {
                     return Visibility.Collapsed;

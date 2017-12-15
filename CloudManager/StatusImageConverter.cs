@@ -21,23 +21,25 @@ namespace CloudManager
                 string status = (string)value;
                 if (status.Equals("ECS"))
                 {
-                    return "images/ecs.png";
+                    return "images/ecs24.png";
                 }
                 else if (status.Equals("RDS"))
                 {
-                    return "images/rds.png";
+                    return "images/rds24.png";
                 }
                 else if (status.Equals("OSS"))
                 {
-                    return "images/oss.png";
+                    return "images/oss24.png";
                 }
                 else if (status.Equals("Running", StringComparison.CurrentCultureIgnoreCase)
-                    || status.Equals("active", StringComparison.CurrentCultureIgnoreCase))
+                    || status.Equals("active", StringComparison.CurrentCultureIgnoreCase)
+                    || status.Equals("enable", StringComparison.CurrentCultureIgnoreCase))
                 {
                     return "images/running.png";
                 }
                 else if (status.Equals("Stopped")
-                    || status.Equals("inactive", StringComparison.CurrentCultureIgnoreCase))
+                    || status.Equals("inactive", StringComparison.CurrentCultureIgnoreCase)
+                    || status.Equals("disable", StringComparison.CurrentCultureIgnoreCase))
                 {
                     return "images/stopped.png";
                 }

@@ -7,6 +7,18 @@
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="800"
       Title="OSSPage">
+    <Page.Resources>
+        <DataTemplate x:Key="FileName">
+            <StackPanel Orientation="Horizontal">
+                <Rectangle Width="32" Height="32" RenderOptions.BitmapScalingMode="NearestNeighbor">
+                    <Rectangle.Fill>
+                        <ImageBrush ImageSource="{Binding ObjectType, Converter={StaticResource FileIconConverter}}"/>
+                    </Rectangle.Fill>
+                </Rectangle>
+                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
 
     <Grid Background="#F9F9F9">
         <Grid.ColumnDefinitions>
@@ -193,19 +205,20 @@
                         <!-- 为了ListView的列提供自适应的宽度 -->
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="3*" />
-                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="0.8*" />
                             <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="0.1*"/>
+                            <ColumnDefinition Width="0.2*"/>
                         </Grid.ColumnDefinitions>
                         <Grid Grid.Column="0" x:Name="Column1"/>
                         <Grid Grid.Column="1" x:Name="Column2"/>
                         <Grid Grid.Column="2" x:Name="Column3"/>
                     </Grid>
                     <ListView x:Name="FileList" BorderThickness="0" Background="Transparent"
-                              MouseDoubleClick="FileList_MouseDoubleClick">
+                              MouseDoubleClick="FileList_MouseDoubleClick"
+                              MaxHeight="545">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="文件名" DisplayMemberBinding="{Binding Name}"
+                                <GridViewColumn Header="文件名" CellTemplate="{StaticResource FileName}"
                                         Width="{Binding ElementName=Column1, Path=ActualWidth}"/>
                                 <GridViewColumn Header="大小" DisplayMemberBinding="{Binding Size, Converter={StaticResource FileSizeConverter}}"
                                         Width="{Binding ElementName=Column2, Path=ActualWidth}"/>

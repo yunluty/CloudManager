@@ -84,15 +84,15 @@ namespace CloudManager
             if (instance != null)
             {
                 mECSInstances.Add(instance);
-                SelectDefaultIndex();
+                SelectDefaultIndex(ECSList);
             }
         }
 
-        private void SelectDefaultIndex()
+        private void SelectDefaultIndex(ListBox list)
         {
-            if (ECSList.SelectedIndex == -1)
+            if (list.Items.Count > 0 && list.SelectedIndex == -1)
             {
-                ECSList.SelectedIndex = 0;
+                list.SelectedIndex = 0;
             }
         }
 

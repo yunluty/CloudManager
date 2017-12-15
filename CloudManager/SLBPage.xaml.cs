@@ -117,15 +117,15 @@ namespace CloudManager
             if (balancer != null)
             {
                 mLoadBalancers.Add(balancer);
-                SelectDefaultIndex();
+                SelectDefaultIndex(SLBList);
             }
         }
 
-        private void SelectDefaultIndex()
+        private void SelectDefaultIndex(ListBox list)
         {
-            if (SLBList.SelectedIndex == -1)
+            if (list.Items.Count > 0 && list.SelectedIndex == -1)
             {
-                SLBList.SelectedIndex = 0;
+                list.SelectedIndex = 0;
             }
         }
 
@@ -327,7 +327,7 @@ namespace CloudManager
         private void RequestListeners(DefaultAcsClient client, DescribeLoadBalancerAttributeResponse response)
         {
             ObservableCollection<SLBListener> listeners = new ObservableCollection<SLBListener>();
-            Parallel.ForEach(response.ListenerPortsAndProtocol, (p) =>
+            foreach (DescribeLoadBalancerAttribute_ListenerPortAndProtocol p in response.ListenerPortsAndProtocol)
             {
                 SLBListener l = null;
 
@@ -364,14 +364,13 @@ namespace CloudManager
                     l = new SLBListener(listener);
                 }
 
-                l.LoadBalancerId = response.LoadBalancerId;
-                l.RegionId = response.RegionIdAlias;
-
                 if (l != null)
                 {
+                    l.LoadBalancerId = response.LoadBalancerId;
+                    l.RegionId = response.RegionIdAlias;
                     listeners.Add(l);
                 }
-            });
+            }
 
             DescribeVServerGroupsRequest vrequest = new DescribeVServerGroupsRequest();
             vrequest.LoadBalancerId = response.LoadBalancerId;
@@ -407,6 +406,11 @@ namespace CloudManager
 
                 foreach (SLBListener l in listeners)
                 {
+                    if (l == null)
+                    {
+                        continue;
+                    }
+
                     foreach (DescribeHealthStatus_BackendServer server in status.BackendServers)
                     {
                         if (l.ListenerPort == server.ListenerPort)

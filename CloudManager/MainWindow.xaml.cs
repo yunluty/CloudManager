@@ -2,6 +2,8 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.ComponentModel;
+using CloudManager.Domain;
 
 namespace CloudManager
 {
@@ -17,6 +19,8 @@ namespace CloudManager
         private BucketPage mBucketPage;
         private CertificatePage mCertificatePage;
         private AboutPage mAboutPage;
+        private DomainPage mDomainPage;
+        private System.Windows.Forms.NotifyIcon mNotifyIcon;
 
         private delegate void DelegateGot(object obj);
 
@@ -49,6 +53,9 @@ namespace CloudManager
 
             mAboutPage = new AboutPage();
             mAboutPage.mMainWindow = this;
+
+            mDomainPage = new DomainPage();
+            mDomainPage.mMainWindow = this;
         }
 
         private void Menus_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -81,6 +88,10 @@ namespace CloudManager
             else if (id.Equals("Certificates"))
             {
                 Process.Content = mCertificatePage;
+            }
+            else if (id.Equals("Domains"))
+            {
+                Process.Content = mDomainPage;
             }
             else if (id.Equals("RunningTask"))
             {
@@ -122,6 +133,11 @@ namespace CloudManager
                 SLBMenuList.SelectedIndex = -1;
             }
 
+            if (DomainMenuList != list)
+            {
+                DomainMenuList.SelectedIndex = -1;
+            }
+
             if (TaskMenuList != list)
             {
                 TaskMenuList.SelectedIndex = -1;
@@ -157,6 +173,13 @@ namespace CloudManager
         {
             Application.Current.Shutdown();
         }
+
+        /*protected override void OnClosing(CancelEventArgs e)
+        {
+            e.Cancel = true;
+            this.WindowState = WindowState.Minimized;
+            this.ShowInTaskbar = false;
+        }*/
     }
 
     public class MenuInfo

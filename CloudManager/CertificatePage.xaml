@@ -19,7 +19,7 @@
             <TextBlock Text="{Binding CertificateName}" Width="80" TextWrapping="Wrap"/>
         </DataTemplate>
         <DataTemplate x:Key="CertificateId">
-            <TextBlock Text="{Binding CertificateId}" Width="210" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding CertificateId}" Width="200" TextWrapping="Wrap"/>
         </DataTemplate>
         <DataTemplate x:Key="Fingerprint">
             <TextBlock Text="{Binding Fingerprint}" Width="200" TextWrapping="Wrap"/>

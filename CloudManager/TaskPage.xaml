@@ -8,34 +8,36 @@
       d:DesignHeight="600" d:DesignWidth="600"
       Title="BackupTaskPage">
 
-    <StackPanel Margin="20,0,15,0">
+    <StackPanel Margin="5,0,5,0">
         <ListBox x:Name="RunningList" BorderThickness="0" BorderBrush="Transparent" Background="Transparent"
                  Visibility="{Binding Path=TaskType , Converter={StaticResource VisibilityConverter}, ConverterParameter=Running}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <Image Source="{Binding InstanceType, Converter={StaticResource StatusImageConverter}}" Margin="5,0,0,0"/>
-                        <Label Content="{Binding InstanceName}" Margin="5,0,0,0" Width="120"/>
-                        <Label Content="{Binding FileName}" Margin="5,0,0,0" Width="280"/>
+                        <Image Width="32" Height="32" Stretch="None" Margin="5,0,0,0"
+                               Source="{Binding InstanceType, Converter={StaticResource StatusImageConverter}}"/>
+                        <Label Content="{Binding InstanceName}" Margin="10,0,0,0" Width="120" VerticalAlignment="Center"/>
+                        <Label Content="{Binding FileName}" Margin="5,0,0,0" Width="280" VerticalAlignment="Center"/>
                         <Label Content="{Binding TotalSize, Converter={StaticResource FileSizeConverter}}"
                                Width="80" VerticalAlignment="Center" Margin="5,0,0,0"/>
-                        <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
                             <ProgressBar Value="{Binding Progress}" Width="150" Height="15"/>
                             <Label Content="{Binding ProgressPercent}" Width="40" VerticalAlignment="Center" Margin="5,0,0,0"/>
                         </StackPanel>
-                        <Label Content="{Binding Status, Converter={StaticResource StatusTextConverter}}" Margin="5,0,0,0"/>
+                        <Label Content="{Binding Status, Converter={StaticResource StatusTextConverter}}" VerticalAlignment="Center" Margin="5,0,0,0"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <ListBox x:Name="FinishedList" BorderThickness="0" BorderBrush="Transparent" Background="Transparent"
+        <ListBox x:Name="FinishedList" BorderThickness="0" BorderBrush="Transparent" Background="Transparent" MaxHeight="680"
                  Visibility="{Binding Path=TaskType, Converter={StaticResource VisibilityConverter}, ConverterParameter=Finished}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <Image Source="{Binding InstanceType, Converter={StaticResource StatusImageConverter}}" Margin="5,0,0,0"/>
-                        <Label Content="{Binding InstanceName}" Margin="5,0,0,0" Width="120"/>
-                        <Label Content="{Binding FileName}" Margin="5,0,0,0" Width="300"/>
+                        <Image Width="32" Height="32" Stretch="None" Margin="5,0,0,0"
+                               Source="{Binding InstanceType, Converter={StaticResource StatusImageConverter}}"/>
+                        <Label Content="{Binding InstanceName}" Margin="10,0,0,0" Width="120" VerticalAlignment="Center"/>
+                        <Label Content="{Binding FileName}" Margin="5,0,0,0" Width="300" VerticalAlignment="Center"/>
                         <Label Content="{Binding TotalSize, Converter={StaticResource FileSizeConverter}}"
                                Width="80" VerticalAlignment="Center" Margin="5,0,0,0"/>
                         <Label Content="{Binding CompleteTime}" VerticalAlignment="Center" Margin="5,0,0,0" Width="240"/>
