@@ -224,10 +224,14 @@ namespace CloudManager.Domain
         private void ModifyRecord_Click(object sender, RoutedEventArgs e)
         {
             DescribeDomainRecord record = (sender as Button).DataContext as DescribeDomainRecord;
-            EditRecordWindow win = new EditRecordWindow(record);
+            EditRecordWindow win = new EditRecordWindow(mClient, record);
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             win.Owner = mMainWindow;
             win.ShowDialog();
+            if (win.UpdateRecords)
+            {
+                GetDomainRecords(mSelDomain);
+            }
         }
 
         private void PauseDomainRecord(DescribeDomainRecord record)
@@ -288,10 +292,14 @@ namespace CloudManager.Domain
 
         private void AddRecord_Click(object sender, RoutedEventArgs e)
         {
-            EditRecordWindow win = new EditRecordWindow(mSelDomain);
+            EditRecordWindow win = new EditRecordWindow(mClient, mSelDomain);
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             win.Owner = mMainWindow;
             win.ShowDialog();
+            if (win.UpdateRecords)
+            {
+                GetDomainRecords(mSelDomain);
+            }
         }
     }
 }

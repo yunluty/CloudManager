@@ -125,6 +125,8 @@ namespace CloudManager.Domain
             set
             {
                 tTL = value;
+                NotifyPropertyChanged("TTL");
+
                 if (value == 10 * 60)
                 {
                     TTLStr = "10分钟";
@@ -181,6 +183,8 @@ namespace CloudManager.Domain
             set
             {
                 line = value;
+                NotifyPropertyChanged("Line");
+
                 switch (value)
                 {
                     case "default":

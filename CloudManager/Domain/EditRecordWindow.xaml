@@ -6,7 +6,8 @@
         xmlns:c="clr-namespace:System.Collections;assembly=mscorlib"
         xmlns:local="clr-namespace:CloudManager.Domain"
         mc:Ignorable="d"
-        Title="EditRecordWindow" Width="600" SizeToContent="Height">
+        Title="EditRecordWindow" Width="660" SizeToContent="Height">
+    
     <Window.Resources>
         <c:ArrayList x:Key="RecordTypes">
             <local:SimpleComboBoxItem Name="A - 将域名指向一个IPV4地址" Value="A"/>
@@ -92,7 +93,7 @@
         </c:ArrayList>
     </Window.Resources>
     
-    <Grid Margin="20,10,20,0">
+    <Grid Margin="30,10,30,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="3*"/>
@@ -105,33 +106,109 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="0" Text="记录类型："/>
         <ComboBox Grid.Row="0" Grid.Column="1" Height="32" VerticalContentAlignment="Center" Margin="0,0,0,20"
                   ItemsSource="{StaticResource RecordTypes}" DisplayMemberPath="Name" SelectedValuePath="Value"
-                  SelectedValue="{Binding Type, Mode=TwoWay}"/>
+                  SelectedValue="{Binding Type, Mode=TwoWay}" SelectionChanged="Type_SelectionChanged"/>
         <TextBlock Grid.Row="1" Grid.Column="0" Text="主机记录："/>
-        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,20">
-            <TextBox Text="{Binding RR, Mode=TwoWay}" VerticalContentAlignment="Center" Height="32" Width="328"/>
-            <Label Content="{Binding DomainSuffix}" VerticalContentAlignment="Center"/>
-        </StackPanel>
-        <TextBlock Grid.Row="2" Grid.Column="0" Text="解析线路："/>
-        <ComboBox Grid.Row="2" Grid.Column="1" Height="32" VerticalContentAlignment="Center" Margin="0,0,0,20"
-                  ItemsSource="{StaticResource RecordLines}" DisplayMemberPath="Name" SelectedValuePath="Value"
-                  SelectedValue="{Binding Line, Mode=TwoWay}"/>
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="记录值："/>
-        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Value, Mode=TwoWay}"
-                 Height="32" Margin="0,0,0,20" VerticalContentAlignment="Center"/>
-        <TextBlock Grid.Row="4" Grid.Column="0" Text="MX优先级："
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Text="{Binding RR, Mode=TwoWay}" VerticalContentAlignment="Center" Height="32"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Label Content="{Binding DomainSuffix}" VerticalContentAlignment="Center"/>
+                <Image Source="../images/question.png" Stretch="None" Margin="5,0,0,0">
+                    <Image.ToolTip>
+                        <TextBlock>
+                            <Run>主机记录就是域名前缀，常见用法有：</Run>
+                            <LineBreak/>
+                            <LineBreak/>
+                            <Run>www：解析后的域名为www.aliyun.com。</Run>
+                            <LineBreak/>
+                            <LineBreak/>
+                            <Run>@：直接解析主域名 aliyun.com。</Run>
+                             <LineBreak/>
+                            <LineBreak/>
+                            <Run>*：泛解析，匹配其他所有域名 *.aliyun.com。</Run>
+                            <LineBreak/>
+                            <LineBreak/>
+                            <Run>mail：将域名解析为mail.aliyun.com，通常用于解析邮箱服务器。</Run>
+                            <LineBreak/>
+                            <LineBreak/>
+                            <Run>二级域名：如：abc.aliyun.com，填写abc。</Run>
+                            <LineBreak/>
+                            <LineBreak/>
+                            <Run>手机网站：如：m.aliyun.com，填写m。</Run>
+                            <LineBreak/>
+                            <LineBreak/>
+                            <Run>显性URL：不支持泛解析（泛解析：将所有子域名解析到同一地址）</Run>
+                        </TextBlock>
+                    </Image.ToolTip>
+                </Image>
+            </StackPanel>
+        </Grid>
+        <TextBlock Grid.Row="2" Grid.Column="1"  TextWrapping="Wrap" Foreground="DarkGray" Margin="0,5,0,20"
+                   Text="主机记录（RR）值合法字符包含a-z、A-Z、0-9、'-' 、'_' 、'.'、'*'、'@'、'中文汉字'"/>
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="解析线路："/>
+        <Grid Grid.Row="3" Grid.Column="1" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox x:Name="LinesComboBox" Height="32" VerticalContentAlignment="Center"
+                      ItemsSource="{StaticResource RecordLines}" DisplayMemberPath="Name" SelectedValuePath="Value"
+                      SelectedValue="{Binding Line, Mode=TwoWay}"/>
+            <Image Grid.Column="1" Source="../images/question.png" Stretch="None" Margin="5,0,0,0">
+                <Image.ToolTip>
+                    <TextBlock>
+                        <Run>如果只有一个IP地址或CNAME域名，请务必选择【默认】。</Run>
+                        <LineBreak/>
+                        <LineBreak/>
+                        <Run>世界：向除中国大陆以外的其他国家和地区，返回设置的记录值。</Run>
+                        <LineBreak/>
+                        <LineBreak/>
+                        <Run>搜索引擎：向搜索引擎爬虫的DNS，返回设置的记录值。</Run>
+                    </TextBlock>
+                </Image.ToolTip>
+            </Image>
+        </Grid>
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="记录值："/>
+        <Grid Grid.Row="4" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Text="{Binding Value, Mode=TwoWay}" Height="32" VerticalContentAlignment="Center"/>
+            <Image Grid.Column="1" Source="../images/question.png" Stretch="None" Margin="5,0,0,0">
+                <Image.ToolTip>
+                    <TextBlock>
+                        <Run>显性URL记录值请填写要跳转到的网址，例如https://www.aliyun.com</Run>
+                        <LineBreak/>
+                        <LineBreak/>
+                        <Run>URL转发功能目前只支持网站有备案号且接入商是万网的域名转发需求</Run>
+                        <LineBreak/>
+                        <LineBreak/>
+                        <Run>URL转发的目标域名不支持中文域名</Run>
+                    </TextBlock>
+                </Image.ToolTip>
+            </Image>
+        </Grid>
+        <TextBlock x:Name="ValueTips" Grid.Row="5" Grid.Column="1"  TextWrapping="Wrap" Foreground="DarkGray" Margin="0,5,0,20"/>
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="MX优先级："
                    Visibility="{Binding Type, Converter={StaticResource VisibilityConverter}, ConverterParameter=MX}"/>
-        <ComboBox x:Name="MXComboBox" Grid.Row="4" Grid.Column="1" Height="32" Margin="0,0,0,20" VerticalContentAlignment="Center"
+        <ComboBox x:Name="MXComboBox" Grid.Row="6" Grid.Column="1" Height="32" Margin="0,0,0,20" VerticalContentAlignment="Center"
                   ItemsSource="{StaticResource PriorityValues}" DisplayMemberPath="Name" SelectedValuePath="Value" SelectedValue="{Binding Priority, Mode=TwoWay}"
                   Visibility="{Binding Type, Converter={StaticResource VisibilityConverter}, ConverterParameter=MX}"/>
-        <TextBlock Grid.Row="5" Grid.Column="0" Text="TTL值："/>
-        <ComboBox Grid.Row="5" Grid.Column="1" Height="32" VerticalContentAlignment="Center"
+        <TextBlock Grid.Row="7" Grid.Column="0" Text="TTL值："/>
+        <ComboBox Grid.Row="7" Grid.Column="1" Height="32" VerticalContentAlignment="Center"
                   ItemsSource="{StaticResource TTLValues}" DisplayMemberPath="Name" SelectedValuePath="Value"
                   SelectedValue="{Binding TTL, Mode=TwoWay}" Margin="0,0,0,20"/>
-        <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,20">
+        <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,20">
             <Button x:Name="OK" Width="80" Height="32" Content="确定"
                     Click="OK_Click" Style="{StaticResource ProcessButton}"/>
             <Button x:Name="Cancel" Width="80" Height="32" Content="取消" Margin="10,0,0,0"
