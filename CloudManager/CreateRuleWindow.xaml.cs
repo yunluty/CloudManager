@@ -22,7 +22,7 @@ namespace CloudManager
     /// <summary>
     /// CreateRuleWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class CreateRuleWindow : Window
+    public partial class CreateRuleWindow : WindowBase
     {
         private SLBListener mListener;
         private DefaultAcsClient mClient;

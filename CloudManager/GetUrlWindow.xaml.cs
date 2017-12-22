@@ -19,7 +19,7 @@ namespace CloudManager
     /// <summary>
     /// GetUrlWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class GetUrlWindow : Window
+    public partial class GetUrlWindow : WindowBase
     {
         private OssClient mClient;
         private DescribeBucket mBucket;

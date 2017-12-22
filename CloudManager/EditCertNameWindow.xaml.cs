@@ -21,7 +21,7 @@ namespace CloudManager
     /// <summary>
     /// EditCertNameWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class EditCertNameWindow : Window
+    public partial class EditCertNameWindow : WindowBase
     {
         private DefaultAcsClient mClient;
         private DescribeCertificate mCertificate;

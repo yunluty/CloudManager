@@ -18,7 +18,7 @@ namespace CloudManager
     /// <summary>
     /// ForgotWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class ForgotWindow : Window , INextCallBack
+    public partial class ForgotWindow : WindowBase , INextCallBack
     {
         private string mUserName;
         private string mPhoneNumber;

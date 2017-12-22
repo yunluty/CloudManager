@@ -979,6 +979,11 @@ namespace CloudManager
             win.ShowDialog();
         }
 
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void ListenersSelectAll_Click(object sender, RoutedEventArgs e)
         {
             if (ListenersSelectAll.IsChecked == true)

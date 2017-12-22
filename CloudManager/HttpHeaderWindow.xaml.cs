@@ -20,7 +20,7 @@ namespace CloudManager
     /// <summary>
     /// HttpHeaderWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class HttpHeaderWindow : Window
+    public partial class HttpHeaderWindow : WindowBase
     {
         private OssClient mClient;
         private DescribeBucket mBucket;

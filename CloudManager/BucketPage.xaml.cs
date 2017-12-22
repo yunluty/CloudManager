@@ -690,6 +690,11 @@ namespace CloudManager
             win.ShowDialog();
         }
 
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void UpdateDirectory(object sender, string key)
         {
             if (mCurrDirectory.Key == key)

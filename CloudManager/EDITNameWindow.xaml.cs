@@ -23,7 +23,7 @@ namespace CloudManager
     /// <summary>
     /// BucketEditWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class EditNameWindow : Window
+    public partial class EditNameWindow : WindowBase
     {
         private OssClient mOssClient;
         private DescribeBucket mBucket;
@@ -47,8 +47,8 @@ namespace CloudManager
             mOssClient = c;
             mBucket = b;
             mCurrKey = k;
-            TextTile = "文件名:";
-            TextTips = "长度限制为1-254个字符，不要以「/」打头，不要出现连续的「/」，不允许出现名为「..」的子目录";
+            TextTile = "文件夹名称:";
+            TextTips = "长度限制为1-254个字符\n不要以「/」打头，不要出现连续的「/」，不允许出现名为「..」的子目录";
             EditNameBox.MaxLength = 254;
             mEditingType = EditingType.BucketFolderName;
             this.Title = "新建文件夹";
@@ -62,7 +62,7 @@ namespace CloudManager
             mAcsClient = c;
             mBalancer = b;
             TextTile = "名称:";
-            TextTips = "长度限制为1-80个字符，允许包含中文、字母、数字、'-'、'/'、'.'、'_'这些字符";
+            TextTips = "长度限制为1-80个字符\n允许包含中文、字母、数字、'-'、'/'、'.'、'_'这些字符";
             EditNameBox.MaxLength = 80;
             mEditingType = EditingType.BlancerName;
             this.Title = "编辑负载均衡名称";

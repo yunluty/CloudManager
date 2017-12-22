@@ -9,7 +9,7 @@ namespace CloudManager
     /// <summary>
     /// EditBackupPolicy.xaml 的交互逻辑
     /// </summary>
-    public partial class EditBackupPolicyWindow : Window
+    public partial class EditBackupPolicyWindow : WindowBase
     {
         private DBBackupPolicy mPolicy;
         private DefaultAcsClient mClient;

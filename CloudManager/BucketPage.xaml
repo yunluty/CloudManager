@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:CloudManager"
+      xmlns:control="clr-namespace:CloudManager.Control"
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="800"
       Title="OSSPage">
@@ -25,9 +26,10 @@
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
-        <Label Grid.Column="0" Content="Bucket列表" FontSize="18"/>
+        <!--Label Grid.Column="0" Content="Bucket列表" FontSize="18"/-->
+        <control:RefreshTitle VerticalAlignment="Top" Text="Bucket列表" Background="#ECEAE8" Click="Refresh_Click" Height="37" Margin="0,0,0,0"/>
         <ListBox x:Name="BucketList" Grid.Column="0" Style="{StaticResource ItemListBox}"
-                 Margin="0,40,0,0" SelectionChanged="BucketList_SelectionChanged">
+                 Margin="0,37,0,0" SelectionChanged="BucketList_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Label Content="{Binding Name}"/>
@@ -179,27 +181,27 @@
                             Text="{Binding Path, Mode=OneWay}" Margin="0,0,30,0" VerticalContentAlignment="Center"/>
                     </Grid>
                     <StackPanel Orientation="Horizontal" Margin="10,10,10,10">
-                        <Button x:Name="UploadFile" Content="上传文件" Height="32"
+                        <Button x:Name="UploadFile" Content="上传文件" Height="32" Width="70"
                                 Click="UploadFile_Click"
                                 Style="{StaticResource ProcessButton}"/>
-                        <Button x:Name="UploadFolder" Content="上传文件夹" Height="32"
+                        <Button x:Name="UploadFolder" Content="上传文件夹" Height="32" Width="70"
                                 Click="UploadFolder_Click"
-                                Style="{StaticResource ProcessButton}" Margin="10,0,0,0"/>
-                        <Button x:Name="CreateFolder" Content="新建文件夹" Height="32"
+                                Style="{StaticResource ProcessButton}" Margin="5,0,0,0"/>
+                        <Button x:Name="CreateFolder" Content="新建文件夹" Height="32" Width="70"
                                 Click="CreateFolder_Click"
-                                Style="{StaticResource ProcessButton}" Margin="10,0,0,0"/>
-                        <Button x:Name="Download" Content="下载" Height="32"
+                                Style="{StaticResource ProcessButton}" Margin="5,0,0,0"/>
+                        <Button x:Name="Download" Content="下载" Height="32" Width="70"
                                 Click="Download_Click"
-                                Style="{StaticResource ProcessButton}" Margin="10,0,0,0"/>
-                        <Button x:Name="Delete" Content="删除" Height="32"
+                                Style="{StaticResource ProcessButton}" Margin="5,0,0,0"/>
+                        <Button x:Name="Delete" Content="删除" Height="32" Width="70"
                                 Click="Delete_Click"
-                                Style="{StaticResource ProcessButton}" Margin="10,0,0,0"/>
-                        <Button x:Name="GetUrl" Content="获取地址" Height="32"
+                                Style="{StaticResource ProcessButton}" Margin="5,0,0,0"/>
+                        <Button x:Name="GetUrl" Content="获取地址" Height="32" Width="70"
                                 Click="GetUrl_Click"
-                                Style="{StaticResource ProcessButton}" Margin="10,0,0,0"/>
+                                Style="{StaticResource ProcessButton}" Margin="5,0,0,0"/>
                         <Button x:Name="HttpHeader" Content="设置HTTP头" Height="32"
                                 Click="HttpHeader_Click"
-                                Style="{StaticResource ProcessButton}" Margin="10,0,0,0"/>
+                                Style="{StaticResource ProcessButton}" Margin="5,0,0,0"/>
                     </StackPanel>
                     <Grid>
                         <!-- 为了ListView的列提供自适应的宽度 -->

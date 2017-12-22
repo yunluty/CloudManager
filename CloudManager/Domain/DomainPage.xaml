@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:CloudManager.Domain"
+      xmlns:control="clr-namespace:CloudManager.Control"
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="600"
       Title="DomainPage">
@@ -13,27 +14,27 @@
             <StackPanel Orientation="Horizontal">
                 <Button Content="修改" Style="{StaticResource ClickText}" Click="ModifyRecord_Click"/>
                 <Button Content="{Binding Status, Converter={StaticResource StatusTextConverter}, ConverterParameter=Process}"
-                        Style="{StaticResource ClickText}" Margin="5,0,0,0" Click="SetRecordStatus_Click"/>
-                <Button Content="删除" Style="{StaticResource ClickText}" Margin="5,0,0,0" Click="DeleteRecord_Click"/>
+                        Style="{StaticResource ClickText}" Margin="2,0,0,0" Click="SetRecordStatus_Click"/>
+                <Button Content="删除" Style="{StaticResource ClickText}" Margin="2,0,0,0" Click="DeleteRecord_Click"/>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="Type">
-            <TextBlock Text="{Binding Type}" Foreground="DarkGray"/>
+            <TextBlock Text="{Binding Type}" Foreground="DarkGray" MinWidth="50"/>
         </DataTemplate>
         <DataTemplate x:Key="RR">
-            <TextBlock Text="{Binding RR}" Foreground="DarkGray"/>
+            <TextBlock Text="{Binding RR}" Foreground="DarkGray" MinWidth="80"/>
         </DataTemplate>
         <DataTemplate x:Key="Line">
-            <TextBlock Text="{Binding LineStr}" Foreground="DarkGray" Margin="0,0,5,0"/>
+            <TextBlock Text="{Binding LineStr}" Foreground="DarkGray" MinWidth="60" Margin="0,0,2,0"/>
         </DataTemplate>
         <DataTemplate x:Key="Value">
-            <TextBlock Text="{Binding Value}" TextWrapping="Wrap" Foreground="DarkGray" Width="200"/>
+            <TextBlock Text="{Binding Value}" TextWrapping="Wrap" Foreground="DarkGray" Width="160"/>
         </DataTemplate>
         <DataTemplate x:Key="Priority">
             <TextBlock Text="{Binding Priority}" Foreground="DarkGray"/>
         </DataTemplate>
         <DataTemplate x:Key="TTL">
-            <TextBlock Text="{Binding TTLStr}" Foreground="DarkGray" Margin="0,0,5,0"/>
+            <TextBlock Text="{Binding TTLStr}" Foreground="DarkGray" Margin="0,0,2,0"/>
         </DataTemplate>
         <DataTemplate x:Key="Status">
             <Image Margin="0,0,5,0" Width="16" Height="16"
@@ -46,7 +47,9 @@
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
-        <Label Grid.Column="0" Content="域名列表" FontSize="18"/>
+        <!--Label Grid.Column="0" Content="域名列表" FontSize="18"/-->
+        <control:RefreshTitle Text="实例列表" Background="#ECEAE8" Height="37" Margin="0,0,0,0"
+                              Click="Refresh_Click" VerticalAlignment="Top"/>
         <ListBox x:Name="DomainList" Style="{StaticResource ItemListBox}"
                  Margin="0,35,0,0" SelectionChanged="DomainList_SelectionChanged">
             <ListBox.ItemTemplate>
@@ -110,7 +113,7 @@
                         <Button Content="添加解析" Height="32" Width="60" Margin="0,0,10,0" HorizontalAlignment="Right"
                                 Style="{StaticResource ProcessButton}" Click="AddRecord_Click"/>
                     </Grid>
-                    <ListView x:Name="RecordList" Margin="0,5,0,0">
+                    <ListView x:Name="RecordList" Margin="0,5,0,0" MaxHeight="600">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="记录类型" CellTemplate="{StaticResource Type}"/>

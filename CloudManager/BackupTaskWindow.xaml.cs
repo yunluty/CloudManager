@@ -17,7 +17,7 @@ namespace CloudManager
     /// <summary>
     /// BackupTaskWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class BackupTaskWindow : Window
+    public partial class BackupTaskWindow : WindowBase
     {
         private BackupTask mBackupTask;
 

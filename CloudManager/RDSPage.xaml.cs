@@ -473,6 +473,11 @@ namespace CloudManager
             t.Start(mSelDBInstance);
         }
 
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void EditPolicy_Click(object sender, RoutedEventArgs e)
         {
             IClientProfile profile = DefaultProfile.GetProfile(mSelDBInstance.RegionId, mAki, mAks);

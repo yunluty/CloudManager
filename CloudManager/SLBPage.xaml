@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:CloudManager"
+      xmlns:control="clr-namespace:CloudManager.Control"
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="600"
       Title="SLBServersPage">
@@ -98,9 +99,12 @@
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
-        <Label Grid.Column="0" Content="实例列表" FontSize="18"/>
+        <Grid x:Name="Column1" Grid.Column="0"/>
+        <!--" Label Grid.Column="0" Content="实例列表" FontSize="18"/-->
+        <control:RefreshTitle Text="实例列表" Background="#ECEAE8" Height="37" Margin="0,0,0,0"
+                              Click="Refresh_Click" VerticalAlignment="Top"/>
         <ListBox x:Name="SLBList" Grid.Column="0" Style="{StaticResource ItemListBox}"
-                 Margin="0,40,0,0" SelectionChanged="SLBList_SelectionChanged">
+                 Margin="0,37,0,0" SelectionChanged="SLBList_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Label Content="{Binding LoadBalanceTitle}"/>

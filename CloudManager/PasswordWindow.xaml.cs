@@ -24,7 +24,7 @@ namespace CloudManager
     /// <summary>
     /// PasswordWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class PasswordWindow : Window
+    public partial class PasswordWindow : WindowBase
     {
         string mAki, mAks, mPassword;
         DescribeInstance mCurrInstance;

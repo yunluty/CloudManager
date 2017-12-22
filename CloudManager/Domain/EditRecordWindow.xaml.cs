@@ -21,7 +21,7 @@ namespace CloudManager.Domain
     /// <summary>
     /// EditRecordWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class EditRecordWindow : Window
+    public partial class EditRecordWindow : WindowBase
     {
         private DescribeDomainRecord mRecord;
         private DefaultAcsClient mClient;

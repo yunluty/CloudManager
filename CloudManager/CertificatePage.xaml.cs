@@ -140,6 +140,11 @@ namespace CloudManager
             StartGetCertificates();
         }
 
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void DeleteCertificate(object obj)
         {
             DescribeCertificate cert = obj as DescribeCertificate;

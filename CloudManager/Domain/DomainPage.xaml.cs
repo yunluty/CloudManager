@@ -301,5 +301,10 @@ namespace CloudManager.Domain
                 GetDomainRecords(mSelDomain);
             }
         }
+
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

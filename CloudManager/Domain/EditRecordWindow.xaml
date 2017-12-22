@@ -1,12 +1,13 @@
-﻿<Window x:Class="CloudManager.Domain.EditRecordWindow"
+﻿<localc:WindowBase x:Class="CloudManager.Domain.EditRecordWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:c="clr-namespace:System.Collections;assembly=mscorlib"
         xmlns:local="clr-namespace:CloudManager.Domain"
+        xmlns:localc="clr-namespace:CloudManager"
         mc:Ignorable="d"
-        Title="EditRecordWindow" Width="660" SizeToContent="Height">
+        Title="EditRecordWindow" Width="660" SizeToContent="Height" >
     
     <Window.Resources>
         <c:ArrayList x:Key="RecordTypes">
@@ -215,4 +216,4 @@
                     Click="Cancel_Click" Style="{StaticResource ProcessButton}"/>
         </StackPanel>
     </Grid>
-</Window>
+</localc:WindowBase>

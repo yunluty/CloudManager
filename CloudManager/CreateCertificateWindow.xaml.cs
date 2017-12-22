@@ -22,7 +22,7 @@ namespace CloudManager
     /// <summary>
     /// CreateCertificateWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class CreateCertificateWindow : Window
+    public partial class CreateCertificateWindow : WindowBase
     {
         private List<CertificateRegion> CertRegions = new List<CertificateRegion>();
         /*{

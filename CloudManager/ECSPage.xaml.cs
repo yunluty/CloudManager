@@ -357,6 +357,11 @@ namespace CloudManager
             win.ShowDialog();
         }
 
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void ReceivedReboot(object sender, DescribeInstance instance)
         {
             Thread t = new Thread(new ParameterizedThreadStart(DoRebootInstance));

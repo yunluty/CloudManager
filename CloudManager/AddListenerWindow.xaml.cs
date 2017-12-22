@@ -26,7 +26,7 @@ namespace CloudManager
     /// <summary>
     /// AddListenerWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class AddListenerWindow : Window
+    public partial class AddListenerWindow : WindowBase
     {
         private AddListenerParams mParams = new AddListenerParams();
         private DefaultAcsClient mClient;

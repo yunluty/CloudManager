@@ -19,7 +19,7 @@ namespace CloudManager
     /// <summary>
     /// SignUpWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class SignUpWindow : Window
+    public partial class SignUpWindow : WindowBase
     {
         public SignUpWindow()
         {

@@ -10,7 +10,7 @@ namespace CloudManager
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : WindowBase
     {
         private ECSPage mECSPage;
         private SLBPage mSLBPage;       
@@ -56,6 +56,8 @@ namespace CloudManager
 
             mDomainPage = new DomainPage();
             mDomainPage.mMainWindow = this;
+
+            SettingMenuList.SelectedIndex = 0;
         }
 
         private void Menus_SelectionChanged(object sender, SelectionChangedEventArgs e)

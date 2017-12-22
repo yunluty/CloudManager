@@ -18,7 +18,7 @@ namespace CloudManager.Activation
     /// <summary>
     /// ActivationWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class ActivationWindow : Window
+    public partial class ActivationWindow : WindowBase
     {
         public class ResponseLife
         {

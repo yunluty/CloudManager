@@ -1,4 +1,4 @@
-﻿<Window x:Class="CloudManager.AddListenerWindow"
+﻿<local:WindowBase x:Class="CloudManager.AddListenerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:CloudManager"
         mc:Ignorable="d"
         Title="AddListenerWindow" Width="600" SizeToContent="Height"
-        ContentRendered="Window_ContentRendered">
+        MaxVisibility="Collapsed" ContentRendered="Window_ContentRendered">
 
     <Frame x:Name="PageContent"  NavigationUIVisibility="Hidden" MinHeight="280"/>
-</Window>
+</local:WindowBase>

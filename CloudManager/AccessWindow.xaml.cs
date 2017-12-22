@@ -26,7 +26,7 @@ namespace CloudManager
     /// <summary>
     /// AccessWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class AccessWindow : Window
+    public partial class AccessWindow : WindowBase
     {
         private string mRegion = "cn-shanghai";
         private delegate void DelegateDone(object obj);
