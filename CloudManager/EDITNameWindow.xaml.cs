@@ -94,21 +94,20 @@ namespace CloudManager
         {
         }
 
-        private void SetDBInstanceName(object obj)
+        private void SetDBInstanceName(string name)
         {
-            string name = obj as string;
-            ModifyDBInstanceDescriptionRequest request = new ModifyDBInstanceDescriptionRequest();
-            request.DBInstanceId = mDBInstance.DBInstanceId;
-            request.DBInstanceDescription = name;
-            try
+            DoLoadingWork(win =>
             {
+                ModifyDBInstanceDescriptionRequest request = new ModifyDBInstanceDescriptionRequest();
+                request.DBInstanceId = mDBInstance.DBInstanceId;
+                request.DBInstanceDescription = name;
                 ModifyDBInstanceDescriptionResponse response = mAcsClient.GetAcsResponse(request);
-                Dispatcher.Invoke(new DelegateGot(SetDBInstanceNameSuccess), obj);
-            }
-            catch
+                Dispatcher.Invoke(new DelegateGot(SetDBInstanceNameSuccess), name);
+            },
+            ex =>
             {
                 Dispatcher.Invoke(new Action(SetDBInstanceNameFail));
-            }
+            });
         }
 
         private void SetNameSuccess(object obj)
@@ -122,21 +121,20 @@ namespace CloudManager
         {
         }
 
-        private void SetBalancerName(object obj)
+        private void SetBalancerName(string name)
         {
-            string name = obj as string;
-            SetLoadBalancerNameRequest request = new SetLoadBalancerNameRequest();
-            request.LoadBalancerId = mBalancer.LoadBalancerId;
-            request.LoadBalancerName = name;
-            try
+            DoLoadingWork(win =>
             {
+                SetLoadBalancerNameRequest request = new SetLoadBalancerNameRequest();
+                request.LoadBalancerId = mBalancer.LoadBalancerId;
+                request.LoadBalancerName = name;
                 SetLoadBalancerNameResponse response = mAcsClient.GetAcsResponse(request);
-                Dispatcher.Invoke(new DelegateGot(SetNameSuccess), obj);
-            }
-            catch
+                Dispatcher.Invoke(new DelegateGot(SetNameSuccess), name);
+            },
+            ex =>
             {
                 Dispatcher.Invoke(new Action(SetNameFail));
-            }
+            });
         }
 
         private void CreatedFolder()
@@ -149,25 +147,20 @@ namespace CloudManager
         {
         }
 
-        private void CreateFolder(object obj)
+        private void CreateFolder(string key)
         {
-            string key = obj as string;
-            Stream stream = null;
-            try
+            Stream stream = new MemoryStream();
+            DoLoadingWork(win =>
             {
-                stream = new MemoryStream();
                 mOssClient.PutObject(mBucket.Name, key, stream);
+                stream.Close();
                 Dispatcher.Invoke(new Action(CreatedFolder));
-            }
-            catch
-            {
-                Dispatcher.Invoke(new Action(CreatedFail));
-            }
-            finally
+            },
+            ex =>
             {
                 stream.Close();
-            }
-            
+                Dispatcher.Invoke(new Action(CreatedFail));
+            });
         }
 
         private void OK_Click(object sender, RoutedEventArgs e)
@@ -175,20 +168,17 @@ namespace CloudManager
             if (mEditingType == EditingType.BucketFolderName)
             {
                 string key = mCurrKey + EditName + '/';
-                Thread t = new Thread(new ParameterizedThreadStart(CreateFolder));
-                t.Start(key);
+                CreateFolder(key);
             }
             else if (mEditingType == EditingType.BlancerName)
             {
                 string name = String.Copy(EditName);
-                Thread t = new Thread(new ParameterizedThreadStart(SetBalancerName));
-                t.Start(name);
+                SetBalancerName(name);
             }
             else if (mEditingType == EditingType.DBInstanceName)
             {
                 string name = String.Copy(EditName);
-                Thread t = new Thread(new ParameterizedThreadStart(SetDBInstanceName));
-                t.Start(name);
+                SetDBInstanceName(name);
             }
         }
 

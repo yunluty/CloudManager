@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CloudManager.Control;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,8 @@ namespace CloudManager
         private Button NormalButton;
         private Rect Rectnormal;
         private Visibility MaxVisibilityValue;
+        private Grid LoadingGrid;
+
 
         public WindowBase()
         {
@@ -84,6 +87,8 @@ namespace CloudManager
                     MaxButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                 }
             };
+
+            LoadingGrid = (Grid)template.FindName("LoadingGrid", this);
         }
 
         public static readonly DependencyProperty MaxVisibilityProperty = DependencyProperty.Register(
@@ -103,6 +108,26 @@ namespace CloudManager
             {
                 owner.MaxVisibilityValue = (Visibility)args.NewValue;
             }
+        }
+
+        public void DoLoadingWork(Action<WindowBase> doWhat, Action<Exception> doError)
+        {
+            LoadingGrid?.SetValue(VisibilityProperty, Visibility.Visible);
+            Task.Run(() =>
+            {
+                try
+                {
+                    doWhat?.Invoke(this);
+                }
+                catch (Exception ex)
+                {
+                    try { doError?.Invoke(ex); } catch { }
+                }
+                Dispatcher.Invoke(() =>
+                {
+                    LoadingGrid?.SetValue(VisibilityProperty, Visibility.Collapsed);
+                });
+            });
         }
     }
 }

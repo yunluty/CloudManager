@@ -142,7 +142,7 @@ namespace CloudManager
 
         private void Refresh_Click(object sender, RoutedEventArgs e)
         {
-
+            StartGetCertificates();
         }
 
         private void DeleteCertificate(object obj)

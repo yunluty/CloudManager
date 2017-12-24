@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:control="clr-namespace:CloudManager.Control">
     
     <ControlTemplate x:Key="WindowTemplateKey" TargetType="{x:Type Window}">
         <Border Background="{TemplateBinding Background}"
@@ -55,9 +56,16 @@
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
                     Width="Auto" Height="Auto" DockPanel.Dock="Top" CornerRadius="0,0,2,2">
-                <AdornerDecorator>
-                    <ContentPresenter />
-                </AdornerDecorator>
+                <Grid>
+                    <AdornerDecorator>
+                        <ContentPresenter />
+                    </AdornerDecorator>
+                    <Grid x:Name="LoadingGrid" Visibility="Collapsed">
+                        <Canvas Opacity="0.2" Background="LightGray"/>
+
+                        <control:LoadingPanel/>
+                    </Grid>
+                </Grid>
             </Border>
         </DockPanel>
     </ControlTemplate>

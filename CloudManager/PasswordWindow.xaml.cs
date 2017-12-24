@@ -45,33 +45,32 @@ namespace CloudManager
         {
             Message.Text = "";
             mPassword = Password1.Password;
-            Thread t = new Thread(DoResetPassword);
-            t.Start();
+            DoResetPassword();
         }
 
         private void DoResetPassword()
         {
-            if (mCurrInstance == null)
+            DoLoadingWork(win =>
             {
-                return;
-            }
-
-            string regionId = mCurrInstance.RegionId;
-            string instanceId = mCurrInstance.InstanceId;
-            IClientProfile profile = DefaultProfile.GetProfile(regionId, mAki, mAks);
-            DefaultAcsClient client = new DefaultAcsClient(profile);
-            ModifyInstanceAttributeRequest request = new ModifyInstanceAttributeRequest();
-            request.InstanceId = instanceId;
-            request.Password = mPassword;
-            try
-            {
+                if (mCurrInstance == null)
+                {
+                    return;
+                }
+                string regionId = mCurrInstance.RegionId;
+                string instanceId = mCurrInstance.InstanceId;
+                IClientProfile profile = DefaultProfile.GetProfile(regionId, mAki, mAks);
+                DefaultAcsClient client = new DefaultAcsClient(profile);
+                ModifyInstanceAttributeRequest request = new ModifyInstanceAttributeRequest();
+                request.InstanceId = instanceId;
+                request.Password = mPassword;
                 ModifyInstanceAttributeResponse response = client.GetAcsResponse(request);
                 Dispatcher.Invoke(new Action(ResetSuccess));
-            }
-            catch (ClientException ex)
+            },
+            ex =>
             {
                 Dispatcher.Invoke(new DelegateResetFail(ResetFail), ex);
-            }
+            });
+            
         }
 
         private void ResetSuccess()

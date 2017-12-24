@@ -52,6 +52,7 @@ namespace CloudManager
 
         private void GetInstances()
         {
+            ObservableCollection<DescribeInstance> instances = new ObservableCollection<DescribeInstance>();
             Parallel.ForEach(mRegions, (region) =>
             {
                 IClientProfile profile = DefaultProfile.GetProfile(region.RegionId, mAki, mAks);
@@ -65,7 +66,8 @@ namespace CloudManager
                         foreach (DescribeInstances_Instance i in response.Instances)
                         {
                             DescribeInstance instance = new DescribeInstance(i);
-                            Dispatcher.Invoke(new DelegateGot(GotInstances), instance);
+                            instances.Add(instance);
+                            
                         }
                     }
                 }
@@ -76,16 +78,21 @@ namespace CloudManager
                 {
                 }
             });
+            Dispatcher.Invoke(new DelegateGot(GotInstances), instances);
         }
 
         private void GotInstances(object obj)
         {
-            DescribeInstance instance = obj as DescribeInstance;
-            if (instance != null)
-            {
-                mECSInstances.Add(instance);
-                SelectDefaultIndex(ECSList);
-            }
+            ObservableCollection<DescribeInstance> instances = obj as ObservableCollection<DescribeInstance>;
+            mECSInstances = instances;
+            ECSList.ItemsSource = mECSInstances;
+            SelectDefaultIndex(ECSList);
+        }
+
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            Thread t = new Thread(GetInstances);
+            t.Start();
         }
 
         private void SelectDefaultIndex(ListBox list)
@@ -355,11 +362,6 @@ namespace CloudManager
             win.Owner = mMainWindow;
             win.PassValuesEvent += new PasswordWindow.PassValuesHandler(ReceivedReboot);
             win.ShowDialog();
-        }
-
-        private void Refresh_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void ReceivedReboot(object sender, DescribeInstance instance)

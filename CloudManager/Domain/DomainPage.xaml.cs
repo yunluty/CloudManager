@@ -72,16 +72,27 @@ namespace CloudManager.Domain
                     }
                 } while (nextPage);
 
-                Dispatcher.Invoke(() =>
+                try
                 {
-                    if (domains.Count > 0)
+                    Dispatcher.Invoke(() =>
                     {
-                        mDomains = domains;
-                        DomainList.ItemsSource = mDomains;
-                        SelectDefaultIndex(DomainList);
-                    }
-                });
+                        if (domains.Count > 0)
+                        {
+                            mDomains = domains;
+                            DomainList.ItemsSource = mDomains;
+                            SelectDefaultIndex(DomainList);
+                        }
+                    });
+                }
+                catch
+                {
+                }
             });
+        }
+
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            GetDomainList();
         }
 
         private void SelectDefaultIndex(ListBox list)
@@ -212,12 +223,17 @@ namespace CloudManager.Domain
                     {
                     }
                 } while (nextPage);
-
-                Dispatcher.Invoke(() =>
+                try
                 {
-                    domain.Records = records;
-                    RecordList.ItemsSource = domain.Records;
-                });
+                    Dispatcher.Invoke(() =>
+                    {
+                        domain.Records = records;
+                        RecordList.ItemsSource = domain.Records;
+                    });
+                }
+                catch
+                {
+                }
             });
         }
 
@@ -300,11 +316,6 @@ namespace CloudManager.Domain
             {
                 GetDomainRecords(mSelDomain);
             }
-        }
-
-        private void Refresh_Click(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

@@ -57,16 +57,15 @@ namespace CloudManager
 
         private void GotDBInstances(object obj)
         {
-            DescribeDBInstance instance = obj as DescribeDBInstance;
-            if (instance != null)
-            {
-                mDBInstances.Add(instance);
-                SelectDefaultIndex(RDSList);
-            }
+            ObservableCollection<DescribeDBInstance> instances = obj as ObservableCollection<DescribeDBInstance>;
+            mDBInstances = instances;
+            RDSList.ItemsSource = mDBInstances;
+            SelectDefaultIndex(RDSList);
         }
 
         private void GetDBInstances()
         {
+            ObservableCollection<DescribeDBInstance> instances = new ObservableCollection<DescribeDBInstance>();
             Parallel.ForEach(mRegions, (region) =>
             {
                 IClientProfile profile = DefaultProfile.GetProfile(region.RegionId, mAki, mAks);
@@ -78,13 +77,21 @@ namespace CloudManager
                     foreach (DescribeDBInstances_DBInstance d in response.Items)
                     {
                         DescribeDBInstance instance = new DescribeDBInstance(d);
-                        Dispatcher.Invoke(new DelegateGot(GotDBInstances), instance);
+                        instances.Add(instance);
+                        
                     }
                 }
                 catch
                 {
                 }
             });
+            Dispatcher.Invoke(new DelegateGot(GotDBInstances), instances);
+        }
+
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            Thread t = new Thread(GetDBInstances);
+            t.Start();
         }
 
         private void SelectDefaultIndex(ListBox list)
@@ -473,11 +480,6 @@ namespace CloudManager
             t.Start(mSelDBInstance);
         }
 
-        private void Refresh_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void EditPolicy_Click(object sender, RoutedEventArgs e)
         {
             IClientProfile profile = DefaultProfile.GetProfile(mSelDBInstance.RegionId, mAki, mAks);
@@ -486,6 +488,11 @@ namespace CloudManager
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             win.Owner = mMainWindow;
             win.ShowDialog();
+            if (win.NewPolicy != null)
+            {
+                mPolicy = win.NewPolicy;
+                BackupPolicy.DataContext = mPolicy;
+            }
         }
     }
 
@@ -684,7 +691,14 @@ namespace CloudManager
             PreferredBackupTime = r.PreferredBackupTime;
             PreferredBackupPeriod = r.PreferredBackupPeriod;
             BackupLog = r.BackupLog;
-            LogBackupRetentionPeriod = r.LogBackupRetentionPeriod.ToString();
+            if (Enable)
+            {
+                LogBackupRetentionPeriod = r.LogBackupRetentionPeriod.ToString();
+            }
+            else
+            {
+                LogBackupRetentionPeriod = BackupRetentionPeriod;
+            }
         }
 
         public DBBackupPolicy(DBBackupPolicy p)

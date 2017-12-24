@@ -49,10 +49,9 @@ namespace CloudManager
         {
         }
 
-        private void SetCertificateName(object obj)
+        private void SetCertificateName(string name)
         {
-            string name = obj as string;
-            try
+            DoLoadingWork(win =>
             {
                 if (mCertificate.CertificateType.Equals("ServerCertificate"))
                 {
@@ -69,18 +68,17 @@ namespace CloudManager
                     SetCACertificateNameResponse response = mClient.GetAcsResponse(request);
                 }
                 Dispatcher.Invoke(new DelegateGot(SetNameSuccess), name);
-            }
-            catch
+            },
+            ex =>
             {
                 Dispatcher.Invoke(new Action(SetNameFail));
-            }
+            });
         }
 
         private void OK_Click(object sender, RoutedEventArgs e)
         {
             string name = String.Copy(CertificateName.Text);
-            Thread t = new Thread(new ParameterizedThreadStart(SetCertificateName));
-            t.Start(name);
+            SetCertificateName(name);
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

@@ -36,7 +36,6 @@
                  IsReadOnly="True" BorderThickness="0" BorderBrush="Transparent"/>
         <Button x:Name="AccessButton" Grid.Row="3" Grid.RowSpan="2" Content="登录" 
                 VerticalAlignment="Center" Margin="120,0,120,0" Height="30"
-                Style="{StaticResource ResourceKey=LoginButton}"
-                Click="AccessButton_Click"/>
+                Style="{StaticResource ResourceKey=LoginButton}" Click="AccessButton_Click"/>
     </Grid>
 </local:WindowBase>

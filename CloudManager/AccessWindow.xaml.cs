@@ -41,18 +41,17 @@ namespace CloudManager
         {
             Message.Text = "";
             AccessButton.IsEnabled = false;
-            Thread t = new Thread(new ParameterizedThreadStart(AccessCloud));
-            string[] s = new string[2] { AKI.Text, AKS.Text };
-            t.Start(s);
+            AccessCloud();
         }
 
-        private void AccessCloud(object obj)
+        private void AccessCloud()
         {
-            string[] s = obj as string[];
-            IClientProfile profile = DefaultProfile.GetProfile(mRegion, s[0], s[1]);
+            string aki = String.Copy(AKI.Text);
+            string aks = String.Copy(AKS.Text);
+            IClientProfile profile = DefaultProfile.GetProfile(mRegion, aki, aks);
             DefaultAcsClient client = new DefaultAcsClient(profile);
-            
-            try
+
+            DoLoadingWork(win =>
             {
                 DescribeInstancesRequest request = new DescribeInstancesRequest();
                 DescribeInstancesResponse response = client.GetAcsResponse(request);
@@ -61,55 +60,29 @@ namespace CloudManager
                 Aliyun.Acs.Ecs.Model.V20140526.DescribeRegionsResponse rs = client.GetAcsResponse(rr);
                 List<DescribeRegions_Region> regions = new List<DescribeRegions_Region>();
                 regions.AddRange(rs.Regions);
-
-                App.AKI = s[0];
-                App.AKS = s[1];
+                App.AKI = aki;
+                App.AKS = aks;
                 App.REGIONS = regions;
-                Dispatcher.Invoke(new DelegateDone(AccessSuccess), obj);
-            }
-            catch (ServerException ex)
-            {
-                //MessageBox.Show(ex.ToString());
-                Dispatcher.Invoke(new DelegateDone(AccessFail), ex);
-            }
-            catch (ClientException ex)
-            {
-                //MessageBox.Show(ex.ToString());
-                Dispatcher.Invoke(new DelegateDone(AccessFail), ex);
-            }
-            catch
-            {
-            }
-        }
 
-        private void AccessSuccess(object obj)
-        {
-            string aki = String.Copy(App.AKI);
-            Task.Run(() =>
+                //Thread.Sleep(TimeSpan.FromSeconds(10));
+
+                int time = ActivationApi.GetKeyLife(aki);
+                Dispatcher.Invoke(() =>
+                {
+                    AccessButton.IsEnabled = true;
+                    if (time > ActivationApi.RunCondition)
+                    {
+                        StartMainWindow();
+                    }
+                    else
+                    {
+                        StartActivationWindow();
+                    }
+                });
+            },
+            ex =>
             {
-                try
-                {
-                    int time = ActivationApi.GetKeyLife(aki);
-                    Dispatcher.Invoke(() =>
-                    {
-                        if (time > ActivationApi.RunCondition)
-                        {
-                            StartMainWindow();
-                        }
-                        else
-                        {
-                            StartActivationWindow();
-                        }
-                    });
-                }
-                catch (Exception ex)
-                {
-                    Dispatcher.Invoke(() =>
-                    {
-                        Message.Text = ex.Message;
-                        AccessButton.IsEnabled = true;
-                    });
-                }
+                Dispatcher.Invoke(new DelegateDone(AccessFail), ex);
             });
         }
 
@@ -151,7 +124,7 @@ namespace CloudManager
             }
             else
             {
-                message = "未知错误";
+                message = ((Exception)obj).Message;
             }
             Message.Text = message;
             AccessButton.IsEnabled = true;

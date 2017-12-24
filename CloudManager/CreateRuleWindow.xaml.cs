@@ -51,6 +51,7 @@ namespace CloudManager
         public CreateRuleWindow(SLBListener l, DescribeRule r)
         {
             InitializeComponent();
+            this.Title = "编辑转发策略";
             mListener = l;
             mConfigureRule = r;
             IClientProfile profile = DefaultProfile.GetProfile(mListener.RegionId, App.AKI, App.AKS);
@@ -106,21 +107,20 @@ namespace CloudManager
             this.Close();
         }
 
-        private void CreateRules(object obj)
+        private void CreateRules(string rules)
         {
-            string rules = obj as string;
-            CreateRulesRequest request = new CreateRulesRequest();
-            request.LoadBalancerId = mListener.LoadBalancerId;
-            request.ListenerPort = mListener.ListenerPort;
-            request.RuleList = rules;
-            try
+            DoLoadingWork(win =>
             {
+                CreateRulesRequest request = new CreateRulesRequest();
+                request.LoadBalancerId = mListener.LoadBalancerId;
+                request.ListenerPort = mListener.ListenerPort;
+                request.RuleList = rules;
                 CreateRulesResponse response = mClient.GetAcsResponse(request);
                 Dispatcher.Invoke(new Action(CreatedRules));
-            }
-            catch
-            {
-            }
+            },
+            ex => {
+                //TODO:
+            });
         }
 
         private void DoneSetRule()
@@ -130,17 +130,18 @@ namespace CloudManager
 
         private void SetRule()
         {
-            SetRuleRequest request = new SetRuleRequest();
-            request.RuleId = mConfigureRule.RuleId;
-            request.VServerGroupId = mConfigureRule.VServerGroupId;
-            try
+            DoLoadingWork(win =>
             {
+                SetRuleRequest request = new SetRuleRequest();
+                request.RuleId = mConfigureRule.RuleId;
+                request.VServerGroupId = mConfigureRule.VServerGroupId;
                 SetRuleResponse response = mClient.GetAcsResponse(request);
                 Dispatcher.Invoke(new Action(DoneSetRule));
-            }
-            catch
+            },
+            ex =>
             {
-            }
+                //TODO:
+            });
         }
 
         private void OK_Click(object sender, RoutedEventArgs e)
@@ -163,13 +164,11 @@ namespace CloudManager
                         "\"}";
                 }
                 rules += "]";
-                Thread t = new Thread(new ParameterizedThreadStart(CreateRules));
-                t.Start(rules);
+                CreateRules(rules);
             }
             else
             {
-                Thread t = new Thread(SetRule);
-                t.Start();
+                SetRule();
             }
         }
 

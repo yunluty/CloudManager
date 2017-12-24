@@ -142,7 +142,7 @@ namespace CloudManager
             }
             string name = mParameter.CertName == null ? null : mParameter.CertName;
 
-            Task.Run(() =>
+            DoLoadingWork(win =>
             {
                 Parallel.ForEach(regionIds, (id) =>
                 {
@@ -176,6 +176,9 @@ namespace CloudManager
                     RefreshEvent?.Invoke(this, regionIds);
                     this.Close();
                 });
+            },
+            ex =>
+            {
             });
         }
 

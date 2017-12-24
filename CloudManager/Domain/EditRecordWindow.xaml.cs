@@ -57,50 +57,48 @@ namespace CloudManager.Domain
 
         private void OK_Click(object sender, RoutedEventArgs e)
         {
-            Task.Run(() =>
+            DoLoadingWork(win =>
             {
-                try
+                if (mEditType == RecordEditType.CreateRecord)
                 {
-                    if (mEditType == RecordEditType.CreateRecord)
+                    AddDomainRecordRequest request = new AddDomainRecordRequest();
+                    request.DomainName = mRecord.DomainName;
+                    request.Type = mRecord.Type;
+                    request.RR = mRecord.RR;
+                    request.Line = mRecord.Line;
+                    request.Value = mRecord.Value;
+                    if (mRecord.Type.Equals("MX"))
                     {
-                        AddDomainRecordRequest request = new AddDomainRecordRequest();
-                        request.DomainName = mRecord.DomainName;
-                        request.Type = mRecord.Type;
-                        request.RR = mRecord.RR;
-                        request.Line = mRecord.Line;
-                        request.Value = mRecord.Value;
-                        if (mRecord.Type.Equals("MX"))
-                        {
-                            request.Priority = mRecord.Priority;
-                        }
-                        request.TTL = mRecord.TTL;
-                        AddDomainRecordResponse response = mClient.GetAcsResponse(request);
+                        request.Priority = mRecord.Priority;
                     }
-                    else
+                    request.TTL = mRecord.TTL;
+                    AddDomainRecordResponse response = mClient.GetAcsResponse(request);
+                }
+                else
+                {
+                    UpdateDomainRecordRequest request = new UpdateDomainRecordRequest();
+                    request.RecordId = mRecord.RecordId;
+                    request.Type = mRecord.Type;
+                    request.RR = mRecord.RR;
+                    request.Line = mRecord.Line;
+                    request.Value = mRecord.Value;
+                    if (mRecord.Type.Equals("MX"))
                     {
-                        UpdateDomainRecordRequest request = new UpdateDomainRecordRequest();
-                        request.RecordId = mRecord.RecordId;
-                        request.Type = mRecord.Type;
-                        request.RR = mRecord.RR;
-                        request.Line = mRecord.Line;
-                        request.Value = mRecord.Value;
-                        if (mRecord.Type.Equals("MX"))
-                        {
-                            request.Priority = mRecord.Priority;
-                        }
-                        request.TTL = mRecord.TTL;
-                        UpdateDomainRecordResponse response = mClient.GetAcsResponse(request);
+                        request.Priority = mRecord.Priority;
                     }
+                    request.TTL = mRecord.TTL;
+                    UpdateDomainRecordResponse response = mClient.GetAcsResponse(request);
+                }
 
-                    Dispatcher.Invoke(() =>
-                    {
-                        mUpdateRecords = true;
-                        this.Close();
-                    });
-                }
-                catch
+                Dispatcher.Invoke(() =>
                 {
-                }
+                    mUpdateRecords = true;
+                    this.Close();
+                });
+            },
+            ex =>
+            {
+                //TODO:
             });
         }
 

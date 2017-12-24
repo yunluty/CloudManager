@@ -67,6 +67,12 @@ namespace CloudManager
             Dispatcher.Invoke(new DelegateGot(GotBuckets), buckets);
         }
 
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            Thread t = new Thread(GetBuckets);
+            t.Start();
+        }
+
         private void SelectDefaultIndex(ListBox list)
         {
             if (list.Items.Count > 0 && list.SelectedIndex == -1)
@@ -688,11 +694,6 @@ namespace CloudManager
             win.Owner = mMainWindow;
             win.UpdateEventHandler += UpdateDirectory;
             win.ShowDialog();
-        }
-
-        private void Refresh_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void UpdateDirectory(object sender, string key)

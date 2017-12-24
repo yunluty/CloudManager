@@ -29,11 +29,15 @@
 
     <StackPanel Margin="5,0,5,0">
         <Grid Margin="0,5,0,0">
-            <!--Label Content="证书列表" FontSize="18" VerticalAlignment="Center"/-->
-            <control:RefreshTitle Text="证书列表" Height="37" Margin="0,0,0,0" Width="180"
-                              Click="Refresh_Click" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <Button Content="创建证书" Height="32" Width="60" Margin="0,0,10,0" HorizontalAlignment="Right"
-                    Style="{StaticResource ProcessButton}" Click="AddCertificate_Click"/>
+            <Label Content="证书列表" FontSize="18" VerticalAlignment="Center"/>
+            <!--control:RefreshTitle Text="证书列表" Height="37" Margin="0,0,0,0" Width="160"
+                               VerticalAlignment="Top" HorizontalAlignment="Left"/-->
+            <StackPanel Orientation="Horizontal" Margin="0,0,10,0" HorizontalAlignment="Right">
+                <Button Content="刷新" Height="32" Width="60" Click="Refresh_Click" Style="{StaticResource ProcessButton}"/>
+                <Button Content="创建证书" Height="32" Width="60" Margin="10,0,0,0"
+                        Style="{StaticResource ProcessButton}" Click="AddCertificate_Click"/>
+            </StackPanel>
+            
         </Grid>
         <ListView x:Name="CertificatesList" MaxHeight="640" Margin="0,5,0,0"
                   Background="Transparent" BorderBrush="Transparent" BorderThickness="0">

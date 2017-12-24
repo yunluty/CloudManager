@@ -81,7 +81,7 @@
             <TextBlock Text="日志备份保留:" Grid.Row="4" Grid.Column="0" Margin="0,20,0,0"/>
             <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" Margin="0,20,0,0">
                 <TextBox Width="60" Height="32" VerticalContentAlignment="Center"
-                         Text="{Binding BackupRetentionPeriod, Mode=TwoWay}"/>
+                         Text="{Binding LogBackupRetentionPeriod, Mode=TwoWay}"/>
                 <TextBlock Text="天" Margin="5,8,0,0"/>
             </StackPanel>
         </Grid>

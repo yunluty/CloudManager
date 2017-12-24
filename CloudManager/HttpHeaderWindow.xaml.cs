@@ -35,9 +35,11 @@ namespace CloudManager
             mClient = c;
             mBucket = b;
             mObject = o;
+        }
 
-            Thread t = new Thread(GetHttpHeader);
-            t.Start();
+        private void HttpHeaderWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            GetHttpHeader();
         }
 
         private void GotHttpHeader(object obj)
@@ -90,14 +92,15 @@ namespace CloudManager
 
         private void GetHttpHeader()
         {
-            try
+            DoLoadingWork(win =>
             {
                 ObjectMetadata meta = mClient.GetObjectMetadata(mBucket.Name, mObject.Key);
                 Dispatcher.Invoke(new DelegateGot(GotHttpHeader), meta);
-            }
-            catch
+            },
+            ex =>
             {
-            }
+                //TODO:
+            });
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
@@ -119,7 +122,7 @@ namespace CloudManager
 
         private void ModifyHttpHeader()
         {
-            try
+            DoLoadingWork(win =>
             {
                 ObjectMetadata meta = new ObjectMetadata();
                 if (!String.IsNullOrEmpty(mHttpHeader.Type))
@@ -154,16 +157,16 @@ namespace CloudManager
 
                 mClient.ModifyObjectMeta(mBucket.Name, mObject.Key, meta);
                 Dispatcher.Invoke(new Action(ModifiedHttpHeader));
-            }
-            catch
+            },
+            ex =>
             {
-            }
+                //TODO:
+            });
         }
 
         private void OK_Click(object sender, RoutedEventArgs e)
         {
-            Thread t = new Thread(ModifyHttpHeader);
-            t.Start();
+            ModifyHttpHeader();
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

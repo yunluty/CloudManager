@@ -72,6 +72,7 @@ namespace CloudManager
 
         private void GetLoadBalancers()
         {
+            ObservableCollection<DescribeLoadBalancer> balancers = new ObservableCollection<DescribeLoadBalancer>();
             Parallel.ForEach(mRegions, (region) =>
             {
                 IClientProfile profile = DefaultProfile.GetProfile(region.RegionId, mAki, mAks);
@@ -98,7 +99,7 @@ namespace CloudManager
                         foreach (DescribeLoadBalancers_LoadBalancer b in response.LoadBalancers)
                         {
                             DescribeLoadBalancer balancer = new DescribeLoadBalancer(b, App.REGIONS);
-                            Dispatcher.Invoke(new DelegateGot(GotLoadBalancers), balancer);
+                            balancers.Add(balancer);
                         }
                     }
                 }
@@ -109,16 +110,21 @@ namespace CloudManager
                 {
                 }
             });
+            Dispatcher.Invoke(new DelegateGot(GotLoadBalancers), balancers);
         }
 
         private void GotLoadBalancers(object obj)
         {
-            DescribeLoadBalancer balancer = obj as DescribeLoadBalancer;
-            if (balancer != null)
-            {
-                mLoadBalancers.Add(balancer);
-                SelectDefaultIndex(SLBList);
-            }
+            ObservableCollection<DescribeLoadBalancer> balancers = obj as ObservableCollection<DescribeLoadBalancer>;
+            mLoadBalancers = balancers;
+            SLBList.ItemsSource = mLoadBalancers;
+            SelectDefaultIndex(SLBList);
+        }
+
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            Thread t = new Thread(GetLoadBalancers);
+            t.Start();
         }
 
         private void SelectDefaultIndex(ListBox list)
@@ -977,11 +983,6 @@ namespace CloudManager
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             win.Owner = mMainWindow;
             win.ShowDialog();
-        }
-
-        private void Refresh_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void ListenersSelectAll_Click(object sender, RoutedEventArgs e)

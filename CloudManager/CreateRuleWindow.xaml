@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CloudManager"
         mc:Ignorable="d"
-        Title="添加转发策略" Height="300" Width="600" SizeToContent="Height"
+        Title="添加转发策略" Height="600" Width="600" SizeToContent="Height"
         MaxVisibility="Collapsed" Loaded="Window_Loaded">
 
     <Window.Resources>
@@ -63,7 +63,7 @@
             <LineBreak/>
             <Run>* 域名与URL请至少填写一项。</Run>
         </TextBlock>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
             <Button x:Name="OK" Content="确认" Height="32" Width="80"
                     Style="{StaticResource ProcessButton}" Click="OK_Click"/>
             <Button x:Name="Cancel" Content="取消" Height="32" Width="80"  Margin="10,0,0,0"

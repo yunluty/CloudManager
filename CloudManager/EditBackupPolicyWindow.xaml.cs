@@ -14,6 +14,7 @@ namespace CloudManager
         private DBBackupPolicy mPolicy;
         private DefaultAcsClient mClient;
 
+        public DBBackupPolicy NewPolicy { get; set; }
 
         public EditBackupPolicyWindow(DBBackupPolicy policy, DefaultAcsClient client)
         {
@@ -25,42 +26,49 @@ namespace CloudManager
 
         private void ModifiedPolicy()
         {
-
-            this.Close();
-        }
-
-        private void ModifyPolicy(object obj)
-        {
-            DBBackupPolicy policy = obj as DBBackupPolicy;
-            ModifyBackupPolicyRequest request = new ModifyBackupPolicyRequest();
-            request.DBInstanceId = policy.DBInstanceId;
-            request.BackupRetentionPeriod = policy.BackupRetentionPeriod;
-            request.PreferredBackupPeriod = policy.GetBackupPeriod();
-            request.PreferredBackupTime = policy.GetBackupTimeUTC();
-            if (policy.Enable)
+            NewPolicy = mPolicy;
+            if (NewPolicy.Enable) //Set the backup log status
             {
-                request.BackupLog = "Enable";
+                NewPolicy.BackupLog = "Enable";
             }
             else
             {
-                request.BackupLog = "Disable";
+                NewPolicy.BackupLog = "Disabled";
             }
-            request.LogBackupRetentionPeriod = policy.LogBackupRetentionPeriod;
-            try
+            this.Close();
+        }
+
+        private void ModifyPolicy(DBBackupPolicy policy)
+        {
+            DoLoadingWork(win =>
             {
+                ModifyBackupPolicyRequest request = new ModifyBackupPolicyRequest();
+                request.DBInstanceId = policy.DBInstanceId;
+                request.BackupRetentionPeriod = policy.BackupRetentionPeriod;
+                request.PreferredBackupTime = policy.GetBackupTimeUTC();
+                request.PreferredBackupPeriod = policy.GetBackupPeriod();
+                if (policy.Enable)
+                {
+                    request.BackupLog = "Enable";
+                }
+                else
+                {
+                    request.BackupLog = "Disabled";
+                }
+                request.LogBackupRetentionPeriod = policy.LogBackupRetentionPeriod;
                 ModifyBackupPolicyResponse response = mClient.GetAcsResponse(request);
                 Dispatcher.Invoke(new Action(ModifiedPolicy));
-            }
-            catch (Exception)
+            },
+            ex =>
             {
-
-            }
+                //TODO:
+            });
+            
         }
 
         private void OK_Click(object sender, RoutedEventArgs e)
         {
-            Thread t = new Thread(new ParameterizedThreadStart(ModifyPolicy));
-            t.Start(mPolicy);
+            ModifyPolicy(mPolicy);
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

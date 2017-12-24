@@ -5,7 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:CloudManager"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="600"
+      d:DesignHeight="400" d:DesignWidth="600"
       Title="ListenerConfigPage">
 
     <StackPanel Margin="10">
@@ -48,6 +48,7 @@
                            Visibility="{Binding Path=ConfigureListener, Converter={StaticResource VisibilityConverter}}"/>
             </StackPanel>
         </StackPanel>
-        <Button x:Name="OK" Width="80" Height="32" Content="确定" Click="OK_Click" Margin="0,0,20,20" HorizontalAlignment="Right"/>
+        <Button x:Name="OK" Width="80" Height="32" Content="确定" HorizontalAlignment="Right" Margin="0,0,20,20"
+                Click="OK_Click" Style="{StaticResource ProcessButton}"/>
     </StackPanel>
 </Page>

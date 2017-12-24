@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CloudManager"
         mc:Ignorable="d"
-        Title="设置HTTP头" Height="600" Width="600" SizeToContent="Height" MaxVisibility="Collapsed">
+        Title="设置HTTP头" Height="600" Width="600" SizeToContent="Height" MaxVisibility="Collapsed"
+        Loaded="HttpHeaderWindow_Loaded">
 
     <Window.Resources>
         <DataTemplate x:Key="ParameterName">
@@ -62,8 +63,10 @@
         <Button x:Name="AddUserData" Content="添加" Height="32" Margin="0,10,0,0"
                  Click="AddUserData_Click" Style="{StaticResource LoginButton}"/>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-            <Button x:Name="OK" Content="确认" Click="OK_Click" Style="{StaticResource ProcessButton}"/>
-            <Button x:Name="Cancel" Content="取消" Margin="10,0,0,0" Click="Cancel_Click" Style="{StaticResource ProcessButton}"/>
+            <Button x:Name="OK" Content="确认" Width="60" Height="32"
+                    Click="OK_Click" Style="{StaticResource ProcessButton}"/>
+            <Button x:Name="Cancel" Content="取消" Width="60" Height="32" Margin="10,0,0,0"
+                    Click="Cancel_Click" Style="{StaticResource ProcessButton}"/>
         </StackPanel>
     </StackPanel>
 </local:WindowBase>
