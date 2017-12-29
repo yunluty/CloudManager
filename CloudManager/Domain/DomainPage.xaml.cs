@@ -26,7 +26,7 @@ namespace CloudManager.Domain
     /// <summary>
     /// DomainPage.xaml 的交互逻辑
     /// </summary>
-    public partial class DomainPage : Page
+    public partial class DomainPage : PageBase
     {
         private DescribeDomain mSelDomain;
         private DefaultAcsClient mClient;
@@ -41,12 +41,25 @@ namespace CloudManager.Domain
 
             IClientProfile profile = DefaultProfile.GetProfile("cn-hangzhou", App.AKI, App.AKS);
             mClient = new DefaultAcsClient(profile);
+
+            this.Loaded += delegate
+            {
+                if (!Refreshed)
+                {
+                    RefreshPage();
+                }
+            };
+        }
+
+        protected override void RefreshPage()
+        {
+            Refreshed = true;
             GetDomainList();
         }
 
         private void GetDomainList()
         {
-            Task.Run(() =>
+            DoLoadingWork(page =>
             {
                 var nextPage = false;
                 var domains = new ObservableCollection<DescribeDomain>();
@@ -72,27 +85,22 @@ namespace CloudManager.Domain
                     }
                 } while (nextPage);
 
-                try
+                Dispatcher.Invoke(() =>
                 {
-                    Dispatcher.Invoke(() =>
-                    {
-                        if (domains.Count > 0)
-                        {
-                            mDomains = domains;
-                            DomainList.ItemsSource = mDomains;
-                            SelectDefaultIndex(DomainList);
-                        }
-                    });
-                }
-                catch
-                {
-                }
+                    mDomains = domains;
+                    DomainList.ItemsSource = mDomains;
+                    SelectDefaultIndex(DomainList);
+                    ProcessGotResults(domains);
+                });
+            },
+            ex =>
+            {
             });
         }
 
         private void Refresh_Click(object sender, RoutedEventArgs e)
         {
-            GetDomainList();
+            RefreshPage();
         }
 
         private void SelectDefaultIndex(ListBox list)

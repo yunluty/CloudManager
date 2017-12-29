@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -105,7 +106,9 @@ namespace CloudManager
         public long? DBInstanceMemory { get; set; }
         public AccountTypeEnum? AccountType { get; set; }
         public SupportUpgradeAccountTypeEnum? SupportUpgradeAccountType { get; set; }
-
+        public ObservableCollection<DBParameter> Parameters { get; set; }
+        public ObservableCollection<DBBackup> Backups { get; set; }
+        public DBBackupPolicy BackupPolicy { get; set; }
 
         public enum LockModeEnum
         {

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CloudManager"
         mc:Ignorable="d"
-        Title="登录阿里云" Height="340" Width="445" Icon="CloudManager16.ico"
+        Title="登录阿里云" Height="340" Width="445"
         WindowStartupLocation="CenterScreen" MaxVisibility="Collapsed">
     <Grid>
         <Grid.RowDefinitions>
@@ -22,14 +22,12 @@
         </TextBox>
         <TextBlock Text="Access Key ID :" Grid.Row="1" Foreground="DarkGray"
                    VerticalAlignment="Top" Margin="80,0,0,0"/>
-        <TextBox x:Name="AKI" Grid.Row="1" Text="LTAIh25SpncZcjON"
-                 VerticalAlignment="Top" Margin="80,17,80,0" Height="32"
-                 VerticalContentAlignment="Center"/>
+        <TextBox x:Name="AKI" Grid.Row="1" Margin="80,17,80,0" Height="32"
+                 VerticalAlignment="Top" VerticalContentAlignment="Center"/>
         <TextBlock Text="Access Key Secret :" Grid.Row="2" Foreground="DarkGray"
                    VerticalAlignment="Bottom" Margin="80,0,0,34"/>
-        <TextBox x:Name="AKS" Grid.Row="2" Text="j75hjBZFlhFS4ldWGjaDIVeEycmTWW"
-                 VerticalAlignment="Bottom" Margin="80,0,80,0" Height="32"
-                 VerticalContentAlignment="Center"/>
+        <TextBox x:Name="AKS" Grid.Row="2" Margin="80,0,80,0" Height="32"
+                 VerticalAlignment="Bottom" VerticalContentAlignment="Center"/>
         <TextBox x:Name="Message" Grid.Row="3" TextWrapping="Wrap" Foreground="Red" Background="Transparent"
                  VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,5,0,0" Height="36"
                  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"

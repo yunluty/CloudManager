@@ -1,13 +1,14 @@
 ﻿using Aliyun.OSS;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CloudManager
 {
-    public class DescribeBucket
+    public class DescribeBucket : INotifyPropertyChanged
     {
         public static Dictionary<string, string> VPCEndPoints = new Dictionary<string, string>()
         {
@@ -58,5 +59,13 @@ namespace CloudManager
         public string Logging { get; set; }
         public string Referer { get; set; }
         public string Website { get; set; }
+        public DescribeOSSObject CurrDirectory { get; set; }
+        public string DeepestKey { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

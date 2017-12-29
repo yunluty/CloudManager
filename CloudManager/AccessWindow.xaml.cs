@@ -20,6 +20,7 @@ using Aliyun.Acs.Core.Exceptions;
 using Aliyun.Acs.Ecs.Model.V20140526;
 using static Aliyun.Acs.Ecs.Model.V20140526.DescribeRegionsResponse;
 using CloudManager.Activation;
+using System.Diagnostics;
 
 namespace CloudManager
 {
@@ -35,6 +36,14 @@ namespace CloudManager
         public AccessWindow()
         {
             InitializeComponent();
+            SetAki();
+        }
+
+        [Conditional("DEBUG")]
+        private void SetAki()
+        {
+            AKI.Text = "LTAIh25SpncZcjON";
+            AKS.Text = "j75hjBZFlhFS4ldWGjaDIVeEycmTWW";
         }
 
         private void AccessButton_Click(object sender, RoutedEventArgs e)
@@ -48,11 +57,12 @@ namespace CloudManager
         {
             string aki = String.Copy(AKI.Text);
             string aks = String.Copy(AKS.Text);
-            IClientProfile profile = DefaultProfile.GetProfile(mRegion, aki, aks);
-            DefaultAcsClient client = new DefaultAcsClient(profile);
-
+            
             DoLoadingWork(win =>
             {
+                IClientProfile profile = DefaultProfile.GetProfile(mRegion, aki, aks);
+                DefaultAcsClient client = new DefaultAcsClient(profile);
+
                 DescribeInstancesRequest request = new DescribeInstancesRequest();
                 DescribeInstancesResponse response = client.GetAcsResponse(request);
 

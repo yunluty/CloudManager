@@ -6,25 +6,15 @@ using Aliyun.Acs.Slb.Model.V20140515;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using static Aliyun.Acs.Ecs.Model.V20140526.DescribeInstancesResponse;
 using static Aliyun.Acs.Ecs.Model.V20140526.DescribeRegionsResponse;
 using static Aliyun.Acs.Slb.Model.V20140515.DescribeHealthStatusResponse;
 using static Aliyun.Acs.Slb.Model.V20140515.DescribeLoadBalancerAttributeResponse;
-using static Aliyun.Acs.Slb.Model.V20140515.DescribeLoadBalancersResponse;
 using static Aliyun.Acs.Slb.Model.V20140515.DescribeMasterSlaveServerGroupsResponse;
 using static Aliyun.Acs.Slb.Model.V20140515.DescribeRulesResponse;
 using static Aliyun.Acs.Slb.Model.V20140515.DescribeVServerGroupsResponse;
@@ -34,18 +24,13 @@ namespace CloudManager
     /// <summary>
     /// SLBServersPage.xaml 的交互逻辑
     /// </summary>
-    public partial class SLBPage : Page
+    public partial class SLBPage : PageBase
     {
         private string mAki, mAks;
         private List<DescribeRegions_Region> mRegions;
         private ObservableCollection<DescribeLoadBalancer> mLoadBalancers = new ObservableCollection<DescribeLoadBalancer>();
         private DescribeLoadBalancer mSelBalancer;
-        private ObservableCollection<DescribeInstance> mBackendServers;
-        private ObservableCollection<DescribeInstance> mNotAddedServers;
-        private ObservableCollection<SLBListener> mListeners;
         private SLBListener mSelListener;
-        private ObservableCollection<ServerGroup> mVServerGroups;
-        private ObservableCollection<ServerGroup> mMServerGroups;
 
         public MainWindow mMainWindow { get; set; }
         public delegate void DelegateGot(object obj);
@@ -59,58 +44,75 @@ namespace CloudManager
             mAks = App.AKS;
             mRegions = App.REGIONS;
             SLBList.ItemsSource = mLoadBalancers;
-            Thread t = new Thread(GetLoadBalancers);
-            t.Start();
 
-            mBackendServers = new ObservableCollection<DescribeInstance>();
-            Added.DataContext = mBackendServers;
-            mNotAddedServers = new ObservableCollection<DescribeInstance>();
-            NotAdded.DataContext = mNotAddedServers;
-            mListeners = new ObservableCollection<SLBListener>();
-            ListenersList.DataContext = mListeners;
+            this.Loaded += delegate
+            {
+                if (!Refreshed)
+                {
+                    RefreshPage();
+                }
+            };
+
+            Added.DataContext = new ObservableCollection<DescribeInstance>();
+            NotAdded.DataContext = new ObservableCollection<DescribeInstance>();
+            ListenersList.DataContext = new ObservableCollection<SLBListener>();
+        }
+
+        protected override void RefreshPage()
+        {
+            Refreshed = true;
+            GetLoadBalancers();
         }
 
         private void GetLoadBalancers()
         {
-            ObservableCollection<DescribeLoadBalancer> balancers = new ObservableCollection<DescribeLoadBalancer>();
-            Parallel.ForEach(mRegions, (region) =>
+            DoLoadingWork(page =>
             {
-                IClientProfile profile = DefaultProfile.GetProfile(region.RegionId, mAki, mAks);
-                DefaultAcsClient client = new DefaultAcsClient(profile);
-                /*Aliyun.Acs.Slb.Model.V20140515.DescribeZonesRequest zonesRequest = new Aliyun.Acs.Slb.Model.V20140515.DescribeZonesRequest();
-                try
+                ObservableCollection<DescribeLoadBalancer> balancers = new ObservableCollection<DescribeLoadBalancer>();
+                Parallel.ForEach(mRegions, (region) =>
                 {
-                    Aliyun.Acs.Slb.Model.V20140515.DescribeZonesResponse response = client.GetAcsResponse(zonesRequest);
-                }
-                catch (ClientException)
-                {
-                    continue;
-                }
-                catch (WebException)
-                {
-                    continue;
-                }*/
-                DescribeLoadBalancersRequest request = new DescribeLoadBalancersRequest();
-                try
-                {
-                    DescribeLoadBalancersResponse response = client.GetAcsResponse(request);
-                    if (response.LoadBalancers.Count > 0)
+                    IClientProfile profile = DefaultProfile.GetProfile(region.RegionId, mAki, mAks);
+                    DefaultAcsClient client = new DefaultAcsClient(profile);
+                    /*Aliyun.Acs.Slb.Model.V20140515.DescribeZonesRequest zonesRequest = new Aliyun.Acs.Slb.Model.V20140515.DescribeZonesRequest();
+                    try
                     {
-                        foreach (DescribeLoadBalancers_LoadBalancer b in response.LoadBalancers)
+                        Aliyun.Acs.Slb.Model.V20140515.DescribeZonesResponse response = client.GetAcsResponse(zonesRequest);
+                    }
+                    catch (ClientException)
+                    {
+                        continue;
+                    }
+                    catch (WebException)
+                    {
+                        continue;
+                    }*/
+                    DescribeLoadBalancersRequest request = new DescribeLoadBalancersRequest();
+                    try
+                    {
+                        DescribeLoadBalancersResponse response = client.GetAcsResponse(request);
+                        if (response.LoadBalancers.Count > 0)
                         {
-                            DescribeLoadBalancer balancer = new DescribeLoadBalancer(b, App.REGIONS);
-                            balancers.Add(balancer);
+                            //foreach (DescribeLoadBalancers_LoadBalancer b in response.LoadBalancers)
+                            Parallel.ForEach(response.LoadBalancers, (b) =>
+                            {
+                                DescribeLoadBalancer balancer = new DescribeLoadBalancer(b, App.REGIONS);
+                                GetAll(balancer);
+                                balancers.Add(balancer);
+                            });
                         }
                     }
-                }
-                catch (ClientException)
-                {
-                }
-                catch (WebException)
-                {
-                }
+                    catch (ClientException)
+                    {
+                    }
+                    catch (WebException)
+                    {
+                    }
+                });
+                Dispatcher.Invoke(new DelegateGot(GotLoadBalancers), balancers);
+            },
+            ex =>
+            {
             });
-            Dispatcher.Invoke(new DelegateGot(GotLoadBalancers), balancers);
         }
 
         private void GotLoadBalancers(object obj)
@@ -119,12 +121,12 @@ namespace CloudManager
             mLoadBalancers = balancers;
             SLBList.ItemsSource = mLoadBalancers;
             SelectDefaultIndex(SLBList);
+            ProcessGotResults(balancers);
         }
 
         private void Refresh_Click(object sender, RoutedEventArgs e)
         {
-            Thread t = new Thread(GetLoadBalancers);
-            t.Start();
+            RefreshPage();
         }
 
         private void SelectDefaultIndex(ListBox list)
@@ -149,8 +151,16 @@ namespace CloudManager
         {
             mSelBalancer = balancer;
             SLBInfo.DataContext = mSelBalancer;
-            Thread t = new Thread(GetAll);
-            t.Start();
+
+            BackendServers.ItemsSource = balancer.AddedServers;
+            Added.DataContext = balancer.AddedServers;
+
+            NotAddedServers.ItemsSource = balancer.NotAddedServers;
+            NotAdded.DataContext = balancer.NotAddedServers;
+
+            ListenersList.ItemsSource = balancer.Listeners;
+            ListenersList.DataContext = balancer.Listeners;
+            ListenersList.SelectedIndex = 0;
         }
 
         private void StartedBalancer(object obj)
@@ -241,7 +251,7 @@ namespace CloudManager
             balancer.LoadBalancerName = name;
         }
 
-        private void GotBackendServers(object obj)
+        /*private void GotBackendServers(object obj)
         {
             ObservableCollection<DescribeInstance> instances = obj as ObservableCollection<DescribeInstance>;
             if (instances != null)
@@ -261,9 +271,9 @@ namespace CloudManager
                 NotAddedServers.ItemsSource = mNotAddedServers;
                 NotAdded.DataContext = mNotAddedServers;
             }
-        }
+        }*/
 
-        private void RequestServers(DefaultAcsClient client, DescribeLoadBalancerAttributeResponse response)
+        private void RequestServers(DescribeLoadBalancer balancer, DefaultAcsClient client, DescribeLoadBalancerAttributeResponse response)
         {
             ObservableCollection<DescribeInstance> addedServers = new ObservableCollection<DescribeInstance>();
             Parallel.ForEach(response.BackendServers, (s) =>
@@ -282,7 +292,8 @@ namespace CloudManager
                 instance.Status = reponse1.Status;
                 addedServers.Add(instance);
             });
-            Dispatcher.Invoke(new DelegateGot(GotBackendServers), addedServers);
+            balancer.AddedServers = addedServers;
+            //Dispatcher.Invoke(new DelegateGot(GotBackendServers), addedServers);
 
             DescribeInstancesRequest request2 = new DescribeInstancesRequest();
             DescribeInstancesResponse response2 = client.GetAcsResponse(request2);
@@ -305,10 +316,40 @@ namespace CloudManager
                     }
                 }
             }
-            Dispatcher.Invoke(new DelegateGot(GotNotAddedServers), notAddedServers);
+            balancer.NotAddedServers = notAddedServers;
+            //Dispatcher.Invoke(new DelegateGot(GotNotAddedServers), notAddedServers);
         }
 
-        private void GotListeners(object obj)
+        private void GetServers(DescribeLoadBalancer balancer)
+        {
+            DoLoadingWork(page =>
+            {
+                IClientProfile profile = DefaultProfile.GetProfile(balancer.RegionId, mAki, mAks);
+                DefaultAcsClient client = new DefaultAcsClient(profile);
+                DescribeLoadBalancerAttributeResponse response = GetAttribute(balancer, client);
+                if (response != null)
+                {
+                    RequestServers(balancer, client, response);
+                }
+                Dispatcher.Invoke(() =>
+                {
+                    if (mSelBalancer == balancer)
+                    {
+                        BackendServers.ItemsSource = balancer.AddedServers;
+                        Added.DataContext = balancer.AddedServers;
+
+                        NotAddedServers.ItemsSource = balancer.NotAddedServers;
+                        NotAdded.DataContext = balancer.NotAddedServers;
+                    }
+                });
+            },
+            ex =>
+            {
+            });
+            
+        }
+
+        /*private void GotListeners(object obj)
         {
             ObservableCollection<SLBListener> listeners = obj as ObservableCollection<SLBListener>;
             if (listeners != null)
@@ -318,9 +359,9 @@ namespace CloudManager
                 ListenersList.DataContext = mListeners;
                 ListenersList.SelectedIndex = 0;
             }
-        }
+        }*/
 
-        private void GotVServerGroups(object obj)
+        /*private void GotVServerGroups(object obj)
         {
             mVServerGroups = obj as ObservableCollection<ServerGroup>;
         }
@@ -328,9 +369,9 @@ namespace CloudManager
         private void GotMServerGroups(object obj)
         {
             mMServerGroups = obj as ObservableCollection<ServerGroup>;
-        }
+        }*/
 
-        private void RequestListeners(DefaultAcsClient client, DescribeLoadBalancerAttributeResponse response)
+        private void RequestListeners(DescribeLoadBalancer balancer, DefaultAcsClient client, DescribeLoadBalancerAttributeResponse response)
         {
             ObservableCollection<SLBListener> listeners = new ObservableCollection<SLBListener>();
             foreach (DescribeLoadBalancerAttribute_ListenerPortAndProtocol p in response.ListenerPortsAndProtocol)
@@ -389,7 +430,8 @@ namespace CloudManager
                 group.ServerGroupName = g.VServerGroupName;
                 vServergroups.Add(group);
             }
-            Dispatcher.Invoke(new DelegateGot(GotVServerGroups), vServergroups);
+            balancer.VServerGroups = vServergroups;
+            //Dispatcher.Invoke(new DelegateGot(GotVServerGroups), vServergroups);
 
             DescribeMasterSlaveServerGroupsRequest describe = new DescribeMasterSlaveServerGroupsRequest();
             describe.LoadBalancerId = response.LoadBalancerId;
@@ -402,7 +444,8 @@ namespace CloudManager
                 group.ServerGroupName = g.MasterSlaveServerGroupName;
                 mServergroups.Add(group);
             }
-            Dispatcher.Invoke(new DelegateGot(GotMServerGroups), mServergroups);
+            balancer.MServerGroups = mServergroups;
+            //Dispatcher.Invoke(new DelegateGot(GotMServerGroups), mServergroups);
 
             if (listeners.Count > 0)
             {
@@ -456,15 +499,41 @@ namespace CloudManager
                     }
                 }
             }
-
-            Dispatcher.Invoke(new DelegateGot(GotListeners), listeners);
+            balancer.Listeners = listeners;
+            //Dispatcher.Invoke(new DelegateGot(GotListeners), listeners);
         }
 
-        private DescribeLoadBalancerAttributeResponse GetAttribute(DefaultAcsClient client)
+        private void GetListeners(DescribeLoadBalancer balancer)
+        {
+            DoLoadingWork(page =>
+            {
+                IClientProfile profile = DefaultProfile.GetProfile(mSelBalancer.RegionId, mAki, mAks);
+                DefaultAcsClient client = new DefaultAcsClient(profile);
+                DescribeLoadBalancerAttributeResponse response = GetAttribute(balancer, client);
+                if (response != null)
+                {
+                    RequestListeners(balancer, client, response);
+                }
+                Dispatcher.Invoke(() =>
+                {
+                    if (mSelBalancer == balancer)
+                    {
+                        ListenersList.ItemsSource = balancer.Listeners;
+                        ListenersList.DataContext = balancer.Listeners;
+                        ListenersList.SelectedIndex = 0;
+                    }
+                });
+            },
+            ex =>
+            {
+            });
+        }
+
+        private DescribeLoadBalancerAttributeResponse GetAttribute(DescribeLoadBalancer balancer, DefaultAcsClient client)
         {
             
             DescribeLoadBalancerAttributeRequest request = new DescribeLoadBalancerAttributeRequest();
-            request.LoadBalancerId = mSelBalancer.LoadBalancerId;
+            request.LoadBalancerId = balancer.LoadBalancerId;
             try
             {
                 DescribeLoadBalancerAttributeResponse response = client.GetAcsResponse(request);
@@ -476,85 +545,66 @@ namespace CloudManager
             }
         }
 
-        private void GetAll()
+        private void GetAll(DescribeLoadBalancer balancer)
         {
-            IClientProfile profile = DefaultProfile.GetProfile(mSelBalancer.RegionId, mAki, mAks);
+            IClientProfile profile = DefaultProfile.GetProfile(balancer.RegionId, mAki, mAks);
             DefaultAcsClient client = new DefaultAcsClient(profile);
-            DescribeLoadBalancerAttributeResponse response = GetAttribute(client);
+            DescribeLoadBalancerAttributeResponse response = GetAttribute(balancer, client);
             if (response != null)
             {
-                RequestServers(client, response);
-                RequestListeners(client, response);
+                RequestServers(balancer, client, response);
+                RequestListeners(balancer, client, response);
             }
         }
 
-        private void GetServers()
-        {
-            IClientProfile profile = DefaultProfile.GetProfile(mSelBalancer.RegionId, mAki, mAks);
-            DefaultAcsClient client = new DefaultAcsClient(profile);
-            DescribeLoadBalancerAttributeResponse response = GetAttribute(client);
-            if (response != null)
-            {
-                RequestServers(client, response);
-            }
-        }
-
-        private void GetListeners()
-        {
-            IClientProfile profile = DefaultProfile.GetProfile(mSelBalancer.RegionId, mAki, mAks);
-            DefaultAcsClient client = new DefaultAcsClient(profile);
-            DescribeLoadBalancerAttributeResponse response = GetAttribute(client);
-            if (response != null)
-            {
-                RequestListeners(client, response);
-            }
-        }
-
-        private void RemovedServers()
+        /*private void RemovedServers()
         {
             AddedSelectAll.IsChecked = false;
-            mBackendServers.Clear();
+            GetServers(mSelBalancer);
+        }*/
 
-            Thread t = new Thread(GetServers);
-            t.Start();
-        }
-
-        private void RemoveServers(object obj)
+        private void RemoveServers(DescribeLoadBalancer balancer, string server)
         {
-            IClientProfile profile = DefaultProfile.GetProfile(mSelBalancer.RegionId, mAki, mAks);
-            DefaultAcsClient client = new DefaultAcsClient(profile);
-            RemoveBackendServersRequest request = new RemoveBackendServersRequest();
-            request.LoadBalancerId = mSelBalancer.LoadBalancerId;
-            request.BackendServers = obj as string;
-            try
+            DoLoadingWork(page =>
             {
+                IClientProfile profile = DefaultProfile.GetProfile(balancer.RegionId, mAki, mAks);
+                DefaultAcsClient client = new DefaultAcsClient(profile);
+                RemoveBackendServersRequest request = new RemoveBackendServersRequest();
+                request.LoadBalancerId = balancer.LoadBalancerId;
+                request.BackendServers = server;
                 RemoveBackendServersResponse response = client.GetAcsResponse(request);
-                Dispatcher.Invoke(new Action(RemovedServers));
-            }
-            catch (Exception)
+            },
+            page =>
             {
-            }
+                Dispatcher.Invoke(() =>
+                {
+                    AddedSelectAll.IsChecked = false;
+                    GetServers(balancer);
+                });
+            },
+            ex =>
+            {
+            });
         }
 
         private void RemoveSingle_Click(object sender, RoutedEventArgs e)
         {
             DescribeInstance instance = (sender as Button).DataContext as DescribeInstance;
             string server = "[\"" + instance.InstanceId + "\"]";
-            Thread t = new Thread(new ParameterizedThreadStart(RemoveServers));
-            t.Start(server);
+            RemoveServers(mSelBalancer, server);
         }
 
         private void RemoveSelected_Click(object sender, RoutedEventArgs e)
         {
             string servers = "[";
-            for (int i = 0; i < mBackendServers.Count; i++)
+            for (int i = 0; i < mSelBalancer.AddedServers.Count; i++)
             {
                 if (i != 0)
                 {
                     servers += ',';
                 }
 
-                DescribeInstance instance = mBackendServers[i];
+                DescribeInstance instance = mSelBalancer.AddedServers[i];
                 if (instance.Checked)
                 {
                     servers += "\"";
@@ -563,55 +613,59 @@ namespace CloudManager
                 }
             }
             servers += "]";
-            Thread t = new Thread(new ParameterizedThreadStart(RemoveServers));
-            t.Start(servers);
+            RemoveServers(mSelBalancer, servers);
         }
 
-        private void AddedServers()
+        /*private void AddedServers()
         {
             NotAddedSelectAll.IsChecked = false;
-            mNotAddedServers.Clear();
+            mSelBalancer.NotAddedServers.Clear();
+            GetServers(mSelBalancer);
+        }*/
 
-            Thread t = new Thread(GetServers);
-            t.Start();
-        }
-
-        private void AddServers(object obj)
+        private void AddServers(DescribeLoadBalancer balancer, string severs)
         {
-            IClientProfile profile = DefaultProfile.GetProfile(mSelBalancer.RegionId, mAki, mAks);
-            DefaultAcsClient client = new DefaultAcsClient(profile);
-            AddBackendServersRequest request = new AddBackendServersRequest();
-            request.LoadBalancerId = mSelBalancer.LoadBalancerId;
-            request.BackendServers = obj as string;
-            try
+            DoLoadingWork(page =>
             {
+                IClientProfile profile = DefaultProfile.GetProfile(balancer.RegionId, mAki, mAks);
+                DefaultAcsClient client = new DefaultAcsClient(profile);
+                AddBackendServersRequest request = new AddBackendServersRequest();
+                request.LoadBalancerId = balancer.LoadBalancerId;
+                request.BackendServers = severs;
                 AddBackendServersResponse response = client.GetAcsResponse(request);
-                Dispatcher.Invoke(new Action(AddedServers));
-            }
-            catch
+            },
+            page =>
             {
-            }
+                Dispatcher.Invoke(() =>
+                {
+                    NotAddedSelectAll.IsChecked = false;
+                    GetServers(balancer);
+                });
+            },
+            ex =>
+            {
+            });
+            
         }
 
         private void AddSingle_Click(object sender, RoutedEventArgs e)
         {
             DescribeInstance instance = (sender as Button).DataContext as DescribeInstance;
             string server = "[{\"ServerId\":\""+ instance.InstanceId + "\",\"Weight\":\"100\"}]";
-            Thread t = new Thread(new ParameterizedThreadStart(AddServers));
-            t.Start(server);
+            AddServers(mSelBalancer, server);
         }
 
         private void AddSelected_Click(object sender, RoutedEventArgs e)
         {
             string servers = "[";
-            for (int i = 0; i < mNotAddedServers.Count; i++)
+            for (int i = 0; i < mSelBalancer.NotAddedServers.Count; i++)
             {
                 if (i != 0)
                 {
                     servers += ',';
                 }
 
-                DescribeInstance instance = mNotAddedServers[i];
+                DescribeInstance instance = mSelBalancer.NotAddedServers[i];
                 if (instance.Checked)
                 {
                     servers += "{\"ServerId\":\"";
@@ -620,14 +674,13 @@ namespace CloudManager
                 }
             }
             servers += "]";
-            Thread t = new Thread(AddServers);
-            t.Start(servers);
+            AddServers(mSelBalancer, servers);
         }
 
         private void AddedSelect_Checked(object sender, RoutedEventArgs e)
         {
             bool allChecked = true;
-            foreach (DescribeInstance i in mBackendServers)
+            foreach (DescribeInstance i in mSelBalancer.AddedServers)
             {
                 if (!i.Checked)
                 {
@@ -650,14 +703,14 @@ namespace CloudManager
         {
             if (AddedSelectAll.IsChecked == true)
             {
-                foreach (DescribeInstance i in mBackendServers)
+                foreach (DescribeInstance i in mSelBalancer.AddedServers)
                 {
                     i.Checked = true;
                 }
             }
             else
             {
-                foreach (DescribeInstance i in mBackendServers)
+                foreach (DescribeInstance i in mSelBalancer.AddedServers)
                 {
                     i.Checked = false;
                 }
@@ -667,7 +720,7 @@ namespace CloudManager
         private void NotAddedSelect_Checked(object sender, RoutedEventArgs e)
         {
             bool allChecked = true;
-            foreach (DescribeInstance i in mNotAddedServers)
+            foreach (DescribeInstance i in mSelBalancer.NotAddedServers)
             {
                 if (!i.Checked)
                 {
@@ -690,14 +743,14 @@ namespace CloudManager
         {
             if (NotAddedSelectAll.IsChecked == true)
             {
-                foreach (DescribeInstance i in mNotAddedServers)
+                foreach (DescribeInstance i in mSelBalancer.NotAddedServers)
                 {
                     i.Checked = true;
                 }
             }
             else
             {
-                foreach (DescribeInstance i in mNotAddedServers)
+                foreach (DescribeInstance i in mSelBalancer.NotAddedServers)
                 {
                     i.Checked = false;
                 }
@@ -707,7 +760,7 @@ namespace CloudManager
         private void ListenersSelect_Checked(object sender, RoutedEventArgs e)
         {
             bool allChecked = true;
-            foreach (SLBListener i in mListeners)
+            foreach (SLBListener i in mSelBalancer.Listeners)
             {
                 if (!i.Checked)
                 {
@@ -726,109 +779,140 @@ namespace CloudManager
             ListenersSelectAll.IsChecked = false;
         }
 
-        private void StartListeners(object obj)
+        private void StartListeners(DescribeLoadBalancer balancer, List<int?> ports)
         {
-            List<int?> ports = obj as List<int?>;
-            IClientProfile profile = DefaultProfile.GetProfile(mSelBalancer.RegionId, mAki, mAks);
-            DefaultAcsClient client = new DefaultAcsClient(profile);
-            StartLoadBalancerListenerRequest request = new StartLoadBalancerListenerRequest();
-            Parallel.ForEach(ports, (port) =>
+            DoLoadingWork(page =>
             {
-                try
+                IClientProfile profile = DefaultProfile.GetProfile(balancer.RegionId, mAki, mAks);
+                DefaultAcsClient client = new DefaultAcsClient(profile);
+                StartLoadBalancerListenerRequest request = new StartLoadBalancerListenerRequest();
+                Parallel.ForEach(ports, (port) =>
                 {
-                    request.LoadBalancerId = mSelBalancer.LoadBalancerId;
-                    request.ListenerPort = port;
-                    StartLoadBalancerListenerResponse response = client.GetAcsResponse(request);
-                    GetListeners();
-                }
-                catch
+                    try
+                    {
+                        request.LoadBalancerId = balancer.LoadBalancerId;
+                        request.ListenerPort = port;
+                        StartLoadBalancerListenerResponse response = client.GetAcsResponse(request);
+                    }
+                    catch
+                    {
+                    }
+                });
+            },
+            page =>
+            {
+                Dispatcher.Invoke(() =>
                 {
-                }
+                    GetListeners(balancer);
+                });
+            },
+            ex =>
+            { 
             });
         }
 
         private void StartListeners_Click(object sender, RoutedEventArgs e)
         {
             List<int?> ports = new List<int?>();
-            foreach (SLBListener l in mListeners)
+            foreach (SLBListener l in mSelBalancer.Listeners)
             {
                 if (l.Checked)
                 {
                     ports.Add(l.ListenerPort);
                 }
             }
-            Thread t = new Thread(new ParameterizedThreadStart(StartListeners));
-            t.Start(ports);
+            StartListeners(mSelBalancer, ports);
         }
 
-        private void StopListeners(object obj)
+        private void StopListeners(DescribeLoadBalancer balancer, List<int?> ports)
         {
-            List<int?> ports = obj as List<int?>;
-            IClientProfile profile = DefaultProfile.GetProfile(mSelBalancer.RegionId, mAki, mAks);
-            DefaultAcsClient client = new DefaultAcsClient(profile);
-            StopLoadBalancerListenerRequest request = new StopLoadBalancerListenerRequest();
-            Parallel.ForEach(ports, (port) =>
+            DoLoadingWork(page =>
             {
-                try
+                IClientProfile profile = DefaultProfile.GetProfile(balancer.RegionId, mAki, mAks);
+                DefaultAcsClient client = new DefaultAcsClient(profile);
+                StopLoadBalancerListenerRequest request = new StopLoadBalancerListenerRequest();
+                Parallel.ForEach(ports, (port) =>
                 {
-                    request.LoadBalancerId = mSelBalancer.LoadBalancerId;
-                    request.ListenerPort = port;
-                    StopLoadBalancerListenerResponse response = client.GetAcsResponse(request);
-                    GetListeners();
-                }
-                catch
+                    try
+                    {
+                        request.LoadBalancerId = balancer.LoadBalancerId;
+                        request.ListenerPort = port;
+                        StopLoadBalancerListenerResponse response = client.GetAcsResponse(request);
+                    }
+                    catch
+                    {
+                    }
+                });
+            },
+            page =>
+            {
+                Dispatcher.Invoke(() =>
                 {
-                }
+                    GetListeners(balancer);
+                });
+            },
+            ex =>
+            {
             });
+            
         }
 
         private void StopListeners_Click(object sender, RoutedEventArgs e)
         {
             List<int?> ports = new List<int?>();
-            foreach (SLBListener l in mListeners)
+            foreach (SLBListener l in mSelBalancer.Listeners)
             {
                 if (l.Checked)
                 {
                     ports.Add(l.ListenerPort);
                 }
             }
-            Thread t = new Thread(new ParameterizedThreadStart(StopListeners));
-            t.Start(ports);
+            StopListeners(mSelBalancer, ports);
         }
 
-        private void DeleteListeners(object obj)
+        private void DeleteListeners(DescribeLoadBalancer balancer, List<int?> ports)
         {
-            List<int?> ports = obj as List<int?>;
-            IClientProfile profile = DefaultProfile.GetProfile(mSelBalancer.RegionId, mAki, mAks);
-            DefaultAcsClient client = new DefaultAcsClient(profile);
-            DeleteLoadBalancerListenerRequest request = new DeleteLoadBalancerListenerRequest();
-            Parallel.ForEach(ports, (port) =>
+            DoLoadingWork(page =>
             {
-                try
+                IClientProfile profile = DefaultProfile.GetProfile(balancer.RegionId, mAki, mAks);
+                DefaultAcsClient client = new DefaultAcsClient(profile);
+                DeleteLoadBalancerListenerRequest request = new DeleteLoadBalancerListenerRequest();
+                Parallel.ForEach(ports, (port) =>
                 {
-                    request.LoadBalancerId = mSelBalancer.LoadBalancerId;
-                    request.ListenerPort = port;
-                    DeleteLoadBalancerListenerResponse response = client.GetAcsResponse(request);
-                }
-                catch
+                    try
+                    {
+                        request.LoadBalancerId = balancer.LoadBalancerId;
+                        request.ListenerPort = port;
+                        DeleteLoadBalancerListenerResponse response = client.GetAcsResponse(request);
+                    }
+                    catch
+                    {
+                    }
+                });
+            },
+            page =>
+            {
+                Dispatcher.Invoke(() =>
                 {
-                }
+                    GetListeners(balancer);
+                });
+            },
+            ex =>
+            {
             });
-            GetListeners();
         }
 
         private void DeleteListeners_Click(object sender, RoutedEventArgs e)
         {
             List<int?> ports = new List<int?>();
-            foreach (SLBListener l in mListeners)
+            foreach (SLBListener l in mSelBalancer.Listeners)
             {
                 if (l.Checked)
                 {
                     ports.Add(l.ListenerPort);
                 }
             }
-            Thread t = new Thread(new ParameterizedThreadStart(DeleteListeners));
-            t.Start(ports);
+            DeleteListeners(mSelBalancer, ports);
         }
 
         private void AddListener_Click(object sender, RoutedEventArgs e)
@@ -846,8 +930,8 @@ namespace CloudManager
 
         private void ShowAddListenerWindow(AddListenerWindow win)
         {
-            win.mVServerGroups = mVServerGroups;
-            win.mMServerGroups = mMServerGroups;
+            win.mVServerGroups = mSelBalancer.VServerGroups;
+            win.mMServerGroups = mSelBalancer.MServerGroups;
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             win.Owner = mMainWindow;
             win.ShowDialog();
@@ -855,8 +939,7 @@ namespace CloudManager
 
         private void UpdateListeners_Click(object sender, RoutedEventArgs e)
         {
-            Thread t = new Thread(GetListeners);
-            t.Start();
+            GetListeners(mSelBalancer);
         }
 
         private void GotRules(object obj)
@@ -881,7 +964,7 @@ namespace CloudManager
                 {
                     DescribeRule rule = new DescribeRule(r);
                     rule.Listener = listener;
-                    foreach (ServerGroup group in mVServerGroups)
+                    foreach (ServerGroup group in mSelBalancer.VServerGroups)
                     {
                         if (rule.VServerGroupId == group.ServerGroupId)
                         {
@@ -921,13 +1004,11 @@ namespace CloudManager
             ports.Add(l.ListenerPort);
             if (l.Status.Equals("running", StringComparison.CurrentCultureIgnoreCase))
             {
-                Thread t = new Thread(new ParameterizedThreadStart(StopListeners));
-                t.Start(ports);
+                StopListeners(mSelBalancer, ports);
             }
             else if (l.Status.Equals("stopped", StringComparison.CurrentCultureIgnoreCase))
             {
-                Thread t = new Thread(new ParameterizedThreadStart(StartListeners));
-                t.Start(ports);
+                StartListeners(mSelBalancer, ports);
             }
         }
 
@@ -936,15 +1017,14 @@ namespace CloudManager
             List<int?> ports = new List<int?>();
             SLBListener l = (sender as Button).DataContext as SLBListener;
             ports.Add(l.ListenerPort);
-            Thread t = new Thread(new ParameterizedThreadStart(DeleteListeners));
-            t.Start(ports);
+            DeleteListeners(mSelBalancer, ports);
         }
 
         private void EditRule_Click(object sender, RoutedEventArgs e)
         {
             DescribeRule rule = (sender as Button).DataContext as DescribeRule;
             CreateRuleWindow win = new CreateRuleWindow(mSelListener, rule);
-            win.mVServerGroups = mVServerGroups;
+            win.mVServerGroups = mSelBalancer.VServerGroups;
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             win.Owner = mMainWindow;
             win.ShowDialog();
@@ -979,7 +1059,7 @@ namespace CloudManager
         private void AddRule_Click(object sender, RoutedEventArgs e)
         {
             CreateRuleWindow win = new CreateRuleWindow(mSelListener);
-            win.mVServerGroups = mVServerGroups;
+            win.mVServerGroups = mSelBalancer.VServerGroups;
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             win.Owner = mMainWindow;
             win.ShowDialog();
@@ -989,14 +1069,14 @@ namespace CloudManager
         {
             if (ListenersSelectAll.IsChecked == true)
             {
-                foreach (SLBListener l in mListeners)
+                foreach (SLBListener l in mSelBalancer.Listeners)
                 {
                     l.Checked = true;
                 }
             }
             else
             {
-                foreach (SLBListener l in mListeners)
+                foreach (SLBListener l in mSelBalancer.Listeners)
                 {
                     l.Checked = false;
                 }

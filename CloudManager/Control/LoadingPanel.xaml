@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       mc:Ignorable="d"
-      d:DesignHeight="541.558" d:DesignWidth="750" Opacity="8">
+      Opacity="8" Background="Transparent">
     <Grid.Resources>
         <Storyboard x:Key="Storyboard1" RepeatBehavior="Forever">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="contentPresenter">
@@ -14,12 +14,17 @@
     </Grid.Resources>
     <Grid.Triggers>
         <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-            <BeginStoryboard Storyboard="{StaticResource Storyboard1}"/>
+            <BeginStoryboard x:Name="LoadingStoryboard" Storyboard="{StaticResource Storyboard1}"/>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="FrameworkElement.Unloaded">
+            <StopStoryboard BeginStoryboardName="LoadingStoryboard"/>
         </EventTrigger>
     </Grid.Triggers>
-    <!--Rectangle x:Name="_cRectFullPanel" >
-        <Rectangle.Fill><VisualBrush x:Name="_visualBrush"></VisualBrush></Rectangle.Fill>
-    </-->
+    <Rectangle x:Name="_cRectFullPanel">
+        <Rectangle.Fill>
+            <VisualBrush x:Name="_visualBrush" Stretch="None"/>
+        </Rectangle.Fill>
+    </Rectangle>
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
         <ContentPresenter x:Name="contentPresenter" Height="32" RenderTransformOrigin="0.5,0.5">
             <ContentPresenter.RenderTransform>

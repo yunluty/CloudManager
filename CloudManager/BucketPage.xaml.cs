@@ -10,22 +10,23 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using static CloudManager.DownUploadTask;
 using static CloudManager.DescribeOSSObject;
+using System.Threading.Tasks;
 
 namespace CloudManager
 {
     /// <summary>
     /// BucketPage.xaml 的交互逻辑
     /// </summary>
-    public partial class BucketPage : Page
+    public partial class BucketPage : PageBase
     {
         private string mAki, mAks;
-        private ObservableCollection<DescribeBucket> mSelBuckets = new ObservableCollection<DescribeBucket>();
+        private ObservableCollection<DescribeBucket> mBuckets = new ObservableCollection<DescribeBucket>();
         private DescribeBucket mSelBucket;
         private delegate void DelegateGot(object obj);
-        private DescribeOSSObject mRootDirectory;
-        private DescribeOSSObject mCurrDirectory;
+        //private DescribeOSSObject mRootDirectory;
+        //private DescribeOSSObject mCurrDirectory;
         //private DescribeOSSObject mLastDirectory;
-        private string mDeepestKey;
+        //private string mDeepestKey;
         private string mUploadFolder;
 
         //public delegate void BackupTaskHandler(object sender, BackupTask task);
@@ -40,37 +41,61 @@ namespace CloudManager
 
             mAki = App.AKI;
             mAks = App.AKS;
-            Thread t = new Thread(GetBuckets);
-            t.Start();
+            this.Loaded += delegate
+            {
+                if (!Refreshed)
+                {
+                    RefreshPage();
+                }
+            };
+        }
+
+        protected override void RefreshPage()
+        {
+            Refreshed = true;
+            GetBuckets();
         }
 
         private void GotBuckets(object obj)
         {
-            mSelBuckets = obj as ObservableCollection<DescribeBucket>;
-            BucketList.ItemsSource = mSelBuckets;
-            if(mSelBuckets.Count > 0)
+            mBuckets = obj as ObservableCollection<DescribeBucket>;
+            BucketList.ItemsSource = mBuckets;
+            if(mBuckets.Count > 0)
             {
                 SelectDefaultIndex(BucketList);
             }
+            ProcessGotResults(mBuckets);
         }
 
         private void GetBuckets()
         {
             ObservableCollection<DescribeBucket> buckets = new ObservableCollection<DescribeBucket>();
-            string endpoint = "http://oss-cn-hangzhou.aliyuncs.com";
-            OssClient client = new OssClient(endpoint, mAki, mAks);
-            foreach (Bucket b in client.ListBuckets())
+            DoLoadingWork(page =>
             {
-                DescribeBucket bucket = new DescribeBucket(b);
-                buckets.Add(bucket);
-            }
-            Dispatcher.Invoke(new DelegateGot(GotBuckets), buckets);
+                string endpoint = "http://oss-cn-hangzhou.aliyuncs.com";
+                OssClient client = new OssClient(endpoint, mAki, mAks);
+                foreach (Bucket b in client.ListBuckets())
+                {
+                    DescribeBucket bucket = new DescribeBucket(b);
+                    buckets.Add(bucket);
+                }
+                Parallel.ForEach(buckets, (bucket) =>
+                {
+                    GetSettings(bucket);
+                });
+            },
+            page =>
+            {
+                Dispatcher.Invoke(new DelegateGot(GotBuckets), buckets);
+            },
+            ex =>
+            {
+            });
         }
 
         private void Refresh_Click(object sender, RoutedEventArgs e)
         {
-            Thread t = new Thread(GetBuckets);
-            t.Start();
+            RefreshPage();
         }
 
         private void SelectDefaultIndex(ListBox list)
@@ -94,28 +119,28 @@ namespace CloudManager
         private void SetBucket(DescribeBucket bucket)
         {
             mSelBucket = bucket;
-            Thread t = new Thread(new ParameterizedThreadStart(GetSettings));
-            t.Start(mSelBucket);
+            OverView.DataContext = mSelBucket;
 
             ClearFileList();
-            mRootDirectory = new DescribeOSSObject(mSelBucket);
-            mCurrDirectory = null;
-            mDeepestKey = mRootDirectory.Key;
-            StartGetObjects(mRootDirectory);
+            if (mSelBucket.CurrDirectory == null)
+            {
+                mSelBucket.CurrDirectory = new DescribeOSSObject(mSelBucket);
+                mSelBucket.DeepestKey = mSelBucket.CurrDirectory.Key;
+            }
+            StartGetObjects(mSelBucket.CurrDirectory);
         }
 
-        private void GotSettings(object obj)
+        /*private void GotSettings(object obj)
         {
             DescribeBucket bucket = obj as DescribeBucket;
             if (bucket == mSelBucket)
             {
                 OverView.DataContext = mSelBucket;
             }
-        }
+        }*/
 
-        private void GetSettings(object obj)
+        private void GetSettings(DescribeBucket bucket)
         {
-            DescribeBucket bucket = obj as DescribeBucket;
             string endpoint = "http://" + bucket.InternetEndPoint;
             OssClient client = new OssClient(endpoint, mAki, mAks);
 
@@ -199,40 +224,36 @@ namespace CloudManager
             {
                 bucket.Website = "Disabled";
             }
-
-            Dispatcher.Invoke(new DelegateGot(GotSettings), bucket);
+            //Dispatcher.Invoke(new DelegateGot(GotSettings), bucket);
         }
 
         private void ClearFileList()
         {
-            if (mCurrDirectory != null && mCurrDirectory.ChildObjects != null)
+            /*if (mCurrDirectory != null && mCurrDirectory.ChildObjects != null)
             {
                 mCurrDirectory.ChildObjects.Clear();
-            }
+            }*/
+            FileList.ItemsSource = null;
         }
 
         private void GotObjects(object obj)
         {
             DescribeOSSObject directory = obj as DescribeOSSObject;
+            DescribeBucket bucket = directory.Bucket;
             if (directory.BucketName == mSelBucket.Name)
             {
-                if (mCurrDirectory != null && mCurrDirectory != directory)
+                bucket.CurrDirectory = directory;
+                FileList.ItemsSource = bucket.CurrDirectory.ChildObjects;
+                FileManager.DataContext = bucket.CurrDirectory;
+                if (!bucket.DeepestKey.Contains(bucket.CurrDirectory.Key))
                 {
-                    mCurrDirectory.ChildObjects.Clear();
-                }
-                mCurrDirectory = directory;
-                FileList.ItemsSource = mCurrDirectory.ChildObjects;
-                FileManager.DataContext = mCurrDirectory;
-                if (!mDeepestKey.Contains(mCurrDirectory.Key))
-                {
-                    mDeepestKey = mCurrDirectory.Key;
+                    bucket.DeepestKey = bucket.CurrDirectory.Key;
                 }
             }
         }
 
-        private void GetObjects(object obj)
+        private void GetObjects(DescribeOSSObject directory)
         {
-            DescribeOSSObject directory = obj as DescribeOSSObject;
             DescribeBucket bucket = directory.Bucket;
             string endpoint = "http://" + bucket.InternetEndPoint;
             OssClient client = new OssClient(endpoint, mAki, mAks);
@@ -312,24 +333,24 @@ namespace CloudManager
                             else
                             {
                                 /*子文件夹下一级的对象，获得这个子文件夹的key，确认是否已经添加过这个key的子文件夹，
-                                  因为子文件夹的key在下一级对象的key的前面，如果没有添加可以认为在bucket中这个子文件不存在，
-                                  如果不存在，在文件列表中创建一个虚拟文件夹，key在bucket中实际不存在。*/
-                                /*next = next.Substring(0, index + 1);
-                                string key = directory.Key + next;
-                                if (!dictionary.ContainsKey(key))
-                                {
-                                    ischild = true;
-                                    o = new DescribeOSSObject(s.BucketName, key);
-                                }
-                            }
-
-                            if (ischild)
+                                    因为子文件夹的key在下一级对象的key的前面，如果没有添加可以认为在bucket中这个子文件不存在，
+                                    如果不存在，在文件列表中创建一个虚拟文件夹，key在bucket中实际不存在。*/
+                            /*next = next.Substring(0, index + 1);
+                            string key = directory.Key + next;
+                            if (!dictionary.ContainsKey(key))
                             {
-                                o.Bucket = bucket;
-                                o.ParentObject = directory;
-                                childs.Add(o);
-                                dictionary.Add(o.Key, o);
-                            }*/
+                                ischild = true;
+                                o = new DescribeOSSObject(s.BucketName, key);
+                            }
+                        }
+
+                        if (ischild)
+                        {
+                            o.Bucket = bucket;
+                            o.ParentObject = directory;
+                            childs.Add(o);
+                            dictionary.Add(o.Key, o);
+                        }*/
                             if (s.Key != directory.Key)
                             {
                                 DescribeOSSObject o = new DescribeOSSObject(s);
@@ -344,18 +365,21 @@ namespace CloudManager
                 }
                 catch
                 {
-
                 }
             } while (isTruncated);
-
             directory.ChildObjects = childs;
-            Dispatcher.Invoke(new DelegateGot(GotObjects), directory);
         }
 
-        private void StartGetObjects(DescribeOSSObject obj)
+        private void StartGetObjects(DescribeOSSObject directory)
         {
-            Thread t = new Thread(GetObjects);
-            t.Start(obj);
+            DoLoadingWork(page =>
+            {
+                GetObjects(directory);
+                Dispatcher.Invoke(new DelegateGot(GotObjects), directory);
+            },
+            ex =>
+            {
+            });
         }
 
         private void FileList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -384,9 +408,9 @@ namespace CloudManager
 
         private void Previous_Click(object sender, RoutedEventArgs e)
         {
-            if (mCurrDirectory.ParentObject != null)
+            if (mSelBucket.CurrDirectory.ParentObject != null)
             {
-                StartGetObjects(mCurrDirectory.ParentObject);
+                StartGetObjects(mSelBucket.CurrDirectory.ParentObject);
                 //mCurrDirectory = mCurrDirectory.ParentObject;
                 //FileList.ItemsSource = mCurrDirectory.ChildObjects;
                 //FileManager.DataContext = mCurrDirectory;
@@ -395,7 +419,7 @@ namespace CloudManager
 
         private void Next_Click(object sender, RoutedEventArgs e)
         {
-            if (mDeepestKey != null && mDeepestKey != mCurrDirectory.Key)
+            if (mSelBucket.DeepestKey != null && mSelBucket.DeepestKey != mSelBucket.CurrDirectory.Key)
             {
                 int index = -1;
                 string key = null;
@@ -407,16 +431,16 @@ namespace CloudManager
                 }
                 else*/
                 {
-                    if (mDeepestKey.Contains(mCurrDirectory.Key))
+                    if (mSelBucket.DeepestKey.Contains(mSelBucket.CurrDirectory.Key))
                     {
-                        string next = mDeepestKey.Substring(mCurrDirectory.Key.Length);
+                        string next = mSelBucket.DeepestKey.Substring(mSelBucket.CurrDirectory.Key.Length);
                         index = next.IndexOf('/');
                         next = next.Substring(0, index + 1);
-                        key = mCurrDirectory.Key + next;
+                        key = mSelBucket.CurrDirectory.Key + next;
                     }
                 }
 
-                foreach (DescribeOSSObject obj in mCurrDirectory.ChildObjects)
+                foreach (DescribeOSSObject obj in mSelBucket.CurrDirectory.ChildObjects)
                 {
                     if (key != null && key == obj.Key)
                     {
@@ -463,7 +487,7 @@ namespace CloudManager
             dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                string key = mCurrDirectory.Key + dialog.FileName.Substring(dialog.FileName.LastIndexOf('\\') + 1);
+                string key = mSelBucket.CurrDirectory.Key + dialog.FileName.Substring(dialog.FileName.LastIndexOf('\\') + 1);
                 DownUploadTask task = CreateOssTask(mSelBucket, dialog.FileName, key);
                 task.FileName = key;
                 task.FileType = FileTypeMode.File;
@@ -477,7 +501,7 @@ namespace CloudManager
             if (IsDirectory(path))
             {
                 DownUploadTask task = null;
-                string key = mCurrDirectory.Key + path.Substring(mUploadFolder.LastIndexOf('\\') + 1).Replace('\\', '/') + '/';
+                string key = mSelBucket.CurrDirectory.Key + path.Substring(mUploadFolder.LastIndexOf('\\') + 1).Replace('\\', '/') + '/';
                 task = CreateOssTask(mSelBucket, path, key);
                 task.FileName = key;
                 task.FileType = FileTypeMode.Directory;
@@ -491,7 +515,7 @@ namespace CloudManager
 
                 foreach (string file in Directory.GetFiles(path))
                 {
-                    key = mCurrDirectory.Key + file.Substring(mUploadFolder.LastIndexOf('\\') + 1).Replace('\\', '/');
+                    key = mSelBucket.CurrDirectory.Key + file.Substring(mUploadFolder.LastIndexOf('\\') + 1).Replace('\\', '/');
                     task = CreateOssTask(mSelBucket, file, key);
                     task.FileName = key;
                     task.FileType = FileTypeMode.File;
@@ -689,7 +713,7 @@ namespace CloudManager
         {
             string endpoint = "http://" + mSelBucket.InternetEndPoint;
             OssClient client = new OssClient(endpoint, mAki, mAks);
-            EditNameWindow win = new EditNameWindow(client, mSelBucket, mCurrDirectory.Key);
+            EditNameWindow win = new EditNameWindow(client, mSelBucket, mSelBucket.CurrDirectory.Key);
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             win.Owner = mMainWindow;
             win.UpdateEventHandler += UpdateDirectory;
@@ -698,9 +722,9 @@ namespace CloudManager
 
         private void UpdateDirectory(object sender, string key)
         {
-            if (mCurrDirectory.Key == key)
+            if (mSelBucket.CurrDirectory.Key == key)
             {
-                StartGetObjects(mCurrDirectory);
+                StartGetObjects(mSelBucket.CurrDirectory);
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Shapes;
 
@@ -10,7 +11,6 @@ namespace CloudManager.Control
     /// </summary>
     public partial class LoadingPanel : Grid
     {
-        //public Rectangle BackImage => _cRectFullPanel;
         public LoadingPanel()
         {
             InitializeComponent();
@@ -27,11 +27,20 @@ namespace CloudManager.Control
             }
         }*/
 
-        /*public LoaderPanel00(UIElement baseUi):this()
+        public LoadingPanel(UIElement baseUi):this()
         {
-            if(baseUi != null) _visualBrush.Visual = baseUi;//TODO:极大影响性能
-            BackImage.Effect = new BlurEffect { Radius = 2 };
-        }*/
+            if (baseUi != null)
+            {
+                _visualBrush.Visual = baseUi;//TODO:极大影响性能
+            }
+            _cRectFullPanel.Effect = new BlurEffect { Radius = 2 };
+        }
+
+        public Visual Visual
+        {
+            get { return _visualBrush.Visual; }
+            set { _visualBrush.Visual = value; }
+        }
 
         /*public string Text
         {

@@ -26,7 +26,7 @@ namespace CloudManager
     /// <summary>
     /// CertificatePage.xaml 的交互逻辑
     /// </summary>
-    public partial class CertificatePage : Page
+    public partial class CertificatePage : PageBase
     {
         private string mAki, mAks;
         private List<DescribeRegions_Region> mRegions;
@@ -39,19 +39,26 @@ namespace CloudManager
         public CertificatePage()
         {
             InitializeComponent();
+            HideBlankPage = true;
 
             mAki = App.AKI;
             mAks = App.AKS;
             mRegions = App.REGIONS;
             CertificatesList.ItemsSource = mCertificates;
-            StartGetCertificates();
+            this.Loaded += delegate
+            {
+                if (!Refreshed)
+                {
+                    RefreshPage();
+                }
+            };
         }
 
-        private void StartGetCertificates()
+        protected override void RefreshPage()
         {
+            Refreshed = true;
             mCertificates.Clear();
-            Thread t = new Thread(GetCertificates);
-            t.Start();
+            GetCertificates();
         }
 
         private void GotCertificates(object obj)
@@ -62,36 +69,43 @@ namespace CloudManager
 
         private void GetCertificates()
         {
-            //ObservableCollection<DescribeCertificate> certs = new ObservableCollection<DescribeCertificate>();
-            Parallel.ForEach(mRegions, (region) =>
+            DoLoadingWork(page =>
             {
-                IClientProfile profile = DefaultProfile.GetProfile(region.RegionId, mAki, mAks);
-                DefaultAcsClient client = new DefaultAcsClient(profile);
-                DescribeServerCertificatesRequest r1 = new DescribeServerCertificatesRequest();
-                DescribeCACertificatesRequest r2 = new DescribeCACertificatesRequest();
-                try
+                //ObservableCollection<DescribeCertificate> certs = new ObservableCollection<DescribeCertificate>();
+                Parallel.ForEach(mRegions, (region) =>
                 {
-                    DescribeServerCertificatesResponse resp1 = client.GetAcsResponse(r1);
-                    foreach (DescribeServerCertificates_ServerCertificate c in resp1.ServerCertificates)
+                    IClientProfile profile = DefaultProfile.GetProfile(region.RegionId, mAki, mAks);
+                    DefaultAcsClient client = new DefaultAcsClient(profile);
+                    DescribeServerCertificatesRequest r1 = new DescribeServerCertificatesRequest();
+                    DescribeCACertificatesRequest r2 = new DescribeCACertificatesRequest();
+                    try
                     {
-                        DescribeCertificate cert = new DescribeCertificate(c);
-                        cert.RegionLocalName = region.LocalName;
-                        Dispatcher.Invoke(new DelegateGot(GotCertificates), cert);
-                        //certs.Add(cert);
+                        DescribeServerCertificatesResponse resp1 = client.GetAcsResponse(r1);
+                        foreach (DescribeServerCertificates_ServerCertificate c in resp1.ServerCertificates)
+                        {
+                            DescribeCertificate cert = new DescribeCertificate(c);
+                            cert.RegionLocalName = region.LocalName;
+                            Dispatcher.Invoke(new DelegateGot(GotCertificates), cert);
+                            //certs.Add(cert);
+                        }
+                        DescribeCACertificatesResponse resp2 = client.GetAcsResponse(r2);
+                        foreach (DescribeCACertificates_CACertificate c in resp2.CACertificates)
+                        {
+                            DescribeCertificate cert = new DescribeCertificate(c);
+                            cert.RegionLocalName = region.LocalName;
+                            Dispatcher.Invoke(new DelegateGot(GotCertificates), cert);
+                            //certs.Add(cert);
+                        }
                     }
-                    DescribeCACertificatesResponse resp2 = client.GetAcsResponse(r2);
-                    foreach (DescribeCACertificates_CACertificate c in resp2.CACertificates)
+                    catch
                     {
-                        DescribeCertificate cert = new DescribeCertificate(c);
-                        cert.RegionLocalName = region.LocalName;
-                        Dispatcher.Invoke(new DelegateGot(GotCertificates), cert);
-                        //certs.Add(cert);
                     }
-                }
-                catch
-                {
-                }
+                });
+            },
+            ex =>
+            {
             });
+            
         }
 
         private void ModifyCertificateName_Click(object sender, RoutedEventArgs e)
@@ -120,31 +134,6 @@ namespace CloudManager
             t.Start(cert);
         }
 
-        private void DeletedCertificate(object obj)
-        {
-            DescribeCertificate cert = obj as DescribeCertificate;
-            mCertificates.Remove(cert);
-        }
-
-        private void AddCertificate_Click(object sender, RoutedEventArgs e)
-        {
-            CreateCertificateWindow win = new CreateCertificateWindow();
-            win.RefreshEvent += RefreshCertificates;
-            win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            win.Owner = mMainWindow;
-            win.ShowDialog();
-        }
-
-        private void RefreshCertificates(object sender, List<string> regions)
-        {
-            StartGetCertificates();
-        }
-
-        private void Refresh_Click(object sender, RoutedEventArgs e)
-        {
-            StartGetCertificates();
-        }
-
         private void DeleteCertificate(object obj)
         {
             DescribeCertificate cert = obj as DescribeCertificate;
@@ -169,6 +158,31 @@ namespace CloudManager
             catch
             {
             }
+        }
+
+        private void DeletedCertificate(object obj)
+        {
+            DescribeCertificate cert = obj as DescribeCertificate;
+            mCertificates.Remove(cert);
+        }
+
+        private void AddCertificate_Click(object sender, RoutedEventArgs e)
+        {
+            CreateCertificateWindow win = new CreateCertificateWindow();
+            win.RefreshEvent += RefreshCertificates;
+            win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            win.Owner = mMainWindow;
+            win.ShowDialog();
+        }
+
+        private void RefreshCertificates(object sender, List<string> regions)
+        {
+            RefreshPage();
+        }
+
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshPage();
         }
     }
 }

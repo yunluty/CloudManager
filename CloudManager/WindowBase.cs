@@ -6,7 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media.Effects;
 
 namespace CloudManager
 {
@@ -14,14 +16,18 @@ namespace CloudManager
     {
         private Button MaxButton;
         private Button NormalButton;
-        private Rect Rectnormal;
         private Visibility MaxVisibilityValue;
         private Grid LoadingGrid;
+        //private LoadingPanel LoadingPanel;
+        //private LoadingAdorner LoadingAdorner;
 
 
         public WindowBase()
         {
             this.Style = (Style)App.Current.Resources["WindowBaseStyle"];
+            ResizeMode = ResizeMode.NoResize;
+            MaxWidth = SystemParameters.WorkArea.Width;
+            MaxHeight = SystemParameters.WorkArea.Height;
             this.Loaded += delegate
             {
                 InitializeEvent();
@@ -42,27 +48,27 @@ namespace CloudManager
             MaxButton.Visibility = this.MaxVisibilityValue;
             MaxButton.Click += delegate
             {
-                //this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
-                MaxButton.Visibility = Visibility.Collapsed;
+                this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
+                /*MaxButton.Visibility = Visibility.Collapsed;
                 NormalButton.Visibility = Visibility.Visible;
                 Rectnormal = new Rect(this.Left, this.Top, this.Width, this.Height);//保存下当前位置与大小
                 this.Left = 0;//设置位置
                 this.Top = 0;
                 Rect rc = SystemParameters.WorkArea;//获取工作区大小
                 this.Width = rc.Width;
-                this.Height = rc.Height;
+                this.Height = rc.Height;*/
             };
 
             NormalButton = (Button)template.FindName("btnNormal", this);
             NormalButton.Click += delegate
             {
-                //this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
-                MaxButton.Visibility = Visibility.Visible;
+                this.WindowState = this.WindowState == WindowState.Normal ? WindowState.Maximized : WindowState.Normal;
+                /*MaxButton.Visibility = Visibility.Visible;
                 NormalButton.Visibility = Visibility.Collapsed;
                 this.Left = Rectnormal.Left;
                 this.Top = Rectnormal.Top;
                 this.Width = Rectnormal.Width;
-                this.Height = Rectnormal.Height;
+                this.Height = Rectnormal.Height;*/
                 
             };
 
@@ -89,6 +95,8 @@ namespace CloudManager
             };
 
             LoadingGrid = (Grid)template.FindName("LoadingGrid", this);
+            //LoadingPanel = new LoadingPanel(this.Content as UIElement);
+            //LoadingGrid.Children.Add(LoadingPanel);
         }
 
         public static readonly DependencyProperty MaxVisibilityProperty = DependencyProperty.Register(
@@ -113,6 +121,8 @@ namespace CloudManager
         public void DoLoadingWork(Action<WindowBase> doWhat, Action<Exception> doError)
         {
             LoadingGrid?.SetValue(VisibilityProperty, Visibility.Visible);
+            //LoadingPanel?.SetValue(VisibilityProperty, Visibility.Visible);
+            (this.Content as UIElement).Effect = new BlurEffect { Radius = 2 };
             Task.Run(() =>
             {
                 try
@@ -125,7 +135,9 @@ namespace CloudManager
                 }
                 Dispatcher.Invoke(() =>
                 {
-                    LoadingGrid?.SetValue(VisibilityProperty, Visibility.Collapsed);
+                    LoadingGrid?.SetValue(VisibilityProperty, Visibility.Hidden);
+                    //LoadingPanel?.SetValue(VisibilityProperty, Visibility.Collapsed);
+                    (this.Content as UIElement).Effect = null;
                 });
             });
         }

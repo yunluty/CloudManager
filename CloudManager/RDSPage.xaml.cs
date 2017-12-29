@@ -26,15 +26,12 @@ namespace CloudManager
     /// <summary>
     /// RDSPage.xaml 的交互逻辑
     /// </summary>
-    public partial class RDSPage : Page
+    public partial class RDSPage : PageBase
     {
         private string mAki, mAks;
         private List<DescribeRegions_Region> mRegions;
         private ObservableCollection<DescribeDBInstance> mDBInstances = new ObservableCollection<DescribeDBInstance>();
         private DescribeDBInstance mSelDBInstance;
-        private ObservableCollection<DBParameter> mParameters;
-        private ObservableCollection<DBBackup> mBackups;
-        private DBBackupPolicy mPolicy;
 
         public MainWindow mMainWindow { get; set; }
         public delegate void DelegateGot(object obj);
@@ -51,8 +48,19 @@ namespace CloudManager
             mAks = App.AKS;
             mRegions = App.REGIONS;
             RDSList.ItemsSource = mDBInstances;
-            Thread t = new Thread(GetDBInstances);
-            t.Start();
+            this.Loaded += delegate
+            {
+                if (!Refreshed)
+                {
+                    RefreshPage();
+                }
+            };
+        }
+
+        protected override void RefreshPage()
+        {
+            Refreshed = true;
+            GetDBInstances();
         }
 
         private void GotDBInstances(object obj)
@@ -61,37 +69,45 @@ namespace CloudManager
             mDBInstances = instances;
             RDSList.ItemsSource = mDBInstances;
             SelectDefaultIndex(RDSList);
+            ProcessGotResults(instances);
         }
 
         private void GetDBInstances()
         {
-            ObservableCollection<DescribeDBInstance> instances = new ObservableCollection<DescribeDBInstance>();
-            Parallel.ForEach(mRegions, (region) =>
+            DoLoadingWork(page =>
             {
-                IClientProfile profile = DefaultProfile.GetProfile(region.RegionId, mAki, mAks);
-                DefaultAcsClient client = new DefaultAcsClient(profile);
-                DescribeDBInstancesRequest request = new DescribeDBInstancesRequest();
-                try
+                ObservableCollection<DescribeDBInstance> instances = new ObservableCollection<DescribeDBInstance>();
+                Parallel.ForEach(mRegions, (region) =>
                 {
-                    DescribeDBInstancesResponse response = client.GetAcsResponse(request);
-                    foreach (DescribeDBInstances_DBInstance d in response.Items)
+                    IClientProfile profile = DefaultProfile.GetProfile(region.RegionId, mAki, mAks);
+                    DefaultAcsClient client = new DefaultAcsClient(profile);
+                    DescribeDBInstancesRequest request = new DescribeDBInstancesRequest();
+                    try
                     {
-                        DescribeDBInstance instance = new DescribeDBInstance(d);
-                        instances.Add(instance);
-                        
+                        DescribeDBInstancesResponse response = client.GetAcsResponse(request);
+                        foreach (DescribeDBInstances_DBInstance d in response.Items)
+                        {
+                            DescribeDBInstance instance = new DescribeDBInstance(d);
+                            Parallel.Invoke(() => GetAttribute(instance), () => GetParameters(instance),
+                                () => GetBackups(instance), () => GetBackupPolicy(instance));
+                            instances.Add(instance);
+                        }
                     }
-                }
-                catch
-                {
-                }
+                    catch
+                    {
+                    }
+                });
+                Dispatcher.Invoke(new DelegateGot(GotDBInstances), instances);
+            },
+            ex =>
+            {
             });
-            Dispatcher.Invoke(new DelegateGot(GotDBInstances), instances);
+            
         }
 
         private void Refresh_Click(object sender, RoutedEventArgs e)
         {
-            Thread t = new Thread(GetDBInstances);
-            t.Start();
+            RefreshPage();
         }
 
         private void SelectDefaultIndex(ListBox list)
@@ -115,15 +131,13 @@ namespace CloudManager
         private void SetDBInstance(DescribeDBInstance instance)
         {
             mSelDBInstance = instance;
-            Thread t1 = new Thread(new ParameterizedThreadStart(GetAttribute));
-            t1.Start(mSelDBInstance);
-            Thread t2 = new Thread(new ParameterizedThreadStart(GetParameters));
-            t2.Start(mSelDBInstance);
-            Thread t3 = new Thread(new ParameterizedThreadStart(GetBackups));
-            t3.Start(mSelDBInstance);
+            RDSInfo.DataContext = mSelDBInstance;
+            Parameters.ItemsSource = mSelDBInstance.Parameters;
+            Backups.ItemsSource = mSelDBInstance.Backups;
+            BackupPolicy.DataContext = mSelDBInstance.BackupPolicy;
         }
 
-        private void GotAttribute(object obj)
+        /*private void GotAttribute(object obj)
         {
             DescribeDBInstanceAttribute_DBInstanceAttribute attribute = obj as DescribeDBInstanceAttribute_DBInstanceAttribute;
             mSelDBInstance.ConnectionString = attribute.ConnectionString;
@@ -137,11 +151,10 @@ namespace CloudManager
             mSelDBInstance.MaintainTime = attribute.MaintainTime;
             mSelDBInstance.DBInstanceStorage = attribute.DBInstanceStorage;
             RDSInfo.DataContext = mSelDBInstance;
-        }
+        }*/
 
-        private void GetAttribute(object obj)
+        private void GetAttribute(DescribeDBInstance db)
         {
-            DescribeDBInstance db = obj as DescribeDBInstance;
             IClientProfile profile = DefaultProfile.GetProfile(db.RegionId, mAki, mAks);
             DefaultAcsClient client = new DefaultAcsClient(profile);
             DescribeDBInstanceAttributeRequest request = new DescribeDBInstanceAttributeRequest();
@@ -149,18 +162,76 @@ namespace CloudManager
             try
             {
                 DescribeDBInstanceAttributeResponse response = client.GetAcsResponse(request);
-                Dispatcher.Invoke(new DelegateGot(GotAttribute), response.Items[0]);
+                //Dispatcher.Invoke(new DelegateGot(GotAttribute), response.Items[0]);
+                DescribeDBInstanceAttribute_DBInstanceAttribute attribute = response.Items[0];
+                db.ConnectionString = attribute.ConnectionString;
+                db.Port = attribute.Port;
+                db.DBInstanceClassType = attribute.DBInstanceClassType;
+                db.DBInstanceCPU = attribute.DBInstanceCPU;
+                db.DBInstanceMemory = attribute.DBInstanceMemory;
+                db.MaxIOPS = attribute.MaxIOPS;
+                db.MaxConnections = attribute.MaxConnections;
+                db.DBInstanceClass = attribute.DBInstanceClass;
+                db.MaintainTime = attribute.MaintainTime;
+                db.DBInstanceStorage = attribute.DBInstanceStorage;
             }
             catch (Exception)
             {
-
             }
         }
 
-        private void GotParameters(object obj)
+        /*private void GotParameters(object obj)
         {
             mParameters = obj as ObservableCollection<DBParameter>;
             Parameters.ItemsSource = mParameters;
+        }*/
+
+        private void GetParameters(DescribeDBInstance db)
+        {
+            IClientProfile profile = DefaultProfile.GetProfile(db.RegionId, mAki, mAks);
+            DefaultAcsClient client = new DefaultAcsClient(profile);
+            DescribeParameterTemplatesRequest r1 = new DescribeParameterTemplatesRequest();
+            r1.Engine = db.Engine;
+            r1.EngineVersion = db.EngineVersion;
+            DescribeParametersRequest r2 = new DescribeParametersRequest();
+            r2.DBInstanceId = db.DBInstanceId;
+            try
+            {
+                DescribeParameterTemplatesResponse resp1 = client.GetAcsResponse(r1);
+                DescribeParametersResponse resp2 = client.GetAcsResponse(r2);
+                ObservableCollection<DBParameter> parameters = new ObservableCollection<DBParameter>();
+                foreach (DescribeParameterTemplates_TemplateRecord record in resp1.Parameters)
+                {
+                    bool boolValue;
+                    DBParameter para = new DBParameter();
+                    para.DBInstanceId = db.DBInstanceId;
+                    para.Name = record.ParameterName;
+                    para.DefaultValue = record.ParameterValue;
+                    bool.TryParse(record.ForceModify, out boolValue);
+                    para.ForceModify = boolValue;
+                    bool.TryParse(record.ForceRestart, out boolValue);
+                    para.ForceRestart = boolValue;
+                    para.CheckingCode = record.CheckingCode;
+                    para.Description = record.ParameterDescription;
+
+                    foreach (DescribeParameters_DBInstanceParameter running in resp2.RunningParameters)
+                    {
+                        if (para.Name.Equals(running.ParameterName))
+                        {
+                            para.RunningValue = running.ParameterValue;
+                            para.OperationValue = running.ParameterValue;
+                            resp2.RunningParameters.Remove(running);
+                            break;
+                        }
+                    }
+                    parameters.Add(para);
+                }
+                db.Parameters = parameters;
+                //Dispatcher.Invoke(new DelegateGot(GotParameters), parameters);
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private void ModifyParameters(object obj)
@@ -209,7 +280,7 @@ namespace CloudManager
         {
             ObservableCollection<DBParameter> modify = new ObservableCollection<DBParameter>();
 
-            foreach (DBParameter p in mParameters)
+            foreach (DBParameter p in mSelDBInstance.Parameters)
             {
                 if (p.Changed == true)
                 {
@@ -227,7 +298,7 @@ namespace CloudManager
 
         private void Undo_Click(object sender, RoutedEventArgs e)
         {
-            foreach (DBParameter p in mParameters)
+            foreach (DBParameter p in mSelDBInstance.Parameters)
             {
                 if (p.Changed == true)
                 {
@@ -259,61 +330,7 @@ namespace CloudManager
             {
                 para.Changed = false;
             }*/
-        }
-
-        private void GetParameters(object obj)
-        {
-            DescribeDBInstance db = obj as DescribeDBInstance;
-            IClientProfile profile = DefaultProfile.GetProfile(db.RegionId, mAki, mAks);
-            DefaultAcsClient client = new DefaultAcsClient(profile);
-            DescribeParameterTemplatesRequest r1 = new DescribeParameterTemplatesRequest();
-            r1.Engine = db.Engine;
-            r1.EngineVersion = db.EngineVersion;
-            DescribeParametersRequest r2 = new DescribeParametersRequest();
-            r2.DBInstanceId = db.DBInstanceId;
-            try
-            {
-                DescribeParameterTemplatesResponse resp1 = client.GetAcsResponse(r1);
-                DescribeParametersResponse resp2 = client.GetAcsResponse(r2);
-                ObservableCollection<DBParameter> parameters = new ObservableCollection<DBParameter>();
-                foreach (DescribeParameterTemplates_TemplateRecord record in resp1.Parameters)
-                {
-                    bool boolValue;
-                    DBParameter para = new DBParameter();
-                    para.DBInstanceId = db.DBInstanceId;
-                    para.Name = record.ParameterName;
-                    para.DefaultValue = record.ParameterValue;
-                    bool.TryParse(record.ForceModify, out boolValue);
-                    para.ForceModify = boolValue;
-                    bool.TryParse(record.ForceRestart, out boolValue);
-                    para.ForceRestart = boolValue;
-                    para.CheckingCode = record.CheckingCode;
-                    para.Description = record.ParameterDescription;
-
-                    foreach (DescribeParameters_DBInstanceParameter running in resp2.RunningParameters)
-                    {
-                        if (para.Name.Equals(running.ParameterName))
-                        {
-                            para.RunningValue = running.ParameterValue;
-                            para.OperationValue = running.ParameterValue;
-                            resp2.RunningParameters.Remove(running);
-                            break;
-                        }
-                    }
-                    parameters.Add(para);
-                }
-                Dispatcher.Invoke(new DelegateGot(GotParameters), parameters);
-            }
-            catch (Exception)
-            {
-            }
-        }
-
-        private void GotBackups(object obj)
-        {
-            mBackups = obj as ObservableCollection<DBBackup>;
-            Backups.ItemsSource = mBackups;
-        }
+        }      
 
         private string GetFileNameByUrl(string url)
         {
@@ -355,9 +372,14 @@ namespace CloudManager
             Clipboard.SetText(backup.BackupIntranetDownloadURL);
         }
 
-        private void GetBackups(object obj)
+        /*private void GotBackups(object obj)
         {
-            DescribeDBInstance db = obj as DescribeDBInstance;
+            mBackups = obj as ObservableCollection<DBBackup>;
+            Backups.ItemsSource = mBackups;
+        }*/
+
+        private void GetBackups(DescribeDBInstance db)
+        {
             IClientProfile profile = DefaultProfile.GetProfile(db.RegionId, mAki, mAks);
             DefaultAcsClient client = new DefaultAcsClient(profile);
             DescribeBackupsRequest r1 = new DescribeBackupsRequest();
@@ -376,9 +398,8 @@ namespace CloudManager
                     DBBackup backup = new DBBackup(b);
                     backups.Add(backup);
                 }
-                Dispatcher.Invoke(new DelegateGot(GotBackups), backups);
-
-                GetBackupPolicy(db);
+                db.Backups = backups;
+                //Dispatcher.Invoke(new DelegateGot(GotBackups), backups);
             }
             catch (Exception)
             {
@@ -386,15 +407,14 @@ namespace CloudManager
             }
         }
 
-        private void GotBackupPolicy(object obj)
+        /*private void GotBackupPolicy(object obj)
         {
             mPolicy = obj as DBBackupPolicy;
             BackupPolicy.DataContext = mPolicy;
-        }
+        }*/
 
-        private void GetBackupPolicy(object obj)
+        private void GetBackupPolicy(DescribeDBInstance db)
         {
-            DescribeDBInstance db = obj as DescribeDBInstance;
             IClientProfile profile = DefaultProfile.GetProfile(db.RegionId, mAki, mAks);
             DefaultAcsClient client = new DefaultAcsClient(profile);
             DescribeBackupPolicyRequest request = new DescribeBackupPolicyRequest();
@@ -404,7 +424,8 @@ namespace CloudManager
                 DescribeBackupPolicyResponse response = client.GetAcsResponse(request);
                 DBBackupPolicy policy = new DBBackupPolicy(response);
                 policy.DBInstanceId = db.DBInstanceId;
-                Dispatcher.Invoke(new DelegateGot(GotBackupPolicy), policy);
+                db.BackupPolicy = policy;
+                //Dispatcher.Invoke(new DelegateGot(GotBackupPolicy), policy);
             }
             catch (Exception)
             {
@@ -484,14 +505,14 @@ namespace CloudManager
         {
             IClientProfile profile = DefaultProfile.GetProfile(mSelDBInstance.RegionId, mAki, mAks);
             DefaultAcsClient client = new DefaultAcsClient(profile);
-            EditBackupPolicyWindow win = new EditBackupPolicyWindow(mPolicy, client);
+            EditBackupPolicyWindow win = new EditBackupPolicyWindow(mSelDBInstance.BackupPolicy, client);
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             win.Owner = mMainWindow;
             win.ShowDialog();
             if (win.NewPolicy != null)
             {
-                mPolicy = win.NewPolicy;
-                BackupPolicy.DataContext = mPolicy;
+                mSelDBInstance.BackupPolicy = win.NewPolicy;
+                BackupPolicy.DataContext = mSelDBInstance.BackupPolicy;
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -12,10 +13,10 @@ namespace CloudManager
 {
     public class DescribeLoadBalancer : INotifyPropertyChanged
     {
-        private List<DescribeRegions_Region> mRegions;
+        private List<DescribeRegions_Region> Regions = new List<DescribeRegions_Region>();
         public DescribeLoadBalancer(DescribeLoadBalancers_LoadBalancer b, List<DescribeRegions_Region> r)
         {
-            mRegions = r;
+            Regions.AddRange(r);
             CreateTimeStamp = b.CreateTimeStamp;
             CreateTime = b.CreateTime;
             InternetChargeType = b.InternetChargeType;
@@ -161,7 +162,7 @@ namespace CloudManager
         }
         private string GetRegionName(string region)
         {
-            foreach (DescribeRegions_Region r in mRegions)
+            foreach (DescribeRegions_Region r in Regions)
             {
                 if (r.RegionId.Contains(region))
                 {
@@ -302,6 +303,11 @@ namespace CloudManager
                 notifyPropertyChanged("ResourceGroupId");
             }
         }
+        public ObservableCollection<DescribeInstance> AddedServers { get; set; }
+        public ObservableCollection<DescribeInstance> NotAddedServers { get; set; }
+        public ObservableCollection<SLBListener> Listeners { get; set; }
+        public ObservableCollection<ServerGroup> VServerGroups { get; set; }
+        public ObservableCollection<ServerGroup> MServerGroups { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void notifyPropertyChanged(string propertyName)

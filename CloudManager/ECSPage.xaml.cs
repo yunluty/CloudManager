@@ -23,11 +23,11 @@ namespace CloudManager
     /// <summary>
     /// ECSPage.xaml 的交互逻辑
     /// </summary>
-    public partial class ECSPage : Page
+    public partial class ECSPage : PageBase
     {
         private string mAki, mAks;
         private List<DescribeRegions_Region> mRegions;
-        private ObservableCollection<DescribeInstance> mECSInstances = new ObservableCollection<DescribeInstance>();
+        private ObservableCollection<DescribeInstance> mECSInstances;//= new ObservableCollection<DescribeInstance>();
         private DescribeInstance mSelInstance;
         //private SQLiteConnection mSQLiteConnection;
         //private FtpInfo mFtpInfo;
@@ -45,40 +45,58 @@ namespace CloudManager
             mAki = App.AKI;
             mAks = App.AKS;
             mRegions = App.REGIONS;
-            ECSList.ItemsSource = mECSInstances; //Display the ECSs list
-            Thread t1 = new Thread(GetInstances);
-            t1.Start();
+            //ECSList.ItemsSource = mECSInstances; //Display the ECSs list
+            this.Loaded += delegate
+            {
+                if (!Refreshed)
+                {
+                    RefreshPage();
+                }
+            };
+        }
+
+        protected override void RefreshPage()
+        {
+            Refreshed = true;
+            GetInstances();
         }
 
         private void GetInstances()
         {
-            ObservableCollection<DescribeInstance> instances = new ObservableCollection<DescribeInstance>();
-            Parallel.ForEach(mRegions, (region) =>
+            DoLoadingWork(page =>
             {
-                IClientProfile profile = DefaultProfile.GetProfile(region.RegionId, mAki, mAks);
-                DefaultAcsClient client = new DefaultAcsClient(profile);
-                DescribeInstancesRequest request = new DescribeInstancesRequest();
-                try
+                ObservableCollection<DescribeInstance> instances = new ObservableCollection<DescribeInstance>();
+                Parallel.ForEach(mRegions, (region) =>
                 {
-                    DescribeInstancesResponse response = client.GetAcsResponse(request);
-                    if (response.Instances.Count > 0)
+                    IClientProfile profile = DefaultProfile.GetProfile(region.RegionId, mAki, mAks);
+                    DefaultAcsClient client = new DefaultAcsClient(profile);
+                    DescribeInstancesRequest request = new DescribeInstancesRequest();
+                    try
                     {
-                        foreach (DescribeInstances_Instance i in response.Instances)
+                        DescribeInstancesResponse response = client.GetAcsResponse(request);
+                        if (response.Instances.Count > 0)
                         {
-                            DescribeInstance instance = new DescribeInstance(i);
-                            instances.Add(instance);
-                            
+                            foreach (DescribeInstances_Instance i in response.Instances)
+                            {
+                                DescribeInstance instance = new DescribeInstance(i);
+                                instances.Add(instance);
+                            }
                         }
                     }
-                }
-                catch (ClientException)
-                {
-                }
-                catch (WebException)
-                {
-                }
+                    catch (ClientException)
+                    {
+                    }
+                    catch (WebException)
+                    {
+                    }
+                });
+                Dispatcher.Invoke(new DelegateGot(GotInstances), instances);
+            },
+            ex =>
+            {
+                //TODO:
             });
-            Dispatcher.Invoke(new DelegateGot(GotInstances), instances);
+            
         }
 
         private void GotInstances(object obj)
@@ -87,12 +105,12 @@ namespace CloudManager
             mECSInstances = instances;
             ECSList.ItemsSource = mECSInstances;
             SelectDefaultIndex(ECSList);
+            ProcessGotResults(instances);
         }
 
         private void Refresh_Click(object sender, RoutedEventArgs e)
         {
-            Thread t = new Thread(GetInstances);
-            t.Start();
+            RefreshPage();
         }
 
         private void SelectDefaultIndex(ListBox list)
@@ -233,7 +251,7 @@ namespace CloudManager
 
             do
             {
-                Thread.Sleep(TimeSpan.FromSeconds(5));
+                Thread.Sleep(TimeSpan.FromSeconds(10));
                 try
                 {
                     DescribeInstanceStatusResponse reponse = client.GetAcsResponse(request);

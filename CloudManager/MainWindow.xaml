@@ -7,7 +7,7 @@
         xmlns:c="clr-namespace:System.Collections;assembly=mscorlib"
         xmlns:local="clr-namespace:CloudManager"
         mc:Ignorable="d"
-        Title="阿里云大师" Height="720" Width="1024" Icon="CloudManager16.ico"
+        Title="阿里云大师" Height="720" Width="1024"
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
