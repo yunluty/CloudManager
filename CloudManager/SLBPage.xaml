@@ -203,8 +203,8 @@
                                 <Button Content="刷新" Click="UpdateListeners_Click" Height="32" Width="60" Margin="10,0,0,0" Style="{StaticResource ProcessButton}"/>
                             </StackPanel>
                         </Grid>
-                        <ListView x:Name="ListenersList" SelectionChanged="ListenersList_SelectionChanged" MaxHeight="240" Background="Transparent"
-                                  Visibility="{Binding Path=Count, Converter={StaticResource VisibilityConverter}}" Margin="0,5,0,0">
+                        <ListView x:Name="ListenersList" MaxHeight="240" Background="Transparent" Margin="0,5,0,0"
+                                  SelectionChanged="ListenersList_SelectionChanged">
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn CellTemplate="{StaticResource ListenersSelector}">
@@ -228,7 +228,7 @@
                             <Button Content="删除" Click="DeleteListeners_Click" Height="32" Width="60" Margin="10,0,0,0" Style="{StaticResource ProcessButton}"/>
                         </StackPanel>
                     </StackPanel>
-                    <StackPanel Grid.Row="1">
+                    <StackPanel x:Name="ListenerDetail" Grid.Row="1" Visibility="{Binding Path=Count, Converter={StaticResource VisibilityConverter}}">
                         <Label Content="监听信息" FontSize="16"/>
                         <Grid x:Name="ListenerInfo" Margin="0,10,0,0">
                             <Grid.RowDefinitions>
@@ -280,7 +280,7 @@
                                         Click="AddRule_Click" Style="{StaticResource ProcessButton}"/>
                             </Grid>
                             <ListView x:Name="ForwardRules" MaxHeight="200" Background="Transparent"
-                                  Visibility="{Binding Path=Count, Converter={StaticResource VisibilityConverter}}">
+                                      Visibility="{Binding Path=Count, Converter={StaticResource VisibilityConverter}}">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="规则名称" DisplayMemberBinding="{Binding RuleName}" Width="100"/>

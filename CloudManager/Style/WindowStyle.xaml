@@ -194,14 +194,16 @@
                             <AdornerDecorator>
                                 <ContentPresenter/>
                             </AdornerDecorator>
-                            <Grid x:Name="BlankGrid" Background="#F9F9F9">
+                            <Grid x:Name="InitGrid" Background="#F9F9F9">
+                            </Grid>
+                            <Grid x:Name="BlankGrid" Background="#F9F9F9" Visibility="Collapsed">
                                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="未查询到符合条件的记录，" FontSize="14"/>
+                                        <TextBlock Text="暂未查询到符合条件的该产品记录，" FontSize="14"/>
                                         <Button x:Name="Refresh" Content="刷新"
                                                 FontSize="14" Style="{StaticResource ClickText}"/>
                                     </StackPanel>
-                                    <Button x:Name="AliyunLink" Content="或者访问阿里云购买" Margin="0,10,0,0"
+                                    <Button x:Name="AliyunLink" Content="或者访问阿里云购买该产品" Margin="0,10,0,0"
                                             FontSize="14" Style="{StaticResource ClickText}"/>
                                 </StackPanel>
                             </Grid>

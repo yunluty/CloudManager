@@ -33,11 +33,12 @@ namespace CloudManager
         private ListenerBasePage mBasePage;
         private ListenerHealthCheckPage mHealthPage;
         private ListenerSubmmitPage mSubmmitPage;
+        private bool mUpdateListeners;
 
         public ObservableCollection<ServerGroup> mVServerGroups { get; set; } //Must
         public ObservableCollection<ServerGroup> mMServerGroups { get; set; }
         public delegate void DelegateGot(object obj);
-
+        public bool UpdateListeners { get { return mUpdateListeners; } }
 
         public AddListenerWindow(DescribeLoadBalancer balancer)
         {
@@ -78,6 +79,7 @@ namespace CloudManager
             mParams.Gzip = true;
             mParams.XForwardedFor = true;
             mParams.TCPCheck = true;
+            mParams.HealthCheckURI = "/";
             mParams.http_2xx = true;
             mParams.http_3xx = true;
             mParams.HealthCheckTimeout = 5;
@@ -219,6 +221,7 @@ namespace CloudManager
             }
             else
             {
+                mParams.HealthCheckURI = "/";
                 mParams.http_2xx = true;
                 mParams.http_3xx = true;
             }
@@ -298,7 +301,7 @@ namespace CloudManager
 
         public void NotifyUpdate()
         {
-            
+            mUpdateListeners = true;
         }
     }
 

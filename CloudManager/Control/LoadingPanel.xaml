@@ -39,6 +39,6 @@
                 <Image x:Name="_cImage" Source="../images/loading.png"/>
             </ContentPresenter.Content>
         </ContentPresenter>
-        <!--TextBlock x:Name="_cText" Text="Loading..." FontSize="14" Foreground="DarkGray" Margin="0,10,0,0"/-->
+        <TextBlock x:Name="_cText" Text="" FontSize="12" Foreground="DarkGray" Margin="0,10,0,0"/>
     </StackPanel>
 </Grid>

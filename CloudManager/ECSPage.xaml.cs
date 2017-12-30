@@ -63,7 +63,7 @@ namespace CloudManager
 
         private void GetInstances()
         {
-            DoLoadingWork(page =>
+            DoLoadingWork("正在加载ECS实例", page =>
             {
                 ObservableCollection<DescribeInstance> instances = new ObservableCollection<DescribeInstance>();
                 Parallel.ForEach(mRegions, (region) =>
@@ -95,8 +95,7 @@ namespace CloudManager
             ex =>
             {
                 //TODO:
-            });
-            
+            }); 
         }
 
         private void GotInstances(object obj)
@@ -105,7 +104,7 @@ namespace CloudManager
             mECSInstances = instances;
             ECSList.ItemsSource = mECSInstances;
             SelectDefaultIndex(ECSList);
-            ProcessGotResults(instances);
+            HideInitPage(instances);
         }
 
         private void Refresh_Click(object sender, RoutedEventArgs e)

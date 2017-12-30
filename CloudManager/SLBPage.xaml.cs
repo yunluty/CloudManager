@@ -56,6 +56,7 @@ namespace CloudManager
             Added.DataContext = new ObservableCollection<DescribeInstance>();
             NotAdded.DataContext = new ObservableCollection<DescribeInstance>();
             ListenersList.DataContext = new ObservableCollection<SLBListener>();
+            ListenerDetail.DataContext = new ObservableCollection<SLBListener>();
         }
 
         protected override void RefreshPage()
@@ -66,7 +67,7 @@ namespace CloudManager
 
         private void GetLoadBalancers()
         {
-            DoLoadingWork(page =>
+            DoLoadingWork("正在加载SLB实例", page =>
             {
                 ObservableCollection<DescribeLoadBalancer> balancers = new ObservableCollection<DescribeLoadBalancer>();
                 Parallel.ForEach(mRegions, (region) =>
@@ -121,7 +122,7 @@ namespace CloudManager
             mLoadBalancers = balancers;
             SLBList.ItemsSource = mLoadBalancers;
             SelectDefaultIndex(SLBList);
-            ProcessGotResults(balancers);
+            HideInitPage(balancers);
         }
 
         private void Refresh_Click(object sender, RoutedEventArgs e)
@@ -161,6 +162,7 @@ namespace CloudManager
             ListenersList.ItemsSource = balancer.Listeners;
             ListenersList.DataContext = balancer.Listeners;
             ListenersList.SelectedIndex = 0;
+            ListenerDetail.DataContext = balancer.Listeners;
         }
 
         private void StartedBalancer(object obj)
@@ -521,6 +523,7 @@ namespace CloudManager
                         ListenersList.ItemsSource = balancer.Listeners;
                         ListenersList.DataContext = balancer.Listeners;
                         ListenersList.SelectedIndex = 0;
+                        ListenerDetail.DataContext = balancer.Listeners;
                     }
                 });
             },
@@ -935,6 +938,10 @@ namespace CloudManager
             win.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             win.Owner = mMainWindow;
             win.ShowDialog();
+            if (win.UpdateListeners)
+            {
+                GetListeners(mSelBalancer);
+            }
         }
 
         private void UpdateListeners_Click(object sender, RoutedEventArgs e)

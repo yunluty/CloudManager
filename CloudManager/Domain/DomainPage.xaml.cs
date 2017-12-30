@@ -59,7 +59,7 @@ namespace CloudManager.Domain
 
         private void GetDomainList()
         {
-            DoLoadingWork(page =>
+            DoLoadingWork("正在加载域名", page =>
             {
                 var nextPage = false;
                 var domains = new ObservableCollection<DescribeDomain>();
@@ -76,6 +76,7 @@ namespace CloudManager.Domain
                         foreach (QueryDomainList_Domain d in response.Data)
                         {
                             DescribeDomain domain = new DescribeDomain(d);
+                            GetDomainRecords(domain);
                             domains.Add(domain);
                         }
                     }
@@ -90,7 +91,7 @@ namespace CloudManager.Domain
                     mDomains = domains;
                     DomainList.ItemsSource = mDomains;
                     SelectDefaultIndex(DomainList);
-                    ProcessGotResults(domains);
+                    HideInitPage(domains);
                 });
             },
             ex =>
@@ -160,32 +161,37 @@ namespace CloudManager.Domain
                     if (domain == mSelDomain)
                     {
                         //Information.DataContext = mSelDomain;
-                        DomainStatus.Children.Clear();
-                        DNSList.Children.Clear();
-                        if (mSelDomain.DomainStatusList != null
-                            && mSelDomain.DomainStatusList.Count > 0)
-                        {
-                            foreach (string status in mSelDomain.DomainStatusList)
-                            {
-                                Label label = new Label();
-                                label.Content = status;
-                                DomainStatus.Children.Add(label);
-                            }
-                        }
-
-                        if (mSelDomain.DNSList != null
-                            && mSelDomain.DNSList.Count > 0)
-                        {
-                            foreach (string dns in mSelDomain.DNSList)
-                            {
-                                Label label = new Label();
-                                label.Content = dns;
-                                DNSList.Children.Add(label);
-                            }
-                        }
+                        SetDNSAndDomainStatus();
                     }
                 });
             });
+        }
+
+        private void SetDNSAndDomainStatus()
+        {
+            DomainStatus.Children.Clear();
+            DNSList.Children.Clear();
+            if (mSelDomain.DomainStatusList != null
+                && mSelDomain.DomainStatusList.Count > 0)
+            {
+                foreach (string status in mSelDomain.DomainStatusList)
+                {
+                    Label label = new Label();
+                    label.Content = status;
+                    DomainStatus.Children.Add(label);
+                }
+            }
+
+            if (mSelDomain.DNSList != null
+                && mSelDomain.DNSList.Count > 0)
+            {
+                foreach (string dns in mSelDomain.DNSList)
+                {
+                    Label label = new Label();
+                    label.Content = dns;
+                    DNSList.Children.Add(label);
+                }
+            }
         }
 
         private void DomainList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -197,51 +203,63 @@ namespace CloudManager.Domain
 
             mSelDomain = (sender as ListBox).SelectedItem as DescribeDomain;
             Information.DataContext = mSelDomain;
-            GetDomainInfo(mSelDomain);
-            GetDomainRecords(mSelDomain);
+            if (mSelDomain.Registrar == null || mSelDomain.DomainStatusList == null)
+            {
+                GetDomainInfo(mSelDomain);
+            }
+            else
+            {
+                SetDNSAndDomainStatus();
+            }
+            RecordList.ItemsSource = mSelDomain.Records;
         }
 
         private void GetDomainRecords(DescribeDomain domain)
         {
-            Task.Run(() =>
+            var nextPage = false;
+            var sum = 0L;
+            var count = 0;
+            var records = new ObservableCollection<DescribeDomainRecord>();
+            do
             {
-                var nextPage = false;
-                var sum = 0L;
-                var count = 0;
-                var records = new ObservableCollection<DescribeDomainRecord>();
-                do
-                {
-                    try
-                    {
-                        DescribeDomainRecordsRequest request = new DescribeDomainRecordsRequest();
-                        request.DomainName = domain.DomainName;
-                        request.PageNumber = ++count;
-                        request.PageSize = 100;
-                        DescribeDomainRecordsResponse response = mClient.GetAcsResponse(request);
-                        foreach (Record r in response.DomainRecords)
-                        {
-                            DescribeDomainRecord record = new DescribeDomainRecord(r);
-                            record.Domain = domain;
-                            records.Add(record);
-                        }
-                        sum += response.DomainRecords.Count;
-                        nextPage = response.TotalCount > sum;
-                    }
-                    catch
-                    {
-                    }
-                } while (nextPage);
                 try
                 {
-                    Dispatcher.Invoke(() =>
+                    DescribeDomainRecordsRequest request = new DescribeDomainRecordsRequest();
+                    request.DomainName = domain.DomainName;
+                    request.PageNumber = ++count;
+                    request.PageSize = 100;
+                    DescribeDomainRecordsResponse response = mClient.GetAcsResponse(request);
+                    foreach (Record r in response.DomainRecords)
                     {
-                        domain.Records = records;
-                        RecordList.ItemsSource = domain.Records;
-                    });
+                        DescribeDomainRecord record = new DescribeDomainRecord(r);
+                        record.Domain = domain;
+                        records.Add(record);
+                    }
+                    sum += response.DomainRecords.Count;
+                    nextPage = response.TotalCount > sum;
                 }
                 catch
                 {
                 }
+            } while (nextPage);
+            domain.Records = records;
+        }
+
+        private void RefreshRecords(DescribeDomain domain)
+        {
+            DoLoadingWork(page =>
+            {
+                GetDomainRecords(domain);
+                Dispatcher.Invoke(() =>
+                {
+                    if (mSelDomain == domain)
+                    {
+                        RecordList.ItemsSource = domain.Records;
+                    }
+                });
+            },
+            ex =>
+            {
             });
         }
 
@@ -254,33 +272,29 @@ namespace CloudManager.Domain
             win.ShowDialog();
             if (win.UpdateRecords)
             {
-                GetDomainRecords(mSelDomain);
+                RefreshRecords(mSelDomain);
             }
         }
 
         private void PauseDomainRecord(DescribeDomainRecord record)
         {
-            Task.Run(() =>
+            DoLoadingWork(page =>
             {
-                try
+                SetDomainRecordStatusRequest request = new SetDomainRecordStatusRequest();
+                request.RecordId = record.RecordId;
+                if (record.Status.Equals("Enable", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    SetDomainRecordStatusRequest request = new SetDomainRecordStatusRequest();
-                    request.RecordId = record.RecordId;
-                    if (record.Status.Equals("Enable", StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        request.Status = "Disable";
-                    }
-                    else
-                    {
-                        request.Status = "Enable";
-                    }
-                    SetDomainRecordStatusResponse response = mClient.GetAcsResponse(request);
-                    record.Status = response.Status;
+                    request.Status = "Disable";
                 }
-                catch
+                else
                 {
-
+                    request.Status = "Enable";
                 }
+                SetDomainRecordStatusResponse response = mClient.GetAcsResponse(request);
+                record.Status = response.Status;
+            },
+            ex =>
+            {
             });
         }
 
@@ -291,21 +305,18 @@ namespace CloudManager.Domain
 
         private void DeleteDomainRecord(DescribeDomainRecord record)
         {
-            Task.Run(() =>
+            DoLoadingWork(page =>
             {
-                try
+                DeleteDomainRecordRequest request = new DeleteDomainRecordRequest();
+                request.RecordId = record.RecordId;
+                DeleteDomainRecordResponse response = mClient.GetAcsResponse(request);
+                Dispatcher.Invoke(() =>
                 {
-                    DeleteDomainRecordRequest request = new DeleteDomainRecordRequest();
-                    request.RecordId = record.RecordId;
-                    DeleteDomainRecordResponse response = mClient.GetAcsResponse(request);
-                    Dispatcher.Invoke(() =>
-                    {
-                        record.Domain.Records.Remove(record);
-                    });
-                }
-                catch
-                {
-                }
+                    record.Domain.Records.Remove(record);
+                });
+            },
+            ex =>
+            {
             });
         }
 
@@ -322,7 +333,7 @@ namespace CloudManager.Domain
             win.ShowDialog();
             if (win.UpdateRecords)
             {
-                GetDomainRecords(mSelDomain);
+                RefreshRecords(mSelDomain);
             }
         }
     }

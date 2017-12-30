@@ -69,12 +69,12 @@ namespace CloudManager
             mDBInstances = instances;
             RDSList.ItemsSource = mDBInstances;
             SelectDefaultIndex(RDSList);
-            ProcessGotResults(instances);
+            HideInitPage(instances);
         }
 
         private void GetDBInstances()
         {
-            DoLoadingWork(page =>
+            DoLoadingWork("正在加载RDS实例", page =>
             {
                 ObservableCollection<DescribeDBInstance> instances = new ObservableCollection<DescribeDBInstance>();
                 Parallel.ForEach(mRegions, (region) =>

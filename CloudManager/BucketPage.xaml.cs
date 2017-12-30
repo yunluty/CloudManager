@@ -64,13 +64,13 @@ namespace CloudManager
             {
                 SelectDefaultIndex(BucketList);
             }
-            ProcessGotResults(mBuckets);
+            HideInitPage(mBuckets);
         }
 
         private void GetBuckets()
         {
             ObservableCollection<DescribeBucket> buckets = new ObservableCollection<DescribeBucket>();
-            DoLoadingWork(page =>
+            DoLoadingWork("正在加载OSS储存空间", page =>
             {
                 string endpoint = "http://oss-cn-hangzhou.aliyuncs.com";
                 OssClient client = new OssClient(endpoint, mAki, mAks);

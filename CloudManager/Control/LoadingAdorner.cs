@@ -14,6 +14,12 @@ namespace CloudManager.Control
         private VisualCollection VisualChildren;
         private LoadingPanel LoadingPanel;
 
+        public string Text
+        {
+            get { return LoadingPanel.Text; }
+            set { LoadingPanel.Text = value; }
+        }
+
         public LoadingAdorner(UIElement adornedElement) : base(adornedElement)
         {
             LoadingPanel = new LoadingPanel(adornedElement);

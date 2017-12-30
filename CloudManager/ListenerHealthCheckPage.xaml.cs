@@ -66,5 +66,29 @@ namespace CloudManager
                 mOwner.Cancel();
             }
         }
+
+        private void HealthCheckURI_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var textBox = sender as TextBox;
+
+            if (textBox.Text.Length == 0)
+            {
+                textBox.Text += '/';
+                textBox.SelectionStart = textBox.Text.Length;
+            }
+            else if (textBox.Text[0] != '/')
+            {
+                var index = textBox.Text.IndexOf('/');
+                if (index > 0)
+                {
+                    textBox.Text = textBox.Text.Substring(index);
+                }
+                else
+                {
+                    textBox.Text = "/";
+                }
+                textBox.SelectionStart = textBox.Text.Length;
+            }
+        }
     }
 }

@@ -18,6 +18,7 @@ namespace CloudManager
     {
         private LoadingAdorner PageLoading;
         private Grid BlankPage;
+        private Grid InitPage;
         private bool Initialization;
 
         protected bool HideBlankPage;
@@ -39,10 +40,12 @@ namespace CloudManager
                     layer.Add(PageLoading);
                     //content.Effect = new BlurEffect { Radius = 2 };
 
+                    InitPage = (Grid)this.Template.FindName("InitGrid", this);
                     BlankPage = (Grid)this.Template.FindName("BlankGrid", this);
                     if (HideBlankPage)
                     {
-                        BlankPage.Visibility = Visibility.Hidden;
+                        InitPage.Visibility = Visibility.Collapsed;
+                        BlankPage.Visibility = Visibility.Collapsed;
                     }
 
                     Button fresh = (Button)this.Template.FindName("Refresh", this);
@@ -60,6 +63,28 @@ namespace CloudManager
         }
 
         protected abstract void RefreshPage();
+
+        public void DoLoadingWork(string text, Action<PageBase> doWhat, Action<Exception> doError)
+        {
+            PageLoading.Text = text;
+            PageLoading?.SetValue(VisibilityProperty, Visibility.Visible);
+            Task.Run(() =>
+            {
+                try
+                {
+                    doWhat?.Invoke(this);
+                }
+                catch (Exception ex)
+                {
+                    try { doError?.Invoke(ex); } catch { }
+                }
+                Dispatcher.Invoke(() =>
+                {
+                    PageLoading.Text = "";
+                    PageLoading?.SetValue(VisibilityProperty, Visibility.Hidden);
+                });
+            });
+        }
 
         public void DoLoadingWork(Action<PageBase> doWhat, Action<Exception> doError)
         {
@@ -103,21 +128,37 @@ namespace CloudManager
             });
         }
 
-        protected void ProcessGotResults<T>(ObservableCollection<T> results) where T : INotifyPropertyChanged
+        public void DoLoadingWork(string text, Action<PageBase> doWhat, Action<PageBase> doNext, Action<Exception> doError)
         {
-            if (BlankPage == null || HideBlankPage)
+            PageLoading.Text = text;
+            PageLoading?.SetValue(VisibilityProperty, Visibility.Visible);
+            Task.Run(() =>
             {
-                return;
-            }
-
-            if (results.Count > 0)
-            {
-                if (BlankPage.Visibility != Visibility.Hidden)
+                try
                 {
-                    BlankPage.Visibility = Visibility.Hidden;
+                    doWhat?.Invoke(this);
                 }
-            }
-            else
+                catch (Exception ex)
+                {
+                    try { doError?.Invoke(ex); } catch { }
+                }
+                Dispatcher.Invoke(() =>
+                {
+                    PageLoading.Text = "";
+                    PageLoading?.SetValue(VisibilityProperty, Visibility.Hidden);
+                });
+
+                doNext?.Invoke(this);
+            });
+        }
+
+        protected void HideInitPage<T>(ObservableCollection<T> results) where T : INotifyPropertyChanged
+        {
+            if (BlankPage == null || InitPage == null || HideBlankPage) return;
+
+            InitPage.Visibility = Visibility.Collapsed;
+
+            if (results.Count == 0)
             {
                 if (BlankPage.Visibility != Visibility.Visible)
                 {

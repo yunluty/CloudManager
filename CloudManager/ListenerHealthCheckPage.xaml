@@ -63,9 +63,8 @@
             <StackPanel Grid.Row="3" Grid.Column="1" Margin="0,5,0,20"
                         Visibility="{Binding Path=HTTPCheck,Converter={StaticResource VisibilityConverter}}">
                 <TextBox x:Name="TCPHealthCheckURI" Width="240" Height="32" MaxLength="80"
-                         VerticalContentAlignment="Center" HorizontalAlignment="Left"
-                         Text="{Binding Path=HealthCheckURI, Mode=TwoWay}"
-                         InputMethod.IsInputMethodEnabled="False"/>
+                         VerticalContentAlignment="Center" HorizontalAlignment="Left" Text="{Binding Path=HealthCheckURI, Mode=TwoWay}"
+                         InputMethod.IsInputMethodEnabled="False" TextChanged="HealthCheckURI_TextChanged"/>
                 <TextBlock Text="用于健康检查页面文件的URI，建议对静态页面进行检查。长度限制为1-80个字符，只能使用字母、数字、'-'、'/'、'.'、'%'、'?'、'#'、'&amp;'、'＝'这些字符"
                            TextWrapping="WrapWithOverflow" Foreground="DarkGray" Margin="0,5,0,0"/>
             </StackPanel>
@@ -103,7 +102,7 @@
                        Visibility="{Binding Path=HTTPCheckOn, Converter={StaticResource VisibilityConverter}}"/>
             <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,10,0,20"
                         Visibility="{Binding Path=HTTPCheckOn, Converter={StaticResource VisibilityConverter}}">
-                <TextBox x:Name="HTTPHealthCheckDomain" Width="240" Height="32" MaxLength="5"
+                <TextBox x:Name="HTTPHealthCheckDomain" Width="240" Height="32" MaxLength="80"
                          VerticalContentAlignment="Center" HorizontalAlignment="Left"
                          Text="{Binding Path=HealthCheckDomain, Mode=TwoWay}"
                          InputMethod.IsInputMethodEnabled="False"/>
@@ -126,10 +125,9 @@
                        Visibility="{Binding Path=HTTPCheckOn,Converter={StaticResource VisibilityConverter}}"/>
             <StackPanel Grid.Row="3" Grid.Column="1" Margin="0,0,0,20"
                         Visibility="{Binding Path=HTTPCheckOn,Converter={StaticResource VisibilityConverter}}">
-                <TextBox x:Name="HTTPHealthCheckURI" Width="240" Height="32" MaxLength="5"
-                         VerticalContentAlignment="Center" HorizontalAlignment="Left"
-                         Text="{Binding Path=HealthCheckURI, Mode=TwoWay}"
-                         InputMethod.IsInputMethodEnabled="False"/>
+                <TextBox x:Name="HTTPHealthCheckURI" Width="240" Height="32" MaxLength="80"
+                         VerticalContentAlignment="Center" HorizontalAlignment="Left" Text="{Binding Path=HealthCheckURI, Mode=TwoWay}"
+                         InputMethod.IsInputMethodEnabled="False" TextChanged="HealthCheckURI_TextChanged"/>
                 <TextBlock Text="用于健康检查页面文件的URI，建议对静态页面进行检查。长度限制为1-80个字符，只能使用字母、数字、'-'、'/'、'.'、'%'、'?'、'#'、'&amp;'、'＝'这些字符"
                            TextWrapping="WrapWithOverflow" Foreground="DarkGray" Margin="0,5,0,0"/>
             </StackPanel>

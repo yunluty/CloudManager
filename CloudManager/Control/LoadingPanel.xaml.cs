@@ -42,10 +42,20 @@ namespace CloudManager.Control
             set { _visualBrush.Visual = value; }
         }
 
-        /*public string Text
+        public string Text
         {
             get { return _cText.Text; }
-            set { _cText.Text = value; }
-        }*/
+            set
+            {
+                if (value.Length > 0)
+                {
+                    _cText.Text = value + " . . .";
+                }
+                else
+                {
+                    _cText.Text = "";
+                }
+            }
+        }
     }
 }
