@@ -8,42 +8,68 @@
       d:DesignHeight="600" d:DesignWidth="600"
       Title="BackupTaskPage">
 
-    <StackPanel Margin="5,0,5,0">
+    <Grid Margin="5,0,5,0">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="35"/>
+                <ColumnDefinition Width="1.5*"/>
+                <ColumnDefinition Width="2.5*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="30"/>
+            </Grid.ColumnDefinitions>
+            <Grid x:Name="Column1" Grid.Column="0"/>
+            <Grid x:Name="Column2" Grid.Column="1"/>
+            <Grid x:Name="Column3" Grid.Column="2"/>
+            <Grid x:Name="Column4" Grid.Column="3"/>
+            <Grid x:Name="Column5" Grid.Column="4"/>
+            <Grid x:Name="Column6" Grid.Column="5"/>
+            <Grid x:Name="Column7" Grid.Column="6"/>
+        </Grid>
         <ListBox x:Name="RunningList" BorderThickness="0" BorderBrush="Transparent" Background="Transparent"
-                 Visibility="{Binding Path=TaskType , Converter={StaticResource VisibilityConverter}, ConverterParameter=Running}">
+                 Visibility="{Binding Path=TaskType, Converter={StaticResource VisibilityConverter}, ConverterParameter=Running}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <Image Width="32" Height="32" Stretch="None" Margin="5,0,0,0"
+                        <Image Height="32" Stretch="None" Width="{Binding ElementName=Column1, Path=ActualWidth}"
                                Source="{Binding InstanceType, Converter={StaticResource StatusImageConverter}}"/>
-                        <Label Content="{Binding InstanceName}" Margin="10,0,0,0" Width="120" VerticalAlignment="Center"/>
-                        <Label Content="{Binding FileName}" Margin="5,0,0,0" Width="280" VerticalAlignment="Center"/>
+                        <Label Content="{Binding InstanceName}" VerticalAlignment="Center"
+                               Width="{Binding ElementName=Column2, Path=ActualWidth}"/>
+                        <Label Content="{Binding FileName}" VerticalAlignment="Center"
+                               Width="{Binding ElementName=Column3, Path=ActualWidth}"/>
                         <Label Content="{Binding TotalSize, Converter={StaticResource FileSizeConverter}}"
-                               Width="80" VerticalAlignment="Center" Margin="5,0,0,0"/>
-                        <StackPanel Orientation="Horizontal" Margin="5,0,0,0">
+                               VerticalAlignment="Center" Width="{Binding ElementName=Column4, Path=ActualWidth}"/>
+                        <StackPanel Orientation="Horizontal" Width="{Binding ElementName=Column5, Path=ActualWidth}">
                             <ProgressBar Value="{Binding Progress}" Width="150" Height="15"/>
                             <Label Content="{Binding ProgressPercent}" Width="40" VerticalAlignment="Center" Margin="5,0,0,0"/>
                         </StackPanel>
-                        <Label Content="{Binding Status, Converter={StaticResource StatusTextConverter}}" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                        <Label Content="{Binding Status, Converter={StaticResource StatusTextConverter}}" VerticalAlignment="Center"
+                               Width="{Binding ElementName=Column6, Path=ActualWidth}"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <ListBox x:Name="FinishedList" BorderThickness="0" BorderBrush="Transparent" Background="Transparent" MaxHeight="680"
+        <ListBox x:Name="FinishedList" BorderThickness="0" BorderBrush="Transparent" Background="Transparent"
                  Visibility="{Binding Path=TaskType, Converter={StaticResource VisibilityConverter}, ConverterParameter=Finished}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <Image Width="32" Height="32" Stretch="None" Margin="5,0,0,0"
+                    <Border BorderThickness="0,0,0,1">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Height="32" Stretch="None" Width="{Binding ElementName=Column1, Path=ActualWidth}"
                                Source="{Binding InstanceType, Converter={StaticResource StatusImageConverter}}"/>
-                        <Label Content="{Binding InstanceName}" Margin="10,0,0,0" Width="120" VerticalAlignment="Center"/>
-                        <Label Content="{Binding FileName}" Margin="5,0,0,0" Width="300" VerticalAlignment="Center"/>
-                        <Label Content="{Binding TotalSize, Converter={StaticResource FileSizeConverter}}"
-                               Width="80" VerticalAlignment="Center" Margin="5,0,0,0"/>
-                        <Label Content="{Binding CompleteTime}" VerticalAlignment="Center" Margin="5,0,0,0" Width="240"/>
-                    </StackPanel>
+                            <Label Content="{Binding InstanceName}" VerticalAlignment="Center"
+                               Width="{Binding ElementName=Column2, Path=ActualWidth}"/>
+                            <Label Content="{Binding FileName}" VerticalAlignment="Center"
+                               Width="{Binding ElementName=Column3, Path=ActualWidth}"/>
+                            <Label Content="{Binding TotalSize, Converter={StaticResource FileSizeConverter}}"
+                               Width="{Binding ElementName=Column4, Path=ActualWidth}" VerticalAlignment="Center"/>
+                            <Label Content="{Binding CompleteTime}" VerticalAlignment="Center"
+                               Width="{Binding ElementName=Column5, Path=ActualWidth}"/>
+                        </StackPanel>
+                    </Border>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-    </StackPanel>
+    </Grid>
 </Page>

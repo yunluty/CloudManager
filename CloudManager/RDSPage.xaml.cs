@@ -48,18 +48,10 @@ namespace CloudManager
             mAks = App.AKS;
             mRegions = App.REGIONS;
             RDSList.ItemsSource = mDBInstances;
-            this.Loaded += delegate
-            {
-                if (!Refreshed)
-                {
-                    RefreshPage();
-                }
-            };
         }
 
         protected override void RefreshPage()
         {
-            Refreshed = true;
             GetDBInstances();
         }
 

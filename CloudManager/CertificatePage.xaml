@@ -17,18 +17,18 @@
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="CertificateName">
-            <TextBlock Text="{Binding CertificateName}" Width="80" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding CertificateName}" TextWrapping="Wrap"/>
         </DataTemplate>
         <DataTemplate x:Key="CertificateId">
-            <TextBlock Text="{Binding CertificateId}" Width="200" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding CertificateId}" TextWrapping="Wrap"/>
         </DataTemplate>
         <DataTemplate x:Key="Fingerprint">
-            <TextBlock Text="{Binding Fingerprint}" Width="200" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding Fingerprint}" TextWrapping="Wrap"/>
         </DataTemplate>
     </Page.Resources>
 
-    <StackPanel Margin="5,0,5,0">
-        <Grid Margin="0,5,0,0">
+    <Grid Margin="5,0,5,0">
+        <Grid Margin="0,5,0,0" VerticalAlignment="Top">
             <Label Content="证书列表" FontSize="18" VerticalAlignment="Center"/>
             <!--control:RefreshTitle Text="证书列表" Height="37" Margin="0,0,0,0" Width="160"
                                VerticalAlignment="Top" HorizontalAlignment="Left"/-->
@@ -37,20 +37,43 @@
                 <Button Content="创建证书" Height="32" Width="60" Margin="10,0,0,0"
                         Style="{StaticResource ProcessButton}" Click="AddCertificate_Click"/>
             </StackPanel>
-            
         </Grid>
-        <ListView x:Name="CertificatesList" MaxHeight="640" Margin="0,5,0,0"
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="1.2*"/>
+                <ColumnDefinition Width="2.2*"/>
+                <ColumnDefinition Width="90"/>
+                <ColumnDefinition Width="30"/>
+            </Grid.ColumnDefinitions>
+            <Grid x:Name="Column1" Grid.Column="0"/>
+            <Grid x:Name="Column2" Grid.Column="1"/>
+            <Grid x:Name="Column3" Grid.Column="2"/>
+            <Grid x:Name="Column4" Grid.Column="3"/>
+            <Grid x:Name="Column5" Grid.Column="4"/>
+            <Grid x:Name="Column6" Grid.Column="5"/>
+            <Grid x:Name="Column7" Grid.Column="6"/>
+        </Grid>
+        <ListView x:Name="CertificatesList" Margin="0,42,0,0" Foreground="Black"
                   Background="Transparent" BorderBrush="Transparent" BorderThickness="0">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="证书名称" CellTemplate="{StaticResource CertificateName}"/>
-                    <GridViewColumn Header="证书ID" CellTemplate="{StaticResource CertificateId}"/>
-                    <GridViewColumn Header="证书指纹" CellTemplate="{StaticResource Fingerprint}"/>
-                    <GridViewColumn Header="证书类型" DisplayMemberBinding="{Binding CertificateType, Converter={StaticResource StatusTextConverter}}"/>
-                    <GridViewColumn Header="地域" DisplayMemberBinding="{Binding RegionLocalName}" Width="130"/>
-                    <GridViewColumn Header="操作" CellTemplate="{StaticResource ProcessCertificate}"/>
+                    <GridViewColumn Header="证书名称" CellTemplate="{StaticResource CertificateName}"
+                                    Width="{Binding ElementName=Column1, Path=ActualWidth}"/>
+                    <GridViewColumn Header="证书ID" CellTemplate="{StaticResource CertificateId}"
+                                    Width="{Binding ElementName=Column2, Path=ActualWidth}"/>
+                    <GridViewColumn Header="证书指纹" CellTemplate="{StaticResource Fingerprint}"
+                                    Width="{Binding ElementName=Column3, Path=ActualWidth}"/>
+                    <GridViewColumn Header="证书类型" DisplayMemberBinding="{Binding CertificateType, Converter={StaticResource StatusTextConverter}}"
+                                    Width="{Binding ElementName=Column4, Path=ActualWidth}"/>
+                    <GridViewColumn Header="地域" DisplayMemberBinding="{Binding RegionLocalName}"
+                                    Width="{Binding ElementName=Column5, Path=ActualWidth}"/>
+                    <GridViewColumn Header="操作" CellTemplate="{StaticResource ProcessCertificate}"
+                                    Width="{Binding ElementName=Column6, Path=ActualWidth}"/>
                 </GridView>
             </ListView.View>
         </ListView>
-    </StackPanel>
+    </Grid>
 </local:PageBase>

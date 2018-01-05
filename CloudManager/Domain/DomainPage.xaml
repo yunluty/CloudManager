@@ -14,21 +14,21 @@
             <StackPanel Orientation="Horizontal">
                 <Button Content="修改" Style="{StaticResource ClickText}" Click="ModifyRecord_Click"/>
                 <Button Content="{Binding Status, Converter={StaticResource StatusTextConverter}, ConverterParameter=Process}"
-                        Style="{StaticResource ClickText}" Margin="2,0,0,0" Click="SetRecordStatus_Click"/>
-                <Button Content="删除" Style="{StaticResource ClickText}" Margin="2,0,0,0" Click="DeleteRecord_Click"/>
+                        Style="{StaticResource ClickText}" Margin="3,0,0,0" Click="SetRecordStatus_Click"/>
+                <Button Content="删除" Style="{StaticResource ClickText}" Margin="3,0,0,0" Click="DeleteRecord_Click"/>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="Type">
-            <TextBlock Text="{Binding Type}" Foreground="DarkGray" MinWidth="50"/>
+            <TextBlock Text="{Binding Type}" Foreground="DarkGray"/>
         </DataTemplate>
         <DataTemplate x:Key="RR">
-            <TextBlock Text="{Binding RR}" Foreground="DarkGray" MinWidth="80"/>
+            <TextBlock Text="{Binding RR}" Foreground="DarkGray"/>
         </DataTemplate>
         <DataTemplate x:Key="Line">
-            <TextBlock Text="{Binding LineStr}" Foreground="DarkGray" MinWidth="60" Margin="0,0,2,0"/>
+            <TextBlock Text="{Binding LineStr}" Foreground="DarkGray" Margin="0,0,2,0"/>
         </DataTemplate>
         <DataTemplate x:Key="Value">
-            <TextBlock Text="{Binding Value}" TextWrapping="Wrap" Foreground="DarkGray" Width="160"/>
+            <TextBlock Text="{Binding Value}" TextWrapping="Wrap" Foreground="DarkGray"/>
         </DataTemplate>
         <DataTemplate x:Key="Priority">
             <TextBlock Text="{Binding Priority}" Foreground="DarkGray"/>
@@ -60,7 +60,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <TabControl Grid.Column="1" Background="Transparent">
+        <TabControl Grid.Column="1" Background="Transparent" BorderThickness="1,1,0,0">
             <TabItem>
                 <TabItem.Header>
                     <Label Content="基本信息" FontSize="16"/>
@@ -108,26 +108,57 @@
                 <TabItem.Header>
                     <Label Content="解析设置" FontSize="16"/>
                 </TabItem.Header>
-                <StackPanel>
-                    <Grid>
+                <Grid>
+                    <Grid VerticalAlignment="Top">
+                        <Label Content="解析记录" FontSize="16"/>
                         <Button Content="添加解析" Height="32" Width="60" Margin="0,0,10,0" HorizontalAlignment="Right"
                                 Style="{StaticResource ProcessButton}" Click="AddRecord_Click"/>
                     </Grid>
-                    <ListView x:Name="RecordList" Margin="0,5,0,0" MaxHeight="600">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1.5*"/>
+                            <ColumnDefinition Width="1.2*"/>
+                            <ColumnDefinition Width="2.5*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="0.8*"/>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="30"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid x:Name="Column1" Grid.Column="0"/>
+                        <Grid x:Name="Column2" Grid.Column="1"/>
+                        <Grid x:Name="Column3" Grid.Column="2"/>
+                        <Grid x:Name="Column4" Grid.Column="3"/>
+                        <Grid x:Name="Column5" Grid.Column="4"/>
+                        <Grid x:Name="Column6" Grid.Column="5"/>
+                        <Grid x:Name="Column7" Grid.Column="6"/>
+                        <Grid x:Name="Column8" Grid.Column="7"/>
+                        <Grid x:Name="Column9" Grid.Column="8"/>
+                    </Grid>
+                    <ListView x:Name="RecordList" Margin="0,36,0,0">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="记录类型" CellTemplate="{StaticResource Type}"/>
-                                <GridViewColumn Header="主机记录" CellTemplate="{StaticResource RR}"/>
-                                <GridViewColumn Header="解析线路" CellTemplate="{StaticResource Line}"/>
-                                <GridViewColumn Header="记录值" CellTemplate="{StaticResource Value}"/>
-                                <GridViewColumn Header="MX优先级" CellTemplate="{StaticResource Priority}"/>
-                                <GridViewColumn Header="TTL值" CellTemplate="{StaticResource TTL}"/>
-                                <GridViewColumn Header="状态" CellTemplate="{StaticResource Status}"/>
-                                <GridViewColumn Header="操作" CellTemplate="{StaticResource Process}"/>
+                                <GridViewColumn Header="记录类型" CellTemplate="{StaticResource Type}"
+                                                Width="{Binding ElementName=Column1, Path=ActualWidth}"/>
+                                <GridViewColumn Header="主机记录" CellTemplate="{StaticResource RR}"
+                                                Width="{Binding ElementName=Column2, Path=ActualWidth}"/>
+                                <GridViewColumn Header="解析线路" CellTemplate="{StaticResource Line}"
+                                                Width="{Binding ElementName=Column3, Path=ActualWidth}"/>
+                                <GridViewColumn Header="记录值" CellTemplate="{StaticResource Value}"
+                                                Width="{Binding ElementName=Column4, Path=ActualWidth}"/>
+                                <GridViewColumn Header="MX优先级" CellTemplate="{StaticResource Priority}"
+                                                Width="{Binding ElementName=Column5, Path=ActualWidth}"/>
+                                <GridViewColumn Header="TTL值" CellTemplate="{StaticResource TTL}"
+                                                Width="{Binding ElementName=Column6, Path=ActualWidth}"/>
+                                <GridViewColumn Header="状态" CellTemplate="{StaticResource Status}"
+                                                Width="{Binding ElementName=Column7, Path=ActualWidth}"/>
+                                <GridViewColumn Header="操作" CellTemplate="{StaticResource Process}"
+                                                Width="{Binding ElementName=Column8, Path=ActualWidth}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
-                </StackPanel>
+                </Grid>
             </TabItem>
         </TabControl>
     </Grid>

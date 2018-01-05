@@ -41,18 +41,10 @@ namespace CloudManager
 
             mAki = App.AKI;
             mAks = App.AKS;
-            this.Loaded += delegate
-            {
-                if (!Refreshed)
-                {
-                    RefreshPage();
-                }
-            };
         }
 
         protected override void RefreshPage()
         {
-            Refreshed = true;
             GetBuckets();
         }
 
@@ -564,10 +556,10 @@ namespace CloudManager
                     if (o.ObjectType == OSSObjectType.Directory)
                     {
                         task.FileType = FileTypeMode.Directory;
-                        if (!Directory.Exists(realPath))
+                        /*if (!Directory.Exists(realPath))
                         {
                             Directory.CreateDirectory(realPath);
-                        }
+                        }*/
                     }
                     else
                     {
@@ -621,19 +613,17 @@ namespace CloudManager
             DownloadObject(obj);
         }
         
-        private void DeleteObject(object para)
+        private void DeleteObject(DescribeBucket bucket, DescribeOSSObject obj)
         {
-            DescribeOSSObject obj = para as DescribeOSSObject;
-            DescribeBucket bucket = mSelBucket;
-            if (obj.BucketName != bucket.Name)
+            DoLoadingWork(page =>
             {
-                return;
-            }
+                if (obj.BucketName != bucket.Name)
+                {
+                    return;
+                }
 
-            string endpoint = "http://" + bucket.InternetEndPoint;
-            OssClient client = new OssClient(endpoint, mAki, mAks);
-            try
-            {
+                string endpoint = "http://" + bucket.InternetEndPoint;
+                OssClient client = new OssClient(endpoint, mAki, mAks);
                 if (obj.ObjectType == OSSObjectType.Directory)
                 {
                     var listing = client.ListObjects(bucket.Name, obj.Key);
@@ -650,10 +640,10 @@ namespace CloudManager
                     client.DeleteObject(bucket.Name, obj.Key);
                 }
                 Dispatcher.Invoke(new DelegateGot(DeletedObject), obj);
-            }
-            catch
+            },
+            ex =>
             {
-            }
+            });
         }
 
         private void DeletedObject(object para)
@@ -673,8 +663,7 @@ namespace CloudManager
                 return;
             }
 
-            Thread t = new Thread(new ParameterizedThreadStart(DeleteObject));
-            t.Start(obj);
+            DeleteObject(mSelBucket, obj);
         }
 
         private void GetUrl_Click(object sender, RoutedEventArgs e)

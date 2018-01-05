@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.ComponentModel;
 using CloudManager.Domain;
+using System.Collections.ObjectModel;
 
 namespace CloudManager
 {
@@ -12,6 +13,7 @@ namespace CloudManager
     /// </summary>
     public partial class MainWindow : WindowBase
     {
+        private ObservableCollection<MenuNumberInfo> mTaskMenuInfos;
         private ECSPage mECSPage;
         private SLBPage mSLBPage;       
         private RDSPage mRDSPage;
@@ -49,7 +51,9 @@ namespace CloudManager
             mCertificatePage = new CertificatePage();
             mCertificatePage.mMainWindow = this;
 
+            CreateTaskMenuInfo();
             mBackupPage = new DownUpLoadTaskPage();
+            mBackupPage.UpdateTaskNumber += UpdateTaskNumber;
 
             mAboutPage = new AboutPage();
             mAboutPage.mMainWindow = this;
@@ -60,6 +64,32 @@ namespace CloudManager
             SettingMenuList.SelectedIndex = 0;
         }
 
+        private void CreateTaskMenuInfo()
+        {
+            mTaskMenuInfos = new ObservableCollection<MenuNumberInfo>();
+            mTaskMenuInfos.Add(new MenuNumberInfo() { Name = "正在进行", Id = "Running", Number = 0 });
+            mTaskMenuInfos.Add(new MenuNumberInfo() { Name = "已完成", Id = "Finished", Number = 0 });
+            TaskMenuList.ItemsSource = mTaskMenuInfos;
+        }
+
+        private void UpdateTaskNumber(string type, int number)
+        {
+            try
+            {
+                foreach (MenuNumberInfo info in mTaskMenuInfos)
+                {
+                    if (info.Id == type)
+                    {
+                        info.Number = number;
+                        break;
+                    }
+                }
+            }
+            catch
+            {
+            }
+        }
+
         private void Menus_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListBox menuList = sender as ListBox;
@@ -68,7 +98,7 @@ namespace CloudManager
                 return;
             }
 
-            MenuInfo menu = menuList.SelectedItem as MenuInfo;
+            MenuNumberInfo menu = menuList.SelectedItem as MenuNumberInfo;
             string id = menu.Id;
             
             if (id.Equals("ECSInstances"))
@@ -95,12 +125,12 @@ namespace CloudManager
             {
                 Process.Content = mDomainPage;
             }
-            else if (id.Equals("RunningTask"))
+            else if (id.Equals("Running"))
             {
                 Process.Content = mBackupPage;
                 mBackupPage.TaskType = DownUpLoadTaskPage.TaskStatus.Running;
             }
-            else if (id.Equals("FinishedTask"))
+            else if (id.Equals("Finished"))
             {
                 Process.Content = mBackupPage;
                 mBackupPage.TaskType = DownUpLoadTaskPage.TaskStatus.Finished;
@@ -188,5 +218,28 @@ namespace CloudManager
     {
         public string Name { get; set; }
         public string Id { get; set; }
+    }
+
+    public class MenuNumberInfo : INotifyPropertyChanged
+    {
+        private int number;
+
+        public string Name { get; set; }
+        public string Id { get; set; }
+        public int Number
+        {
+            get { return number; }
+            set
+            {
+                number = value;
+                NotifyPropertyChanged("Number");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void NotifyPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

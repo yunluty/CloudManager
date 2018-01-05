@@ -12,28 +12,28 @@
 
     <Window.Resources>
         <c:ArrayList x:Key="TaskMenus">
-            <local:MenuInfo Name="正在进行" Id="RunningTask"/>
-            <local:MenuInfo Name="已完成" Id="FinishedTask"/>
+            <local:MenuNumberInfo Name="正在进行" Id="RunningTask"/>
+            <local:MenuNumberInfo Name="已完成" Id="FinishedTask"/>
         </c:ArrayList>
         <c:ArrayList x:Key="ECSMenus">
-            <local:MenuInfo Name="实例管理" Id="ECSInstances"/>
+            <local:MenuNumberInfo Name="实例管理" Id="ECSInstances"/>
         </c:ArrayList>
         <c:ArrayList x:Key="RDSMenus">
-            <local:MenuInfo Name="实例管理" Id="RDSInstances"/>
+            <local:MenuNumberInfo Name="实例管理" Id="RDSInstances"/>
         </c:ArrayList>
         <c:ArrayList x:Key="OSSMenus">
-            <local:MenuInfo Name="储存空间" Id="OSSInstances"/>
+            <local:MenuNumberInfo Name="储存空间" Id="OSSInstances"/>
         </c:ArrayList>
         <c:ArrayList x:Key="SLBMenus">
-            <local:MenuInfo Name="实例管理" Id="SLBInstances"/>
-            <local:MenuInfo Name="证书管理" Id="Certificates"/>
+            <local:MenuNumberInfo Name="实例管理" Id="SLBInstances"/>
+            <local:MenuNumberInfo Name="证书管理" Id="Certificates"/>
         </c:ArrayList>
         <c:ArrayList x:Key="DomainMenus">
-            <local:MenuInfo Name="域名" Id="Domains"/>
+            <local:MenuNumberInfo Name="域名" Id="Domains"/>
             <!--local:MenuInfo Name="证书管理" Id="Certificates"/-->
         </c:ArrayList>
         <c:ArrayList x:Key="SettingMenus">
-            <local:MenuInfo Name="关于我们" Id="About"/>
+            <local:MenuNumberInfo Name="关于我们" Id="About"/>
         </c:ArrayList>
     </Window.Resources>
     
@@ -106,8 +106,8 @@
                 <Image Source="images/task.png" Margin="1,0,1,0"/>
                 <Label Content="网络任务" Style="{StaticResource TitleLabel2}"/>
             </StackPanel>
-            <ListBox x:Name="TaskMenuList" Style="{StaticResource MenuListBox}"
-                     ItemsSource="{StaticResource TaskMenus}" SelectionChanged="Menus_SelectionChanged">
+            <ListBox x:Name="TaskMenuList" Style="{StaticResource MenuNumberListBox}"
+                     SelectionChanged="Menus_SelectionChanged">
             </ListBox>
             <StackPanel Orientation="Horizontal">
                 <Image Source="images/settings.png" Margin="1,0,1,0"/>

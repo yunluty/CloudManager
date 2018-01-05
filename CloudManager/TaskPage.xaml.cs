@@ -3,6 +3,7 @@ using Aliyun.OSS.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -34,6 +35,8 @@ namespace CloudManager
         private ObservableCollection<DownUploadTask> mRunningTasks = new ObservableCollection<DownUploadTask>();
         private ObservableCollection<DownUploadTask> mFinishedTasks = new ObservableCollection<DownUploadTask>();
 
+        public delegate void UpdateNumberEvent(string type, int count);
+        public UpdateNumberEvent UpdateTaskNumber;
         public delegate void DelegateResult(object obj);
 
         private TaskStatus taskType;
@@ -53,17 +56,32 @@ namespace CloudManager
 
             mAki = App.AKI;
             mAks = App.AKS;
+
+            mRunningTasks.CollectionChanged += RunningCollectionChanged;
+            mFinishedTasks.CollectionChanged += FinishedCollectionChanged;
+
             RunningList.ItemsSource = mRunningTasks;
             FinishedList.ItemsSource = mFinishedTasks;
             RunningList.DataContext = this;
             FinishedList.DataContext = this;
         }
 
+        private void RunningCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            ObservableCollection<DownUploadTask> col = sender as ObservableCollection<DownUploadTask>;
+            UpdateTaskNumber?.Invoke("Running", col.Count);
+        }
+
+        private void FinishedCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            ObservableCollection<DownUploadTask> col = sender as ObservableCollection<DownUploadTask>;
+            UpdateTaskNumber?.Invoke("Finished", col.Count);
+        }
+
         public void AddNewTask(DownUploadTask task)
         {
-            mRunningTasks.Add(task);
+            mRunningTasks.Insert(0, task);
             StartTask(task);
-            
         }
 
         private void StartTask(DownUploadTask task)
@@ -98,7 +116,7 @@ namespace CloudManager
             task.Status = "Success";
             task.CompleteTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             mRunningTasks.Remove(task);
-            mFinishedTasks.Add(task);
+            mFinishedTasks.Insert(0, task);
         }
 
         private void TaskFail(object obj)
@@ -146,6 +164,15 @@ namespace CloudManager
             }
         }
 
+        static private void TestDirectory(string path)
+        {
+            if (!Directory.Exists(path))
+            {
+                TestDirectory(path.Substring(0, path.LastIndexOf('\\')));
+                Directory.CreateDirectory(path);
+            }
+        }
+
         private void OssDownload(object obj)
         {
             DownUploadTask task = obj as DownUploadTask;
@@ -160,18 +187,20 @@ namespace CloudManager
             {
                 if (task.FileType == FileTypeMode.Directory)
                 {
-                    if (!Directory.Exists(task.FilePath))
+                    TestDirectory(path);
+                    /*if (!Directory.Exists(task.FilePath))
                     {
                         Directory.CreateDirectory(task.FilePath);
-                    }
+                    }*/
                 }
                 else
                 {
+                    TestDirectory(path.Substring(0, path.LastIndexOf('\\')));
+
                     if (File.Exists(path))
                     {
                         File.Delete(path);
                     }
-
                     fs = File.Open(path, FileMode.Create);
                     var request = new GetObjectRequest(bucket.Name, key);
                     request.StreamTransferProgress += task.StreamTransferProgress;

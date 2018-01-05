@@ -45,14 +45,6 @@ namespace CloudManager
             mRegions = App.REGIONS;
             SLBList.ItemsSource = mLoadBalancers;
 
-            this.Loaded += delegate
-            {
-                if (!Refreshed)
-                {
-                    RefreshPage();
-                }
-            };
-
             Added.DataContext = new ObservableCollection<DescribeInstance>();
             NotAdded.DataContext = new ObservableCollection<DescribeInstance>();
             ListenersList.DataContext = new ObservableCollection<SLBListener>();
@@ -61,7 +53,6 @@ namespace CloudManager
 
         protected override void RefreshPage()
         {
-            Refreshed = true;
             GetLoadBalancers();
         }
 

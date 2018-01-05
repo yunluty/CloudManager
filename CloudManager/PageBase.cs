@@ -22,7 +22,6 @@ namespace CloudManager
         private bool Initialization;
 
         protected bool HideBlankPage;
-        protected bool Refreshed;
         
 
         public PageBase()
@@ -58,6 +57,8 @@ namespace CloudManager
                     {
                         System.Diagnostics.Process.Start("https://www.aliyun.com/");
                     };
+
+                    RefreshPage();
                 }
             };
         }

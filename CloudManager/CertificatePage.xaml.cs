@@ -45,18 +45,10 @@ namespace CloudManager
             mAks = App.AKS;
             mRegions = App.REGIONS;
             CertificatesList.ItemsSource = mCertificates;
-            this.Loaded += delegate
-            {
-                if (!Refreshed)
-                {
-                    RefreshPage();
-                }
-            };
         }
 
         protected override void RefreshPage()
         {
-            Refreshed = true;
             mCertificates.Clear();
             GetCertificates();
         }
@@ -105,7 +97,6 @@ namespace CloudManager
             ex =>
             {
             });
-            
         }
 
         private void ModifyCertificateName_Click(object sender, RoutedEventArgs e)

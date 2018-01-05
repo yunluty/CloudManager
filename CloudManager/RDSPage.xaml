@@ -11,16 +11,16 @@
 
     <Page.Resources>
         <DataTemplate x:Key="EditValue">
-            <StackPanel Orientation="Horizontal" Width="120">
+            <StackPanel Orientation="Horizontal">
                 <TextBox x:Name="EditValue" Text="{Binding Path=OperationValue, Mode=TwoWay, UpdateSourceTrigger= Explicit}"
-                         TextChanged="EditValue_TextChanged" Width="100"/>
+                         TextChanged="EditValue_TextChanged" MinWidth="120"/>
                 <Image Source="{Binding Path=LegalValue, Converter={StaticResource StatusImageConverter}}"
                        Visibility="{Binding Path=Changed, Converter={StaticResource VisibilityConverter}}"
                        Margin="4,0,0,0"/>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="CheckingCode">
-            <TextBlock Text="{Binding Path=CheckingCode}" Width="120">
+            <TextBlock Text="{Binding Path=CheckingCode}">
                 <TextBlock.ToolTip>
                     <TextBlock Text="{Binding CheckingCode}" Width="300" TextWrapping="Wrap"/>
                 </TextBlock.ToolTip>
@@ -60,7 +60,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <TabControl Grid.Column="1" Background="Transparent">
+        <TabControl Grid.Column="1" Background="Transparent" BorderThickness="1,1,0,0">
             <TabItem>
                 <TabItem.Header>
                     <Label Content="基本信息" FontSize="16"/>
@@ -197,34 +197,58 @@
                 <TabItem.Header>
                     <Label Content="参数设置" FontSize="16"/>
                 </TabItem.Header>
-                <StackPanel>
+                <Grid>
                     <Grid>
-                        <Label Content="参数列表" FontSize="16" VerticalAlignment="Center"/>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Label Content="参数列表" FontSize="16" VerticalAlignment="Top"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
                             <Button x:Name="Submit" Content="提交参数" Width="60" Height="32" Click="Submit_Click" Style="{StaticResource ProcessButton}"/>
                             <Button x:Name="Undo" Content="撤销" Width="60" Height="32" Margin="10,0,10,0" Click="Undo_Click" Style="{StaticResource ProcessButton}"/>
                         </StackPanel>
                     </Grid>
-                    <ListView x:Name="Parameters" MaxHeight="600" Margin="0,5,0,0" Background="Transparent" BorderThickness="0" BorderBrush="Transparent">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*"/>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="4*"/>
+                            <ColumnDefinition Width="35"/>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="35"/>
+                            <ColumnDefinition Width="30"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid x:Name="Column1" Grid.Column="0"/>
+                        <Grid x:Name="Column2" Grid.Column="1"/>
+                        <Grid x:Name="Column3" Grid.Column="2"/>
+                        <Grid x:Name="Column4" Grid.Column="3"/>
+                        <Grid x:Name="Column5" Grid.Column="4"/>
+                        <Grid x:Name="Column6" Grid.Column="5"/>
+                    </Grid>
+                    <ListView x:Name="Parameters" Margin="0,36,0,0" Background="Transparent" Foreground="Black"
+                              BorderThickness="0" BorderBrush="Transparent">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="参数名" DisplayMemberBinding="{Binding Name}"/>
-                                <GridViewColumn Header="参数默认值" DisplayMemberBinding="{Binding DefaultValue}" Width="100"/>
-                                <GridViewColumn Header="运行参数值" CellTemplate="{StaticResource EditValue}"/>
-                                <GridViewColumn Header="重启" DisplayMemberBinding="{Binding ForceRestart, Converter={StaticResource StatusTextConverter}, ConverterParameter=YESNO}"/>
-                                <GridViewColumn Header="可修改参数值" CellTemplate="{StaticResource CheckingCode}"/>
-                                <GridViewColumn Header="描述" CellTemplate="{StaticResource Description}"/>
+                                <GridViewColumn Header="参数名" DisplayMemberBinding="{Binding Name}"
+                                                Width="{Binding ElementName=Column1, Path=ActualWidth}"/>
+                                <GridViewColumn Header="参数默认值" DisplayMemberBinding="{Binding DefaultValue}"
+                                                Width="{Binding ElementName=Column2, Path=ActualWidth}"/>
+                                <GridViewColumn Header="运行参数值" CellTemplate="{StaticResource EditValue}"
+                                                Width="{Binding ElementName=Column3, Path=ActualWidth}"/>
+                                <GridViewColumn Header="重启" DisplayMemberBinding="{Binding ForceRestart, Converter={StaticResource StatusTextConverter}, ConverterParameter=YESNO}"
+                                                Width="{Binding ElementName=Column4, Path=ActualWidth}"/>
+                                <GridViewColumn Header="可修改参数值" CellTemplate="{StaticResource CheckingCode}"
+                                                Width="{Binding ElementName=Column5, Path=ActualWidth}"/>
+                                <GridViewColumn Header="描述" CellTemplate="{StaticResource Description}"
+                                                Width="{Binding ElementName=Column6, Path=ActualWidth}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
-                </StackPanel>
+                </Grid>
             </TabItem>
             <TabItem>
                 <TabItem.Header>
                     <Label Content="备份" FontSize="16"/>
                 </TabItem.Header>
-                <StackPanel Height="650">
-                    <Grid x:Name="BackupPolicy">
+                <Grid>
+                    <Grid x:Name="BackupPolicy" VerticalAlignment="Top">
                         <Grid.RowDefinitions>
                             <RowDefinition/>
                             <RowDefinition/>
@@ -264,21 +288,48 @@
                             <TextBlock Text="{Binding LogBackupRetentionPeriod}" Margin="10,0,0,0"/>
                         </StackPanel>
                     </Grid>
-                    <Label Content="数据备份" FontSize="16" Margin="0,20,0,0"/>
-                    <ListView x:Name="Backups" Margin="0,10,0,0" MaxHeight="500" Background="Transparent">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="4*"/>
+                            <ColumnDefinition Width="4*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="35"/>
+                            <ColumnDefinition Width="145"/>
+                            <ColumnDefinition Width="30"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid x:Name="Column21" Grid.Column="0"/>
+                        <Grid x:Name="Column22" Grid.Column="1"/>
+                        <Grid x:Name="Column23" Grid.Column="2"/>
+                        <Grid x:Name="Column24" Grid.Column="3"/>
+                        <Grid x:Name="Column25" Grid.Column="4"/>
+                        <Grid x:Name="Column26" Grid.Column="5"/>
+                        <Grid x:Name="Column27" Grid.Column="6"/>
+                        <Grid x:Name="Column28" Grid.Column="7"/>
+                    </Grid>
+                    <Label Content="数据备份" FontSize="16" Margin="0,110,0,0"/>
+                    <ListView x:Name="Backups" Margin="0,140,0,0" Background="Transparent" Foreground="Black">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="备份开始" DisplayMemberBinding="{Binding BackupStartTime}"/>
-                                <GridViewColumn Header="备份结束" DisplayMemberBinding="{Binding BackupEndTime}"/>
-                                <GridViewColumn Header="备份大小" DisplayMemberBinding="{Binding BackupSizeStr}"/>
-                                <GridViewColumn Header="备份方法" DisplayMemberBinding="{Binding BackupMethod, Converter={StaticResource StatusTextConverter}}"/>
-                                <GridViewColumn Header="备份类型" DisplayMemberBinding="{Binding BackupType, Converter={StaticResource StatusTextConverter}}"/>
-                                <GridViewColumn Header="状态" DisplayMemberBinding="{Binding BackupStatus, Converter={StaticResource StatusTextConverter}, ConverterParameter=None}"/>
-                                <GridViewColumn Header="操作" CellTemplate="{StaticResource ProcessBackup}"/>
+                                <GridViewColumn Header="备份开始" DisplayMemberBinding="{Binding BackupStartTime}"
+                                                Width="{Binding ElementName=Column21, Path=ActualWidth}"/>
+                                <GridViewColumn Header="备份结束" DisplayMemberBinding="{Binding BackupEndTime}"
+                                                Width="{Binding ElementName=Column22, Path=ActualWidth}"/>
+                                <GridViewColumn Header="备份大小" DisplayMemberBinding="{Binding BackupSizeStr}"
+                                                Width="{Binding ElementName=Column23, Path=ActualWidth}"/>
+                                <GridViewColumn Header="备份方法" DisplayMemberBinding="{Binding BackupMethod, Converter={StaticResource StatusTextConverter}}"
+                                                Width="{Binding ElementName=Column24, Path=ActualWidth}"/>
+                                <GridViewColumn Header="备份类型" DisplayMemberBinding="{Binding BackupType, Converter={StaticResource StatusTextConverter}}"
+                                                Width="{Binding ElementName=Column25, Path=ActualWidth}"/>
+                                <GridViewColumn Header="状态" DisplayMemberBinding="{Binding BackupStatus, Converter={StaticResource StatusTextConverter}, ConverterParameter=None}"
+                                                Width="{Binding ElementName=Column26, Path=ActualWidth}"/>
+                                <GridViewColumn Header="操作" CellTemplate="{StaticResource ProcessBackup}"
+                                                Width="{Binding ElementName=Column27, Path=ActualWidth}"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
-                </StackPanel>
+                </Grid>
             </TabItem>
         </TabControl>
     </Grid>

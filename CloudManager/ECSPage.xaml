@@ -34,7 +34,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <TabControl Grid.Column="1" Background="Transparent">
+        <TabControl Grid.Column="1" Background="Transparent" BorderThickness="1,1,0,0">
             <TabItem>
                 <TabItem.Header>
                     <Label Content="实例详情" FontSize="16"/>

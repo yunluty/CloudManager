@@ -41,19 +41,10 @@ namespace CloudManager.Domain
 
             IClientProfile profile = DefaultProfile.GetProfile("cn-hangzhou", App.AKI, App.AKS);
             mClient = new DefaultAcsClient(profile);
-
-            this.Loaded += delegate
-            {
-                if (!Refreshed)
-                {
-                    RefreshPage();
-                }
-            };
         }
 
         protected override void RefreshPage()
         {
-            Refreshed = true;
             GetDomainList();
         }
 

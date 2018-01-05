@@ -46,18 +46,10 @@ namespace CloudManager
             mAks = App.AKS;
             mRegions = App.REGIONS;
             //ECSList.ItemsSource = mECSInstances; //Display the ECSs list
-            this.Loaded += delegate
-            {
-                if (!Refreshed)
-                {
-                    RefreshPage();
-                }
-            };
         }
 
         protected override void RefreshPage()
         {
-            Refreshed = true;
             GetInstances();
         }
 
